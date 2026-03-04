@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginTop="12dp"
+    android:background="@drawable/bg_noti_card"
+    android:clipToOutline="true"
+    android:elevation="2dp">
+
+    <View
+        android:id="@+id/viewUnreadBar"
+        android:layout_width="4dp"
+        android:layout_height="0dp"
+        android:background="#2563EB"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imgNotiIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_input"
+        android:backgroundTint="#DBEAFE"
+        android:padding="8dp"
+        android:src="@android:drawable/ic_menu_agenda"
+        app:tint="#2563EB"
+        app:layout_constraintStart_toEndOf="@id/viewUnreadBar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvNotiTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:text="Công việc mới được giao"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/viewUnreadDot"
+        app:layout_constraintStart_toEndOf="@id/imgNotiIcon"
+        app:layout_constraintTop_toTopOf="@id/imgNotiIcon" />
+
+    <View
+        android:id="@+id/viewUnreadDot"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_unread_indicator"
+        app:layout_constraintBottom_toBottomOf="@id/tvNotiTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvNotiTitle" />
+
+    <TextView
+        android:id="@+id/tvNotiContent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:text="Bạn có 1 công việc mới: Hoàn thành báo cáo..."
+        android:textColor="@color/textColorSecondary"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvNotiTitle"
+        app:layout_constraintTop_toBottomOf="@id/tvNotiTitle" />
+
+    <TextView
+        android:id="@+id/tvNotiTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:text="5 phút trước"
+        android:textColor="#9CA3AF"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvNotiTitle"
+        app:layout_constraintTop_toBottomOf="@id/tvNotiContent" />
+
+    <TextView
+        android:id="@+id/tvNotiAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:text="Xem công việc \u2192"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/tvNotiTime"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvNotiTime" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
