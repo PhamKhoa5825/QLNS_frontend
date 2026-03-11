@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,12 +9,14 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.R;
+import com.example.myapplication.adapter.EmployeeAdapter;
 import com.example.myapplication.model.*;
-import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.viewmodel.EmployeeViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -23,9 +25,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class EmployeeActivity extends AppCompatActivity {
 
@@ -34,11 +33,9 @@ public class EmployeeActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private EditText edtSearch;
     private FloatingActionButton fabAdd;
-
-    // Thống kê
     private TextView tvTotal, tvWorking, tvResigned;
 
-    private List<Employee> allEmployees = new ArrayList<>();
+    private EmployeeViewModel viewModel;
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
 
@@ -49,9 +46,13 @@ public class EmployeeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee_demo);
 
+        viewModel = new ViewModelProvider(this).get(EmployeeViewModel.class);
+
         initViews();
         setupSearch();
-        loadEmployees();
+        observeViewModel();
+
+        viewModel.loadEmployees();
     }
 
     private void initViews() {
@@ -60,8 +61,6 @@ public class EmployeeActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         edtSearch   = findViewById(R.id.edtSearch);
         fabAdd      = findViewById(R.id.fabAddEmployee);
-
-        // Ánh xạ các TextView thống kê (Phải thêm ID vào XML trước)
         tvTotal     = findViewById(R.id.tvTotal);
         tvWorking   = findViewById(R.id.tvWorking);
         tvResigned  = findViewById(R.id.tvResigned);
@@ -72,7 +71,6 @@ public class EmployeeActivity extends AppCompatActivity {
         adapter = new EmployeeAdapter(new ArrayList<>(), this::showEmployeeDetail);
         recyclerView.setAdapter(adapter);
 
-        // Phân quyền FAB
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         String role = prefs.getString("role", "EMPLOYEE");
         if ("ADMIN".equals(role)) {
@@ -83,27 +81,37 @@ public class EmployeeActivity extends AppCompatActivity {
         }
     }
 
+    private void observeViewModel() {
+        viewModel.employees.observe(this, list -> {
+            adapter.setData(list);
+            updateStatistics(list);
+        });
+
+        viewModel.isLoading.observe(this, isLoading -> {
+            if (progressBar != null) {
+                progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            }
+        });
+
+        viewModel.errorMessage.observe(this, message -> {
+            if (message != null) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void setupSearch() {
-        // 1. Xử lý Search realtime
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
             @Override public void onTextChanged(CharSequence s, int st, int b, int c) {}
             @Override
             public void afterTextChanged(Editable s) {
                 if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
-                searchRunnable = () -> {
-                    String kw = s.toString().trim();
-                    if (kw.isEmpty()) {
-                        adapter.setData(allEmployees);
-                    } else {
-                        searchEmployee(kw);
-                    }
-                };
+                searchRunnable = () -> viewModel.searchEmployees(s.toString().trim());
                 searchHandler.postDelayed(searchRunnable, 500);
             }
         });
 
-        // 2. Xử lý Click vào icon Filter (bên phải EditText)
         edtSearch.setOnTouchListener((v, event) -> {
             if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
                 if (event.getRawX() >= edtSearch.getRight()
@@ -114,29 +122,6 @@ public class EmployeeActivity extends AppCompatActivity {
                 }
             }
             return false;
-        });
-    }
-
-    private void loadEmployees() {
-        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
-
-        RetrofitClient.getApiService().getEmployees().enqueue(new Callback<List<Employee>>() {
-            @Override
-            public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
-                if (progressBar != null) progressBar.setVisibility(View.GONE);
-                if (response.isSuccessful() && response.body() != null) {
-                    allEmployees = response.body();
-                    adapter.setData(allEmployees);
-                    updateStatistics(allEmployees); // Cập nhật số liệu
-                } else {
-                    Toast.makeText(EmployeeActivity.this, "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
-                }
-            }
-            @Override
-            public void onFailure(Call<List<Employee>> call, Throwable t) {
-                if (progressBar != null) progressBar.setVisibility(View.GONE);
-                Toast.makeText(EmployeeActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
-            }
         });
     }
 
@@ -164,25 +149,23 @@ public class EmployeeActivity extends AppCompatActivity {
         Button btnApply = view.findViewById(R.id.btnApply);
         Button btnReset = view.findViewById(R.id.btnReset);
 
-        // Thêm trạng thái cố định
         addChip(cgStatus, "Đang làm việc", "ACTIVE");
         addChip(cgStatus, "Đã nghỉ việc", "RESIGNED");
 
-        // Load Phòng ban từ API
-        RetrofitClient.getApiService().getDepartments().enqueue(new Callback<List<Department>>() {
-            @Override
-            public void onResponse(Call<List<Department>> call, Response<List<Department>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    for (Department dept : response.body())
-                        addChipWithId(cgDepartment, dept.getName(), dept.getId());
+        viewModel.departments.observe(this, departments -> {
+            cgDepartment.removeAllViews();
+            if (departments != null) {
+                for (Department dept : departments) {
+                    addChipWithId(cgDepartment, dept.getName(), dept.getId());
                 }
             }
-            @Override public void onFailure(Call<List<Department>> call, Throwable t) {}
         });
+        viewModel.loadDepartments();
 
-        // Load Chức vụ từ list nhân viên hiện tại
         LinkedHashSet<String> positions = new LinkedHashSet<>();
-        for (Employee emp : allEmployees) if (emp.getPosition() != null) positions.add(emp.getPosition());
+        for (Employee emp : viewModel.getFullEmployeeList()) {
+            if (emp.getPosition() != null) positions.add(emp.getPosition());
+        }
         for (String pos : positions) addChip(cgRole, pos, pos);
 
         btnApply.setOnClickListener(v -> {
@@ -190,20 +173,12 @@ public class EmployeeActivity extends AppCompatActivity {
             Long selectedDeptId = getSelectedChipLongTag(cgDepartment);
             String selectedRole = getSelectedChipTag(cgRole);
 
-            List<Employee> filtered = new ArrayList<>();
-            for (Employee emp : allEmployees) {
-                boolean statusOk = selectedStatus == null || selectedStatus.equals(emp.getStatusRaw());
-                boolean deptOk = selectedDeptId == null || (emp.getDepartmentId() != null && emp.getDepartmentId().equals(selectedDeptId));
-                boolean roleOk = selectedRole == null || selectedRole.equals(emp.getPosition());
-
-                if (statusOk && deptOk && roleOk) filtered.add(emp);
-            }
-            adapter.setData(filtered);
+            viewModel.filterEmployees(selectedStatus, selectedDeptId, selectedRole);
             dialog.dismiss();
         });
 
         btnReset.setOnClickListener(v -> {
-            adapter.setData(allEmployees);
+            viewModel.loadEmployees();
             dialog.dismiss();
         });
 
@@ -211,7 +186,6 @@ public class EmployeeActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    // --- Helper Methods ---
     private void addChip(ChipGroup group, String label, String tag) {
         Chip chip = new Chip(this);
         chip.setText(label);
@@ -236,16 +210,6 @@ public class EmployeeActivity extends AppCompatActivity {
     private Long getSelectedChipLongTag(ChipGroup group) {
         int id = group.getCheckedChipId();
         return id != -1 ? (Long) group.findViewById(id).getTag() : null;
-    }
-
-    private void searchEmployee(String keyword) {
-        RetrofitClient.getApiService().searchEmployees(keyword).enqueue(new Callback<List<Employee>>() {
-            @Override
-            public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
-                if (response.isSuccessful() && response.body() != null) adapter.setData(response.body());
-            }
-            @Override public void onFailure(Call<List<Employee>> call, Throwable t) {}
-        });
     }
 
     private void showEmployeeDetail(Employee employee) {
