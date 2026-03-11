@@ -91,7 +91,14 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="112" android:textColor="@color/colorPrimary" android:textSize="20sp" android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tvTotal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tổng số" android:textColor="@color/textColorSecondary" android:textSize="12sp" />
                     </LinearLayout>
 
@@ -103,7 +110,14 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="111" android:textColor="@color/greenSuccess" android:textSize="20sp" android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tvWorking"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/greenSuccess"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Đang làm" android:textColor="@color/textColorSecondary" android:textSize="12sp" />
                     </LinearLayout>
 
@@ -115,8 +129,15 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1" android:textColor="@color/orangeWarning" android:textSize="20sp" android:textStyle="bold" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Nghỉ phép" android:textColor="@color/textColorSecondary" android:textSize="12sp" />
+                        <TextView
+                            android:id="@+id/tvResigned"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/orangeWarning"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Nghỉ việc" android:textColor="@color/textColorSecondary" android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

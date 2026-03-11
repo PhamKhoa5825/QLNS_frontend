@@ -3,65 +3,68 @@ package com.example.myapplication.model;
 import com.google.gson.annotations.SerializedName;
 
 // Model nhận JSON từ Spring Boot API
-// Thay thế Employee.java cũ (hardcode)
 public class Employee {
 
     @SerializedName("id")
     private Long id;
 
-    @SerializedName("employeeCode")
-    private String employeeCode;
-
     @SerializedName("fullName")
     private String fullName;
+
+    @SerializedName("email")
+    private String email;
 
     @SerializedName("phone")
     private String phone;
 
-    @SerializedName("position")
-    private String position;       // Chức vụ: "Lập trình viên"
+    @SerializedName("address")
+    private String address;
+
+    @SerializedName("dateOfBirth")
+    private String dateOfBirth;
+
+    @SerializedName("gender")
+    private String gender;          // MALE / FEMALE / OTHER
 
     @SerializedName("avatarUrl")
     private String avatarUrl;
 
-    @SerializedName("salary")
-    private Double salary;
+    @SerializedName("position")
+    private String position;        // Chức vụ
 
-    @SerializedName("contractType")
-    private String contractType;
+    @SerializedName("joinDate")
+    private String joinDate;
 
-    @SerializedName("gender")
-    private String gender;
+    @SerializedName("status")
+    private String status;          // ACTIVE / RESIGNED
 
-    @SerializedName("startDate")
-    private String startDate;
+    @SerializedName("departmentId")
+    private Long departmentId;
 
-    @SerializedName("endDate")
-    private String endDate;        // null = còn làm việc
+    @SerializedName("departmentName")
+    private String departmentName;
 
-    @SerializedName("department")
-    private Department department;
+    @SerializedName("role")
+    private String role;            // EMPLOYEE / MANAGER / ADMIN
 
-    // ===== Các hàm tiện ích cho UI =====
+    // ===== Hàm tiện ích giữ nguyên để Adapter không phải sửa =====
 
-    // Thay getName() cũ → dùng getFullName()
     public String getFullName() { return fullName; }
 
-    // Thay getRole() cũ → dùng getPosition()
+    // Adapter cũ dùng getRole() → vẫn trả về position (chức vụ)
     public String getRole() { return position; }
 
-    // Thay getDepartment() cũ → lấy tên phòng ban
+    // Adapter cũ dùng getDepartment() → trả về tên phòng ban
     public String getDepartment() {
-        if (department != null) return department.getName();
-        return "";
+        return departmentName != null ? departmentName : "";
     }
 
-    // Giữ nguyên getStatus() cho Adapter khỏi sửa
+    // Adapter cũ dùng getStatus() → trả về chuỗi tiếng Việt
     public String getStatus() {
-        return isWorking() ? "Đang làm việc" : "Đã nghỉ việc";
+        return "ACTIVE".equals(status) ? "Đang làm việc" : "Đã nghỉ việc";
     }
 
-    // Giữ nguyên getAvatarText() cho Adapter khỏi sửa
+    // Adapter cũ dùng getAvatarText() → lấy chữ cái đầu
     public String getAvatarText() {
         if (fullName != null && !fullName.isEmpty()) {
             String[] parts = fullName.trim().split(" ");
@@ -70,19 +73,21 @@ public class Employee {
         return "?";
     }
 
-    // Giữ nguyên isWorking() cho Adapter khỏi sửa
-    public boolean isWorking() { return endDate == null; }
+    // Adapter cũ dùng isWorking() → dựa vào status
+    public boolean isWorking() { return "ACTIVE".equals(status); }
 
-    // Getters
+    // Getters mới
     public Long getId() { return id; }
-    public String getEmployeeCode() { return employeeCode; }
+    public String getEmail() { return email; }
     public String getPhone() { return phone; }
-    public String getPosition() { return position; }
-    public String getAvatarUrl() { return avatarUrl; }
-    public Double getSalary() { return salary; }
-    public String getContractType() { return contractType; }
+    public String getAddress() { return address; }
+    public String getDateOfBirth() { return dateOfBirth; }
     public String getGender() { return gender; }
-    public String getStartDate() { return startDate; }
-    public String getEndDate() { return endDate; }
-    public Department getDepartmentObject() { return department; }
+    public String getAvatarUrl() { return avatarUrl; }
+    public String getPosition() { return position; }
+    public String getJoinDate() { return joinDate; }
+    public String getStatusRaw() { return status; }     // ACTIVE / RESIGNED
+    public Long getDepartmentId() { return departmentId; }
+    public String getDepartmentName() { return departmentName; }
+    public String getRoleRaw() { return role; }         // EMPLOYEE / MANAGER / ADMIN
 }

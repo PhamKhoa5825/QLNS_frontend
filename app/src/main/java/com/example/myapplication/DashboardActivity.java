@@ -25,24 +25,24 @@ public class DashboardActivity extends AppCompatActivity {
 
         // Các nút đã có
         btnNavEmployee.setOnClickListener(v -> startActivity(new Intent(DashboardActivity.this, EmployeeActivity.class)));
-        btnNavTimekeeping.setOnClickListener(v -> startActivity(new Intent(DashboardActivity.this, TimekeepingActivity.class)));
+//        btnNavTimekeeping.setOnClickListener(v -> startActivity(new Intent(DashboardActivity.this, TimekeepingActivity.class)));
         btnNavDepartment.setOnClickListener(v -> startActivity(new Intent(DashboardActivity.this, DepartmentActivity.class)));
 
         // Chuyển sang màn hình Tin nhắn (Chat)
-        btnNavChat.setOnClickListener(v -> {
-            Intent intent = new Intent(DashboardActivity.this, ChatActivity.class);
-            startActivity(intent);
-        });
-
-        btnNavTask.setOnClickListener(v -> {
-            Intent intent = new Intent(DashboardActivity.this, TaskActivity.class);
-            startActivity(intent);
-        });
-
-        btnNavNotification.setOnClickListener(v -> {
-            Intent intent = new Intent(DashboardActivity.this, NotificationActivity.class);
-            startActivity(intent);
-        });
+//        btnNavChat.setOnClickListener(v -> {
+//            Intent intent = new Intent(DashboardActivity.this, ChatActivity.class);
+//            startActivity(intent);
+//        });
+//
+//        btnNavTask.setOnClickListener(v -> {
+//            Intent intent = new Intent(DashboardActivity.this, TaskActivity.class);
+//            startActivity(intent);
+//        });
+//
+//        btnNavNotification.setOnClickListener(v -> {
+//            Intent intent = new Intent(DashboardActivity.this, NotificationActivity.class);
+//            startActivity(intent);
+//        });
 
 
     }

@@ -3,7 +3,6 @@ package com.example.myapplication.model;
 import com.google.gson.annotations.SerializedName;
 
 // Model nhận JSON từ Spring Boot API
-// Thay thế Department.java cũ (hardcode)
 public class Department {
 
     @SerializedName("id")
@@ -15,12 +14,17 @@ public class Department {
     @SerializedName("description")
     private String description;
 
-    @SerializedName("manager")
-    private Employee manager;
+    @SerializedName("managerId")
+    private Long managerId;
 
-    // employeeCount và performance không có trong API
-    // → tính từ danh sách employees hoặc bỏ khỏi UI
-    // colorBg → tự gán màu theo vị trí trong adapter
+    @SerializedName("managerName")       // Server trả thẳng tên, không phải object
+    private String managerName;
+
+    @SerializedName("employeeCount")     // Server đếm thật từ DB
+    private int employeeCount;
+
+    @SerializedName("createdAt")
+    private String createdAt;
 
     public Department() {}
 
@@ -29,21 +33,17 @@ public class Department {
         this.name = name;
     }
 
-    // Dùng khi gửi lên API (chỉ cần id)
-    public void setId(Long id) { this.id = id; }
-
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-    public Employee getManager() { return manager; }
-
-    // Lấy tên manager để hiển thị UI
+    public Long getManagerId() { return managerId; }
     public String getManagerName() {
-        if (manager != null && manager.getFullName() != null) {
-            return manager.getFullName();
-        }
-        return "Chưa có trưởng phòng";
+        return managerName != null ? managerName : "Chưa có trưởng phòng";
     }
+    public int getEmployeeCount() { return employeeCount; }
+    public String getCreatedAt() { return createdAt; }
 }
+

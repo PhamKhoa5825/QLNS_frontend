@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"> <activity
-        android:name=".LoginActivity"
+        android:name=".DashboardActivity"
         android:exported="true">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
@@ -18,7 +18,7 @@
         </intent-filter>
     </activity>
 
-        <activity android:name=".DashboardActivity" android:exported="false" />
+<!--        <activity android:name=".DashboardActivity" android:exported="false" />-->
         <activity android:name=".EmployeeActivity" android:exported="false" />
         <activity android:name=".TimekeepingActivity" android:exported="false" />
         <activity android:name=".DepartmentActivity" android:exported="false" />

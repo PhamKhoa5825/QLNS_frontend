@@ -2,30 +2,24 @@ package com.example.myapplication;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.view.*;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.model.Department;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class DepartmentAdapter extends RecyclerView.Adapter<DepartmentAdapter.ViewHolder> {
 
-    // Màu tự gán theo vị trí (thay colorBg hardcode cũ)
     private static final int[] COLORS = {
-            Color.parseColor("#2563EB"),  // Xanh dương
-            Color.parseColor("#EC4899"),  // Hồng
-            Color.parseColor("#10B981"),  // Xanh lá
-            Color.parseColor("#A855F7"),  // Tím
-            Color.parseColor("#F59E0B"),  // Vàng
-            Color.parseColor("#EF4444"),  // Đỏ
+            Color.parseColor("#2563EB"),
+            Color.parseColor("#EC4899"),
+            Color.parseColor("#10B981"),
+            Color.parseColor("#A855F7"),
+            Color.parseColor("#F59E0B"),
+            Color.parseColor("#EF4444"),
     };
 
     private List<Department> list = new ArrayList<>();
@@ -35,16 +29,11 @@ public class DepartmentAdapter extends RecyclerView.Adapter<DepartmentAdapter.Vi
         void onItemClick(Department department);
     }
 
-    public DepartmentAdapter(List<Department> list) {
-        this.list = list;
-    }
-
     public DepartmentAdapter(List<Department> list, OnItemClickListener listener) {
         this.list = list;
         this.listener = listener;
     }
 
-    // Cập nhật data từ API
     public void setData(List<Department> newList) {
         this.list = newList;
         notifyDataSetChanged();
@@ -65,18 +54,20 @@ public class DepartmentAdapter extends RecyclerView.Adapter<DepartmentAdapter.Vi
         holder.tvDeptName.setText(dept.getName());
         holder.tvManagerName.setText("Trưởng phòng: " + dept.getManagerName());
 
-        // employeeCount và performance không có trong API → ẩn hoặc để mặc định
-        holder.tvEmpCount.setText("--");
-        holder.tvPerformanceStr.setText("--");
-        holder.progressBar.setProgress(0);
+        // Dùng employeeCount thật từ API
+        holder.tvEmpCount.setText(String.valueOf(dept.getEmployeeCount()));
 
-        // Gán màu theo vị trí thay vì hardcode
+        // Performance không có trong API → ẩn hoặc để "--"
+        if (holder.tvPerformanceStr != null) holder.tvPerformanceStr.setText("--");
+        if (holder.progressBar != null) holder.progressBar.setProgress(0);
+
+        // Màu theo vị trí
         int color = COLORS[position % COLORS.length];
-        holder.imgDeptIcon.setBackgroundTintList(ColorStateList.valueOf(color));
+        if (holder.imgDeptIcon != null)
+            holder.imgDeptIcon.setBackgroundTintList(ColorStateList.valueOf(color));
 
-        if (listener != null) {
+        if (listener != null)
             holder.itemView.setOnClickListener(v -> listener.onItemClick(dept));
-        }
     }
 
     @Override
