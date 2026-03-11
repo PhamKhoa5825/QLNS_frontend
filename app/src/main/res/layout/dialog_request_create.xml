@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Tạo đơn mới"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Tiêu đề đơn *"
+        android:textColor="@color/textColorSecondary"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/edtRequestTitle"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_input"
+        android:hint="Ví dụ: Nghỉ phép, Đi muộn..."
+        android:paddingHorizontal="12dp"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="14sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Nội dung"
+        android:textColor="@color/textColorSecondary"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/edtRequestDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_input"
+        android:gravity="top|start"
+        android:hint="Nhập chi tiết lý do..."
+        android:lines="4"
+        android:padding="12dp"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/btnRequestCancel"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_btn_outline"
+            android:text="Hủy"
+            android:textAllCaps="false"
+            android:textColor="@color/textColorSecondary" />
+
+        <Button
+            android:id="@+id/btnRequestSubmit"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_btn_solid"
+            android:backgroundTint="#8B5CF6"
+            android:text="Gửi đơn"
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
+    </LinearLayout>
+</LinearLayout>

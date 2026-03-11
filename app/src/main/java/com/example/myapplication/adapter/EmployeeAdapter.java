@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.adapter;
 
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.R;
 import com.example.myapplication.model.Employee;
 
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
         this.listener = listener;
     }
 
-    // Cập nhật data từ API
     public void setData(List<Employee> newList) {
         this.employeeList = newList;
         notifyDataSetChanged();
@@ -45,19 +45,12 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Employee emp = employeeList.get(position);
 
-        // Dùng getFullName() thay getName() → Employee model mới
         holder.tvName.setText(emp.getFullName());
-
-        // getRole() vẫn dùng được → trả về position
         holder.tvRole.setText(emp.getRole());
-
-        // getDepartment() vẫn dùng được → trả về tên phòng ban
         holder.tvDepartment.setText(emp.getDepartment());
-
         holder.tvAvatar.setText(emp.getAvatarText());
         holder.tvStatus.setText(emp.getStatus());
 
-        // isWorking() vẫn dùng được → dựa vào endDate
         if (emp.isWorking()) {
             holder.tvStatus.setBackgroundResource(R.drawable.bg_status_working);
             holder.tvStatus.setTextColor(Color.WHITE);

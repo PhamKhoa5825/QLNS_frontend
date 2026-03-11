@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="6dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="14dp">
+
+        <!-- Avatar / Room Icon -->
+        <FrameLayout
+            android:layout_width="50dp"
+            android:layout_height="50dp">
+            
+            <View
+                android:id="@+id/viewAvatarBg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_avatar_circle"
+                android:backgroundTint="#DBEAFE" />
+
+            <TextView
+                android:id="@+id/tvAvatarText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="C"
+                android:textColor="#2563EB"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+                
+            <!-- Type indicator dot -->
+            <View
+                android:id="@+id/typeIndicator"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_gravity="bottom|end"
+                android:background="@drawable/bg_online_dot"
+                android:backgroundTint="#10B981" />
+        </FrameLayout>
+
+        <!-- Room Name & Info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvRoomNameItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Room name"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvRoomTypeItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Loại: DEPARTMENT"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <!-- Arrow icon -->
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:alpha="0.4"
+            android:src="@android:drawable/ic_media_play"
+            app:tint="@color/textColorSecondary" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
