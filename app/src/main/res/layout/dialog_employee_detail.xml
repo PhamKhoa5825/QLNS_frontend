@@ -1,84 +1,282 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/bg_search_bar"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
 
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Thông tin nhân viên"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        <!-- ── HEADER BACKGROUND ── -->
+        <View
+            android:id="@+id/headerBg"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/bg_header_dashboard"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tvDialogAvatar"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:background="@drawable/bg_avatar_circle"
+        <!-- NÚT QUAY LẠI (mũi tên) -->
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_input"
+            android:backgroundTint="#1024CE"
             android:gravity="center"
-            android:text="N"
-            android:textColor="@color/colorPrimary"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:src="@drawable/outline_arrow_back_24"
+            app:tint="@color/white"
+            android:padding="8dp"
+            android:elevation="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
+        <!-- TIÊU ĐỀ TRANG -->
+        <TextView
+            android:id="@+id/tvPageTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/tvDialogName"
-                android:layout_width="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="Thông tin nhân viên"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- ── CARD PROFILE (Avatar + Tên + Chức vụ + Trạng thái) ── -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="100dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="10dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nguyễn Văn A"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/tvDialogRole"
-                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="28dp"
+                android:paddingBottom="24dp">
+
+                <!-- Avatar -->
+                <TextView
+                    android:id="@+id/tvDialogAvatar"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="@drawable/bg_avatar_circle"
+                    android:gravity="center"
+                    android:text="N"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:elevation="3dp" />
+
+                <!-- Tên nhân viên -->
+                <TextView
+                    android:id="@+id/tvDialogName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Nguyễn Văn A"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <!-- Chức vụ -->
+                <TextView
+                    android:id="@+id/tvDialogRole"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Trưởng phòng IT"
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="14sp" />
+
+                <!-- TRẠNG THÁI NHÂN VIÊN -->
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_input"
+                    android:backgroundTint="#E8F5E9"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="6dp"
+                    android:text="● Đang làm việc"
+                    android:textColor="#2E7D32"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:elevation="2dp" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ── CARD THÔNG TIN CHI TIẾT ── -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardProfile">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Trưởng phòng IT"
-                android:textColor="@color/textColorSecondary"
-                android:textSize="14sp" />
-        </LinearLayout>
-    </LinearLayout>
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="8dp">
 
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="16dp" android:background="#E5E7EB" />
+                <!-- Section label -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thông tin chi tiết"
+                    android:textColor="@color/textColorPrimary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Phòng ban\nCông nghệ thông tin"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="14sp" />
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F0F0F0"
+                    android:layout_marginBottom="16dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Email\nnguyenvana@company.com"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="14sp" />
+                <!-- Field: Phòng ban -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Số điện thoại\n0912345678"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="14sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Phòng ban"
+                        android:textColor="@color/textColorSecondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
 
-</LinearLayout>
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="6dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="#F5F7FA">
+
+                        <TextView
+                            android:id="@+id/tvDepartment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:paddingHorizontal="14dp"
+                            android:text="Công nghệ thông tin"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="14sp" />
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+                <!-- Field: Email -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Email"
+                        android:textColor="@color/textColorSecondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="6dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="#F5F7FA">
+
+                        <TextView
+                            android:id="@+id/tvEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:paddingHorizontal="14dp"
+                            android:text="nguyenvana@company.com"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="14sp" />
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+                <!-- Field: Số điện thoại -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Số điện thoại"
+                        android:textColor="@color/textColorSecondary"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="6dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="#F5F7FA">
+
+                        <TextView
+                            android:id="@+id/tvPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center_vertical"
+                            android:paddingHorizontal="14dp"
+                            android:text="0912345678"
+                            android:textColor="@color/textColorPrimary"
+                            android:textSize="14sp" />
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
