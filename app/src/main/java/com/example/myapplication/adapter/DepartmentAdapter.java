@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.adapter;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -7,6 +7,7 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.R;
 import com.example.myapplication.model.Department;
 
 import java.util.*;
@@ -53,15 +54,11 @@ public class DepartmentAdapter extends RecyclerView.Adapter<DepartmentAdapter.Vi
 
         holder.tvDeptName.setText(dept.getName());
         holder.tvManagerName.setText("Trưởng phòng: " + dept.getManagerName());
-
-        // Dùng employeeCount thật từ API
         holder.tvEmpCount.setText(String.valueOf(dept.getEmployeeCount()));
 
-        // Performance không có trong API → ẩn hoặc để "--"
         if (holder.tvPerformanceStr != null) holder.tvPerformanceStr.setText("--");
         if (holder.progressBar != null) holder.progressBar.setProgress(0);
 
-        // Màu theo vị trí
         int color = COLORS[position % COLORS.length];
         if (holder.imgDeptIcon != null)
             holder.imgDeptIcon.setBackgroundTintList(ColorStateList.valueOf(color));
