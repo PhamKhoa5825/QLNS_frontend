@@ -1,23 +1,18 @@
-package com.example.myapplication;
+package com.example.myapplication.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.model.Department;
-import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.R;
+import com.example.myapplication.adapter.DepartmentAdapter;
+import com.example.myapplication.viewmodel.DepartmentViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.List;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class DepartmentActivity extends AppCompatActivity {
 
@@ -25,6 +20,7 @@ public class DepartmentActivity extends AppCompatActivity {
     private DepartmentAdapter adapter;
     private ProgressBar progressBar;
     private FloatingActionButton fabAdd;
+    private DepartmentViewModel viewModel;
 
     private static final String PREF_NAME = "qlns_pref";
 
@@ -33,7 +29,15 @@ public class DepartmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_department_demo);
 
-        // Nút back
+        viewModel = new ViewModelProvider(this).get(DepartmentViewModel.class);
+
+        initViews();
+        observeViewModel();
+
+        viewModel.loadDepartments();
+    }
+
+    private void initViews() {
         findViewById(R.id.btnBackDept).setOnClickListener(v -> finish());
 
         progressBar = findViewById(R.id.progressBar);
@@ -43,13 +47,10 @@ public class DepartmentActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new DepartmentAdapter(new java.util.ArrayList<>(), dept -> {
-            // Click vào phòng ban → mở danh sách nhân viên theo phòng ban
-            // TODO: mở EmployeeActivity với filter deptId
             Toast.makeText(this, "Phòng: " + dept.getName(), Toast.LENGTH_SHORT).show();
         });
         recyclerView.setAdapter(adapter);
 
-        // Chỉ ADMIN và MANAGER mới thấy nút thêm
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
         String role = prefs.getString("role", "EMPLOYEE");
         if ("ADMIN".equals(role)) {
@@ -58,36 +59,29 @@ public class DepartmentActivity extends AppCompatActivity {
         } else {
             fabAdd.setVisibility(View.GONE);
         }
-
-        loadDepartments();
     }
 
-    private void loadDepartments() {
-        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
-
-        RetrofitClient.getApiService().getDepartments().enqueue(new Callback<List<Department>>() {
-            @Override
-            public void onResponse(Call<List<Department>> call, Response<List<Department>> response) {
-                if (progressBar != null) progressBar.setVisibility(View.GONE);
-
-                if (response.isSuccessful() && response.body() != null) {
-                    adapter.setData(response.body());
-                } else {
-                    Toast.makeText(DepartmentActivity.this, "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
-                }
+    private void observeViewModel() {
+        viewModel.departments.observe(this, list -> {
+            if (list != null) {
+                adapter.setData(list);
             }
+        });
 
-            @Override
-            public void onFailure(Call<List<Department>> call, Throwable t) {
-                if (progressBar != null) progressBar.setVisibility(View.GONE);
-                Log.e("DEPT_API", t.getMessage());
-                Toast.makeText(DepartmentActivity.this, "Không kết nối được server", Toast.LENGTH_LONG).show();
+        viewModel.isLoading.observe(this, isLoading -> {
+            if (progressBar != null) {
+                progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            }
+        });
+
+        viewModel.errorMessage.observe(this, message -> {
+            if (message != null) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void showAddDepartmentDialog() {
-        // TODO TV1 implement: dialog nhập tên, mô tả phòng ban
         Toast.makeText(this, "Tính năng thêm phòng ban", Toast.LENGTH_SHORT).show();
     }
 }
