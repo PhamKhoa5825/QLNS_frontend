@@ -17,7 +17,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBvvkf30-4wzenU5SJuxbO0DosDNx81Lv4" />
+            android:value="AIzaS" />
 
         <activity
             android:name=".ui.HomeEmployeeActivity"
