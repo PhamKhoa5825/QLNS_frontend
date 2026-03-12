@@ -1,16 +1,18 @@
 package com.example.myapplication.viewmodel;
 
+import android.app.Application;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.myapplication.model.Department;
 import com.example.myapplication.repository.EmployeeRepository;
 
 import java.util.List;
 
-public class DepartmentViewModel extends ViewModel {
-    private final EmployeeRepository repository = new EmployeeRepository();
+public class DepartmentViewModel extends AndroidViewModel {
+    private final EmployeeRepository repository;
 
     private final MutableLiveData<List<Department>> _departments = new MutableLiveData<>();
     public final LiveData<List<Department>> departments = _departments;
@@ -20,6 +22,11 @@ public class DepartmentViewModel extends ViewModel {
 
     private final MutableLiveData<String> _errorMessage = new MutableLiveData<>();
     public final LiveData<String> errorMessage = _errorMessage;
+
+    public DepartmentViewModel(@NonNull Application application) {
+        super(application);
+        this.repository = new EmployeeRepository(application);
+    }
 
     public void loadDepartments() {
         _isLoading.setValue(true);

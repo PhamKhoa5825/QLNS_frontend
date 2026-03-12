@@ -1,8 +1,10 @@
 package com.example.myapplication.viewmodel;
 
+import android.app.Application;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.myapplication.model.Department;
 import com.example.myapplication.model.Employee;
@@ -11,7 +13,7 @@ import com.example.myapplication.repository.EmployeeRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmployeeViewModel extends ViewModel {
+public class EmployeeViewModel extends AndroidViewModel {
     private final EmployeeRepository repository;
 
     private final MutableLiveData<List<Employee>> _employees = new MutableLiveData<>();
@@ -19,6 +21,12 @@ public class EmployeeViewModel extends ViewModel {
 
     private final MutableLiveData<List<Department>> _departments = new MutableLiveData<>();
     public final LiveData<List<Department>> departments = _departments;
+
+    private final MutableLiveData<Employee> _userProfile = new MutableLiveData<>();
+    public final LiveData<Employee> userProfile = _userProfile;
+
+    private final MutableLiveData<Boolean> _isAuthorized = new MutableLiveData<>();
+    public final LiveData<Boolean> isAuthorized = _isAuthorized;
 
     private final MutableLiveData<Boolean> _isLoading = new MutableLiveData<>(false);
     public final LiveData<Boolean> isLoading = _isLoading;
@@ -28,8 +36,33 @@ public class EmployeeViewModel extends ViewModel {
 
     private List<Employee> fullEmployeeList = new ArrayList<>();
 
-    public EmployeeViewModel() {
-        this.repository = new EmployeeRepository();
+    public EmployeeViewModel(@NonNull Application application) {
+        super(application);
+        this.repository = new EmployeeRepository(application);
+    }
+
+    public void checkAuth() {
+        boolean hasToken = repository.hasToken();
+        _isAuthorized.setValue(hasToken);
+    }
+
+    public void loadMyProfile() {
+        repository.getMyProfile(new EmployeeRepository.RepositoryCallback<Employee>() {
+            @Override
+            public void onSuccess(Employee data) {
+                _userProfile.setValue(data);
+            }
+
+            @Override
+            public void onError(String message) {
+                if ("UNAUTHORIZED".equals(message)) {
+                    repository.clearToken();
+                    _isAuthorized.setValue(false);
+                } else {
+                    _errorMessage.setValue(message);
+                }
+            }
+        });
     }
 
     public void loadEmployees() {

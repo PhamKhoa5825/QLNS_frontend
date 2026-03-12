@@ -1,5 +1,8 @@
 package com.example.myapplication.repository;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.example.myapplication.model.Department;
 import com.example.myapplication.model.Employee;
 import com.example.myapplication.network.ApiService;
@@ -13,9 +16,42 @@ import retrofit2.Response;
 
 public class EmployeeRepository {
     private final ApiService apiService;
+    private final SharedPreferences prefs;
 
-    public EmployeeRepository() {
+    public EmployeeRepository(Context context) {
         this.apiService = RetrofitClient.getApiService();
+        this.prefs = context.getSharedPreferences("qlns_pref", Context.MODE_PRIVATE);
+    }
+
+    public boolean hasToken() {
+        String token = prefs.getString("token", null);
+        return token != null && !token.isEmpty();
+    }
+
+    public void clearToken() {
+        prefs.edit().remove("token").apply();
+    }
+
+    public void getMyProfile(RepositoryCallback<Employee> callback) {
+        apiService.getMyProfile().enqueue(new Callback<Employee>() {
+            @Override
+            public void onResponse(Call<Employee> call, Response<Employee> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    if (response.code() == 401) {
+                        callback.onError("UNAUTHORIZED");
+                    } else {
+                        callback.onError("Lỗi tải thông tin cá nhân");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Employee> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
     }
 
     public void getEmployees(RepositoryCallback<List<Employee>> callback) {

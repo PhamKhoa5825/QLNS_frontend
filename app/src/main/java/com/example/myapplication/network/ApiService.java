@@ -8,6 +8,10 @@ import java.util.List;
 
 public interface ApiService {
 
+    // ── AUTH (TV1) ─────────────────────────────
+    @GET("api/employees/profile")
+    Call<Employee> getMyProfile();
+
     // ── DEPARTMENT (TV1) ────────────────────────
     @GET("api/departments")
     Call<List<Department>> getDepartments();

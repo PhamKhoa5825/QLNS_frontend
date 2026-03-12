@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#03A9F4"> <!-- Hiệu ứng loang màu trắng mờ khi nhấn -->
+    <item>
+        <selector>
+            <!-- Khi đang nhấn (pressed) -->
+            <item android:state_pressed="true">
+                <shape android:shape="rectangle">
+                    <solid android:color="#1565C0" /> <!-- Màu xanh đậm hơn một chút khi nhấn -->
+                    <corners android:radius="12dp" />
+                </shape>
+            </item>
+            <!-- Trạng thái bình thường -->
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#1E88E5" /> <!-- Màu xanh lợt hơn màu cũ (#1976D2) -->
+                    <corners android:radius="12dp" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+</ripple>
