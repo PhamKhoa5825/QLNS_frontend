@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.example.myapplication.model.Department;
 import com.example.myapplication.model.Employee;
+import com.example.myapplication.model.EmployeeSummary;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 
@@ -30,6 +31,28 @@ public class EmployeeRepository {
 
     public void clearToken() {
         prefs.edit().remove("token").apply();
+    }
+
+    public Long getSavedUserId() {
+        return prefs.getLong("userId", -1);
+    }
+
+    public void getEmployeeSummary(Long id, RepositoryCallback<EmployeeSummary> callback) {
+        apiService.getEmployeeSummary(id).enqueue(new Callback<EmployeeSummary>() {
+            @Override
+            public void onResponse(Call<EmployeeSummary> call, Response<EmployeeSummary> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Lỗi tải thông tin tóm tắt");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EmployeeSummary> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
     }
 
     public void getMyProfile(RepositoryCallback<Employee> callback) {

@@ -5,12 +5,43 @@ import com.example.myapplication.model.*;
 import retrofit2.Call;
 import retrofit2.http.*;
 import java.util.List;
+import java.util.Map;
 
 public interface ApiService {
 
-    // ── AUTH (TV1) ─────────────────────────────
+    // ── AUTH ─────────────────────────────────────
+    @POST("api/auth/login")
+    Call<AuthenticationResponse> login(@Body AuthenticationRequest request);
+
     @GET("api/employees/profile")
     Call<Employee> getMyProfile();
+
+    @GET("api/employees/{id}/summary")
+    Call<EmployeeSummary> getEmployeeSummary(@Path("id") Long id);
+
+    // ── ATTENDANCE ───────────────────────────────
+    @POST("api/attendance/checkin")
+    Call<Attendance> checkIn(@Body Map<String, Object> data);
+
+    @PUT("api/attendance/checkout")
+    Call<Attendance> checkOut(@Body Map<String, Object> data);
+
+    @GET("api/attendance/today")
+    Call<List<Attendance>> getTodayAttendance();
+
+    @GET("api/attendance/employee/{id}/stats")
+    Call<AttendanceStats> getAttendanceStats(
+            @Path("id") Long id,
+            @Query("month") int month,
+            @Query("year") int year
+    );
+
+    @GET("api/attendance/employee/{id}/month")
+    Call<List<AttendanceRecord>> getAttendanceMonthly(
+            @Path("id") Long id,
+            @Query("month") int month,
+            @Query("year") int year
+    );
 
     // ── DEPARTMENT (TV1) ────────────────────────
     @GET("api/departments")

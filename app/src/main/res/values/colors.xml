@@ -52,4 +52,27 @@
     <color name="green_500">#10B981</color>
     <color name="amber_500">#F59E0B</color>
     <color name="primary_light">#E3F2FD</color>
+
+    <!-- Attendance History Colors -->
+    <color name="primary_dark">#1565C0</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="text_primary">#111827</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="text_tertiary">#9CA3AF</color>
+    <color name="success">#10B981</color>
+    <color name="success_bg">#ECFDF5</color>
+    <color name="warning">#F59E0B</color>
+    <color name="danger">#EF4444</color>
+    <color name="danger_bg">#FEE2E2</color>
+    <color name="purple">#8B5CF6</color>
+    <color name="purple_bg">#F3E8FF</color>
+    <color name="calendar_ontime">#10B981</color>
+    <color name="calendar_late">#F59E0B</color>
+    <color name="calendar_absent">#EF4444</color>
+    <color name="calendar_weekend">#E5E7EB</color>
+    <color name="calendar_future">#F3F4F6</color>
+    <color name="icon_bg_blue">#E3F2FD</color>
+    <color name="icon_bg_green">#ECFDF5</color>
+    <color name="icon_bg_amber">#FEF3C7</color>
+    <color name="icon_bg_purple">#F3E8FF</color>
 </resources>

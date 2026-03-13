@@ -112,4 +112,40 @@
     <string name="success_mark_all_read">Đã đánh dấu tất cả đã đọc</string>
     <string name="success_delete">Đã xóa thông báo</string>
     <string name="error_load_failed">Không thể tải thông báo</string>
+
+    <!-- Attendance History -->
+    <string name="attendance_history">Lịch sử điểm danh</string>
+    <string name="download">Tải xuống</string>
+    <string name="more">Thêm</string>
+    <string name="prev_month">Tháng trước</string>
+    <string name="next_month">Tháng sau</string>
+    <string name="icon">Icon</string>
+    <string name="month_display">Tháng 3, 2026</string>
+    <string name="summary_title">Tổng quan tháng này</string>
+    <string name="total_hours">Tổng giờ làm</string>
+    <string name="on_time_days">Đúng giờ</string>
+    <string name="late_days">Đi trễ</string>
+    <string name="average_hours">Trung bình/ngày</string>
+    <string name="calendar_title">Lịch điểm danh</string>
+    <string name="legend_on_time">Đúng giờ</string>
+    <string name="legend_late">Trễ</string>
+    <string name="legend_absent">Vắng</string>
+    <string name="sunday_short">CN</string>
+    <string name="monday_short">T2</string>
+    <string name="tuesday_short">T3</string>
+    <string name="wednesday_short">T4</string>
+    <string name="thursday_short">T5</string>
+    <string name="friday_short">T6</string>
+    <string name="saturday_short">T7</string>
+    <string name="chart_title">Biểu đồ thống kê</string>
+    <string name="chart_work_hours">Giờ làm theo tuần</string>
+    <string name="average_hours_display">TB: 9.4h</string>
+    <string name="detail_title">Chi tiết điểm danh</string>
+    <string name="sort_label">Sắp xếp ↓</string>
+    <string name="check_in">Vào:</string>
+    <string name="check_out">Ra:</string>
+    <string name="total">Tổng:</string>
+    <string name="status_on_time">Đúng giờ</string>
+    <string name="status_late">Đi trễ</string>
+    <string name="status_absent">Vắng</string>
 </resources>

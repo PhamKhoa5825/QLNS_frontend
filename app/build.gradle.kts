@@ -4,16 +4,12 @@ plugins {
 
 android {
     namespace = "com.example.myapplication"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.myapplication"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -48,4 +44,9 @@ dependencies {
     implementation(libs.play.services.location)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.gson)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    
+    // MPAndroidChart for BarChart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

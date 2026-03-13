@@ -1,6 +1,10 @@
 package com.example.myapplication.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,80 +17,79 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.R;
+import com.example.myapplication.model.Attendance;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.viewmodel.AttendanceViewModel;
 import com.example.myapplication.viewmodel.EmployeeViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class HomeEmployeeActivity extends AppCompatActivity {
 
     private TextView tvUserName, tvAvatarInitials, tvCurrentTime, tvCurrentDate;
-    private EmployeeViewModel viewModel;
+    private MaterialButton btnCheckIn;
     private final Handler timeHandler = new Handler(Looper.getMainLooper());
     private Runnable timeRunnable;
+    
+    private AttendanceViewModel attendanceViewModel;
+    private boolean isCheckedIn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // 1. Khởi tạo môi trường mạng
-        RetrofitClient.init(this);
-
-        // 2. Lấy ViewModel ngay lập tức
-        viewModel = new ViewModelProvider(this).get(EmployeeViewModel.class);
-
-        // 3. Đăng ký các "đài quan sát" (Observers)
-        observeViewModel();
-
-        // 4. Ra lệnh cho ViewModel kiểm tra quyền truy cập
-//        viewModel.checkAuth();
-        //Tạm thời chạy thẳng vào home
-        setupUI();
-    }
-
-    private void setupUI() {
         setContentView(R.layout.activity_home_employee);
+        
+        RetrofitClient.init(this);
+        attendanceViewModel = new ViewModelProvider(this).get(AttendanceViewModel.class);
+        
         initViews();
         startClock();
-        
-        // Chỉ khi UI đã sẵn sàng mới tải profile
-        viewModel.loadMyProfile();
+        observeViewModel();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        attendanceViewModel.getTodayAttendance();
     }
 
     private void observeViewModel() {
-        // Lắng nghe trạng thái đăng nhập từ ViewModel
-        viewModel.isAuthorized.observe(this, isAuthorized -> {
-            if (Boolean.FALSE.equals(isAuthorized)) {
-                redirectToLogin();
-            } else if (Boolean.TRUE.equals(isAuthorized)) {
-                setupUI();
-            }
+        attendanceViewModel.todayAttendance.observe(this, attendances -> {
+            updateAttendanceUI(attendances);
         });
 
-        // Lắng nghe dữ liệu profile
-        viewModel.userProfile.observe(this, user -> {
-            if (user != null && tvUserName != null) {
-                tvUserName.setText(user.getFullName());
-                tvAvatarInitials.setText(user.getAvatarText());
-            }
-        });
-
-        // Lắng nghe thông báo lỗi
-        viewModel.errorMessage.observe(this, message -> {
+        attendanceViewModel.errorMessage.observe(this, message -> {
             if (message != null) {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void redirectToLogin() {
-        // Intent intent = new Intent(this, LoginActivity.class);
-        // startActivity(intent);
-        // finish();
-        Toast.makeText(this, "Vui lòng đăng nhập để tiếp tục", Toast.LENGTH_SHORT).show();
+    private void updateAttendanceUI(List<Attendance> attendances) {
+        if (attendances == null || attendances.isEmpty()) {
+            isCheckedIn = false;
+            btnCheckIn.setText("Check-in");
+            btnCheckIn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#1A73E8")));
+            btnCheckIn.setEnabled(true);
+        } else {
+            Attendance last = attendances.get(0);
+            if (last.getCheckOut() == null) {
+                isCheckedIn = true;
+                btnCheckIn.setText("Check-out");
+                btnCheckIn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F59E0B")));
+                btnCheckIn.setEnabled(true);
+            } else {
+                isCheckedIn = true;
+                btnCheckIn.setText("Đã hoàn thành");
+                btnCheckIn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#94A3B8")));
+                btnCheckIn.setEnabled(false);
+            }
+        }
     }
 
     private void initViews() {
@@ -94,87 +97,48 @@ public class HomeEmployeeActivity extends AppCompatActivity {
         tvAvatarInitials = findViewById(R.id.tvAvatarInitials);
         tvCurrentTime = findViewById(R.id.tvCurrentTime);
         tvCurrentDate = findViewById(R.id.tvCurrentDate);
+        btnCheckIn = findViewById(R.id.btnCheckIn);
 
-        // Nút Check-in GPS
-        View btnCheckIn = findViewById(R.id.btnCheckIn);
-        if (btnCheckIn != null) {
-            btnCheckIn.setOnClickListener(v -> {
-                Intent intent = new Intent(HomeEmployeeActivity.this, GPSCheckInActivity.class);
-                startActivity(intent);
-            });
-        }
+        btnCheckIn.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeEmployeeActivity.this, GPSCheckInActivity.class);
+            intent.putExtra("isCheckInAction", !isCheckedIn);
+            startActivity(intent);
+        });
 
-        // Nút Thông báo (Bell icon)
-        View btnNotification = findViewById(R.id.btnNotification);
-        if (btnNotification != null) {
-            btnNotification.setOnClickListener(v -> {
-                Intent intent = new Intent(HomeEmployeeActivity.this, NotificationCenterActivity.class);
-                startActivity(intent);
-            });
-        }
+        findViewById(R.id.btnNotification).setOnClickListener(v -> startActivity(new Intent(this, NotificationCenterActivity.class)));
+        setupNavigation();
+    }
 
-        // Xử lý các card trong menuGrid
+    private void setupNavigation() {
         ViewGroup menuGrid = findViewById(R.id.menuGrid);
         if (menuGrid != null) {
-            // Card 1: Xin nghỉ phép (Chưa có activity nên tạm thời để Toast hoặc trỏ tới LeaveApplicationActivity nếu có)
-             View leaveCard = menuGrid.getChildAt(0);
-             if (leaveCard != null) {
-                 leaveCard.setOnClickListener(v -> {
-                     Intent intent = new Intent(HomeEmployeeActivity.this, LeaveApplicationActivity.class);
-                     startActivity(intent);
-                 });
-             }
-
-             // Card 2: Công việc -> TaskManagementActivity
-             View taskCard = menuGrid.getChildAt(1);
-             if (taskCard != null) {
-                 taskCard.setOnClickListener(v -> {
-                     Intent intent = new Intent(HomeEmployeeActivity.this, TaskManagementActivity.class);
-                     startActivity(intent);
-                 });
-             }
-
-             // Card 3: Thông báo -> InternalMessageActivity
-             View messageCard = menuGrid.getChildAt(2);
-             if (messageCard != null) {
-                 messageCard.setOnClickListener(v -> {
-                     Intent intent = new Intent(HomeEmployeeActivity.this, InternalMessageActivity.class);
-                     startActivity(intent);
-                 });
-             }
-        }
-
-        // Click vào Avatar để vào Hồ sơ cá nhân
-        View imgAvatar = findViewById(R.id.imgAvatar);
-        if (imgAvatar != null) {
-            imgAvatar.setOnClickListener(v -> {
-                Intent intent = new Intent(HomeEmployeeActivity.this, ProfileActivity.class);
+            // Xin nghỉ phép (Card 1)
+            menuGrid.getChildAt(0).setOnClickListener(v -> startActivity(new Intent(this, LeaveApplicationActivity.class)));
+            
+            // Lịch sử điểm danh (Card 2)
+            menuGrid.getChildAt(1).setOnClickListener(v -> {
+                Intent intent = new Intent(this, AttendanceHistoryActivity.class);
                 startActivity(intent);
             });
+            
+            // Thông báo (Card 3)
+            menuGrid.getChildAt(2).setOnClickListener(v -> startActivity(new Intent(this, NotificationCenterActivity.class)));
         }
 
-        // Xử lý Bottom Navigation
+        findViewById(R.id.imgAvatar).setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
+
         BottomNavigationView bottomNavigation = findViewById(R.id.bottomNavigation);
         if (bottomNavigation != null) {
-            bottomNavigation.setSelectedItemId(R.id.nav_home); // Mặc định là Trang chủ
             bottomNavigation.setOnItemSelectedListener(item -> {
                 int itemId = item.getItemId();
-                if (itemId == R.id.nav_home) {
-                    return true;
-                } else if (itemId == R.id.nav_work) {
-                    Intent intent = new Intent(HomeEmployeeActivity.this, TaskManagementActivity.class);
-                    startActivity(intent);
-                    return true;
+                if (itemId == R.id.nav_work) {
+                    Toast.makeText(this, "Tính năng Công việc đang được cập nhật", Toast.LENGTH_SHORT).show();
                 } else if (itemId == R.id.nav_message) {
-                    Intent intent = new Intent(HomeEmployeeActivity.this, InternalMessageActivity.class);
-                    startActivity(intent);
-                    return true;
+                    startActivity(new Intent(this, InternalMessageActivity.class));
                 } else if (itemId == R.id.nav_profile) {
-                    Intent intent = new Intent(HomeEmployeeActivity.this, ProfileActivity.class);
-                    startActivity(intent);
-                    return true;
+                    startActivity(new Intent(this, ProfileActivity.class));
                 }
-                return false;
+                return true;
             });
         }
     }
@@ -182,13 +146,12 @@ public class HomeEmployeeActivity extends AppCompatActivity {
     private void startClock() {
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, dd 'tháng' M, yyyy", new Locale("vi", "VN"));
-
         timeRunnable = new Runnable() {
             @Override
             public void run() {
                 Date now = new Date();
-                if (tvCurrentTime != null) tvCurrentTime.setText(timeFormat.format(now));
-                if (tvCurrentDate != null) tvCurrentDate.setText(dateFormat.format(now));
+                tvCurrentTime.setText(timeFormat.format(now));
+                tvCurrentDate.setText(dateFormat.format(now));
                 timeHandler.postDelayed(this, 1000);
             }
         };
@@ -198,8 +161,6 @@ public class HomeEmployeeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (timeHandler != null && timeRunnable != null) {
-            timeHandler.removeCallbacks(timeRunnable);
-        }
+        timeHandler.removeCallbacks(timeRunnable);
     }
 }

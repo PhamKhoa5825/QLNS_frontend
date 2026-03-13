@@ -247,7 +247,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Tasks -->
+        <!-- Attendance History -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -268,9 +268,9 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:background="@drawable/bg_avatar_circle"
-                    android:backgroundTint="#10B981"
+                    android:backgroundTint="#A855F7"
                     android:padding="12dp"
-                    android:src="@drawable/ic_briefcase"
+                    android:src="@drawable/ic_calendar"
                     app:tint="@color/white" />
 
                 <TextView
@@ -278,7 +278,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Công việc"
+                    android:gravity="center"
+                    android:text="Lịch sử\nđiểm\ndanh"
                     android:textColor="#333333"
                     android:textSize="13sp"
                     android:textStyle="bold" />

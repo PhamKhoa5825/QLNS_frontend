@@ -20,7 +20,7 @@
             android:value="AIzaS" />
 
         <activity
-            android:name=".ui.HomeEmployeeActivity"
+            android:name=".ui.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,6 +28,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.HomeEmployeeActivity" android:exported="false" />
         <activity android:name=".ui.GPSCheckInActivity" android:exported="false" />
         <activity android:name=".ui.ProfileActivity" android:exported="false" />
         <activity android:name=".ui.EditProfileActivity" android:exported="false" />
@@ -36,6 +37,7 @@
         <activity android:name=".ui.LeaveApplicationActivity" android:exported="false" />
         <activity android:name=".ui.InternalMessageActivity" android:exported="false" />
         <activity android:name=".ui.TaskManagementActivity" android:exported="false" />
+        <activity android:name=".ui.AttendanceHistoryActivity" android:exported="false" />
     </application>
 
 </manifest>

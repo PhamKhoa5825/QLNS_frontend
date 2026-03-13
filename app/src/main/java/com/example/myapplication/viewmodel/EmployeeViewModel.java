@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.model.Department;
 import com.example.myapplication.model.Employee;
+import com.example.myapplication.model.EmployeeSummary;
 import com.example.myapplication.repository.EmployeeRepository;
 
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ public class EmployeeViewModel extends AndroidViewModel {
 
     private final MutableLiveData<Employee> _userProfile = new MutableLiveData<>();
     public final LiveData<Employee> userProfile = _userProfile;
+
+    private final MutableLiveData<EmployeeSummary> _employeeSummary = new MutableLiveData<>();
+    public final LiveData<EmployeeSummary> employeeSummary = _employeeSummary;
 
     private final MutableLiveData<Boolean> _isAuthorized = new MutableLiveData<>();
     public final LiveData<Boolean> isAuthorized = _isAuthorized;
@@ -44,6 +48,25 @@ public class EmployeeViewModel extends AndroidViewModel {
     public void checkAuth() {
         boolean hasToken = repository.hasToken();
         _isAuthorized.setValue(hasToken);
+    }
+
+    public void loadEmployeeSummary() {
+        Long userId = repository.getSavedUserId();
+        if (userId == -1) {
+            _isAuthorized.setValue(false);
+            return;
+        }
+        repository.getEmployeeSummary(userId, new EmployeeRepository.RepositoryCallback<EmployeeSummary>() {
+            @Override
+            public void onSuccess(EmployeeSummary data) {
+                _employeeSummary.setValue(data);
+            }
+
+            @Override
+            public void onError(String message) {
+                _errorMessage.setValue(message);
+            }
+        });
     }
 
     public void loadMyProfile() {
