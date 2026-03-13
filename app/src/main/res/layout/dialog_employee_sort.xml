@@ -111,7 +111,8 @@
                 android:layout_weight="1"
                 android:text="Xoá bộ lọc"
                 android:textAllCaps="false"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                app:cornerRadius="28dp"/>
 
             <!-- Áp dụng -->
             <com.google.android.material.button.MaterialButton
