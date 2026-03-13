@@ -1,3 +1,115 @@
 <resources>
     <string name="app_name">HRMApp</string>
+
+    <!-- Screen Titles -->
+    <string name="update_profile">Cập nhật thông tin</string>
+    <string name="edit_personal_info">Chỉnh sửa thông tin cá nhân</string>
+
+    <!-- Navigation -->
+    <string name="back">Quay lại</string>
+
+    <!-- Avatar Section -->
+    <string name="avatar_hint">Nhấn vào biểu tượng camera để thay đổi ảnh đại diện</string>
+
+    <!-- Form Labels -->
+    <string name="full_name">Họ và tên</string>
+    <string name="phone_number">Số điện thoại mới</string>
+    <string name="email">Email cá nhân</string>
+    <string name="address">Địa chỉ hiện tại</string>
+
+    <!-- Placeholders -->
+    <string name="phone_placeholder">Nhập số điện thoại…</string>
+    <string name="email_placeholder">Nhập email cá nhân…</string>
+    <string name="address_placeholder">Nhập địa chỉ hiện tại…</string>
+
+    <!-- Hints -->
+    <string name="full_name_hint">Họ tên không thể thay đổi. Vui lòng liên hệ phòng Nhân sự.</string>
+    <string name="phone_hint">Số điện thoại dùng để liên hệ và xác thực</string>
+    <string name="email_hint">Email để nhận thông báo và liên lạc công việc</string>
+    <string name="address_hint">Địa chỉ nơi ở hiện tại (số nhà, đường, quận/huyện, thành phố)</string>
+
+    <!-- Information Note -->
+    <string name="info_note"><b>Lưu ý:</b> Thông tin bạn cung cấp sẽ được bảo mật và chỉ sử dụng cho mục đích quản lý nội bộ công ty.</string>
+
+    <!-- Buttons -->
+    <string name="save_changes">Lưu thay đổi</string>
+
+    <!-- Toast Messages -->
+    <string name="avatar_change_developing">Chức năng thay đổi ảnh đại diện đang phát triển</string>
+    <string name="please_fill_all">Vui lòng điền đầy đủ thông tin</string>
+    <string name="invalid_phone">Số điện thoại không hợp lệ</string>
+    <string name="invalid_email">Email không hợp lệ</string>
+    <string name="save_success">Đã lưu thay đổi thành công!</string>
+
+    <!-- Change Password Screen -->
+    <string name="change_password">Đổi mật khẩu</string>
+    <string name="change_password_title">Đổi mật khẩu</string>
+    <string name="change_password_desc">Nhập mật khẩu cũ và mật khẩu mới để thay đổi</string>
+
+    <!-- Form Labels Password -->
+    <string name="old_password">Mật khẩu cũ</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="confirm_password">Xác nhận mật khẩu mới</string>
+
+    <!-- Placeholders Password -->
+    <string name="old_password_hint">Nhập mật khẩu cũ...</string>
+    <string name="new_password_hint">Nhập mật khẩu mới...</string>
+    <string name="confirm_password_hint">Nhập lại mật khẩu mới...</string>
+
+    <!-- Descriptions Password -->
+    <string name="old_password_desc">Mật khẩu hiện tại đang sử dụng</string>
+    <string name="new_password_desc">Mật khẩu mới phải có ít nhất 8 ký tự</string>
+    <string name="confirm_password_desc">Nhập lại mật khẩu mới để xác nhận</string>
+
+    <!-- Security Warning Password -->
+    <string name="security_title">Bảo mật tài khoản</string>
+    <string name="security_desc">Mật khẩu mới nên chứa chữ hoa, chữ thường, số và ký tự đặc biệt để đảm bảo an toàn.</string>
+
+    <!-- Buttons Password -->
+    <string name="cancel">Hủy</string>
+    <string name="confirm">Xác nhận</string>
+
+    <!-- Toast Messages Password -->
+    <string name="please_fill_all_passwords">Vui lòng điền đầy đủ thông tin</string>
+    <string name="password_not_match">Mật khẩu xác nhận không khớp</string>
+    <string name="password_too_short">Mật khẩu mới phải có ít nhất 8 ký tự</string>
+    <string name="change_password_success">Đổi mật khẩu thành công!</string>
+    <string name="wrong_old_password">Mật khẩu cũ không đúng</string>
+
+    <!-- Logout Confirmation -->
+    <string name="logout_confirm_title">Xác nhận đăng xuất</string>
+    <string name="logout_confirm_desc">Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?</string>
+    <string name="logout_btn_text">Đăng xuất</string>
+
+    <!-- Notification Center -->
+    <string name="notification_center">Thông báo</string>
+    <string name="tab_all">Tất cả</string>
+    <string name="tab_unread">Chưa đọc</string>
+    <string name="tab_read">Đã đọc</string>
+    <string name="filter_all">Tất cả</string>
+    <string name="filter_approval">Phê duyệt</string>
+    <string name="filter_task">Công việc</string>
+    <string name="filter_system">Hệ thống</string>
+    <string name="filter_announcement">Thông báo</string>
+    <string name="mark_all_read">Đánh dấu tất cả đã đọc</string>
+    <string name="mark_as_read">Đánh dấu đã đọc</string>
+    <string name="mark_as_unread">Đánh dấu chưa đọc</string>
+    <string name="delete_notification">Xóa thông báo</string>
+    <string name="search_notification">Tìm kiếm</string>
+    <string name="empty_title">Không có thông báo</string>
+    <string name="empty_message">Bạn chưa có thông báo nào</string>
+    <string name="empty_unread_title">Không có thông báo chưa đọc</string>
+    <string name="empty_unread_message">Tất cả thông báo đã được đọc</string>
+    <string name="type_approval">Phê duyệt</string>
+    <string name="type_task">Công việc</string>
+    <string name="type_system">Hệ thống</string>
+    <string name="type_announcement">Thông báo</string>
+    <string name="time_just_now">Vừa xong</string>
+    <string name="time_minutes_ago">%d phút trước</string>
+    <string name="time_hours_ago">%d giờ trước</string>
+    <string name="time_days_ago">%d ngày trước</string>
+    <string name="time_weeks_ago">%d tuần trước</string>
+    <string name="success_mark_all_read">Đã đánh dấu tất cả đã đọc</string>
+    <string name="success_delete">Đã xóa thông báo</string>
+    <string name="error_load_failed">Không thể tải thông báo</string>
 </resources>

@@ -1,0 +1,38 @@
+<resources>
+    <!-- Spacing -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">12dp</dimen>
+    <dimen name="spacing_lg">16dp</dimen>
+    <dimen name="spacing_xl">24dp</dimen>
+    <dimen name="spacing_2xl">32dp</dimen>
+
+    <!-- Card -->
+    <dimen name="card_radius">12dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+    <dimen name="card_stroke_width">1dp</dimen>
+
+    <!-- Icon -->
+    <dimen name="icon_size_sm">18dp</dimen>
+    <dimen name="icon_size_md">24dp</dimen>
+    <dimen name="icon_size_lg">48dp</dimen>
+
+    <!-- Text -->
+    <dimen name="text_size_xs">11sp</dimen>
+    <dimen name="text_size_sm">12sp</dimen>
+    <dimen name="text_size_md">13sp</dimen>
+    <dimen name="text_size_base">14sp</dimen>
+    <dimen name="text_size_lg">15sp</dimen>
+    <dimen name="text_size_xl">16sp</dimen>
+    <dimen name="text_size_2xl">18sp</dimen>
+    <dimen name="text_size_3xl">20sp</dimen>
+
+    <!-- AppBar -->
+    <dimen name="appbar_height">64dp</dimen>
+    <dimen name="tab_height">48dp</dimen>
+
+    <!-- Notification Item -->
+    <dimen name="notification_item_min_height">88dp</dimen>
+    <dimen name="notification_icon_size">48dp</dimen>
+    <dimen name="unread_indicator_width">4dp</dimen>
+</resources>

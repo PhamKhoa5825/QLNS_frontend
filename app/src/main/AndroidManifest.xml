@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
@@ -11,8 +15,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaS" />
+
         <activity
-            android:name=".ui.DashboardActivity"
+            android:name=".ui.HomeEmployeeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,8 +28,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.EmployeeActivity" android:exported="false" />
-        <activity android:name=".ui.DepartmentActivity" android:exported="false" />
+        <activity android:name=".ui.GPSCheckInActivity" android:exported="false" />
+        <activity android:name=".ui.ProfileActivity" android:exported="false" />
+        <activity android:name=".ui.EditProfileActivity" android:exported="false" />
+        <activity android:name=".ui.ChangePasswordActivity" android:exported="false" />
+        <activity android:name=".ui.NotificationCenterActivity" android:exported="false" />
+        <activity android:name=".ui.LeaveApplicationActivity" android:exported="false" />
+        <activity android:name=".ui.InternalMessageActivity" android:exported="false" />
+        <activity android:name=".ui.TaskManagementActivity" android:exported="false" />
     </application>
 
 </manifest>
