@@ -16,11 +16,17 @@ public interface ApiService {
     @POST("api/auth/change-password")
     Call<Void> changePassword(@Body Map<String, String> request);
 
-    @GET("api/employees/profile")
+    @GET("api/employees/{id}/detail")
     Call<Employee> getMyProfile();
 
     @GET("api/employees/{id}/summary")
     Call<EmployeeSummary> getEmployeeSummary(@Path("id") Long id);
+
+    @POST("api/requests/employee/{empId}")
+    Call<Void> createRequest(
+            @Path("empId") Long empId,
+            @Body CreateRequestRequest request
+    );
 
     // ── ATTENDANCE ───────────────────────────────
     @POST("api/attendance/checkin")

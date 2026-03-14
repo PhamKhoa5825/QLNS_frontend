@@ -29,6 +29,8 @@ public class ChangePasswordViewModel extends ViewModel {
         Map<String, String> request = new HashMap<>();
         request.put("oldPassword", oldPassword);
         request.put("newPassword", newPassword);
+        request.put("confirmPassword", newPassword);
+
 
         RetrofitClient.getApiService().changePassword(request).enqueue(new Callback<Void>() {
             @Override

@@ -17,7 +17,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaS" />
+            android:value="AIzaSyBvvkf30-4wzenU5SJuxbO0DosDNx81Lv4" />
 
         <activity
             android:name=".ui.LoginActivity"
@@ -38,6 +38,8 @@
         <activity android:name=".ui.InternalMessageActivity" android:exported="false" />
         <activity android:name=".ui.TaskManagementActivity" android:exported="false" />
         <activity android:name=".ui.AttendanceHistoryActivity" android:exported="false" />
+        <activity android:name=".ui.ForgotPasswordRequestActivity" android:exported="false" />
+        <activity android:name=".ui.RequestFormActivity" android:exported="false" />
     </application>
 
 </manifest>
