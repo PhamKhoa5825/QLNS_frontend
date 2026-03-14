@@ -144,8 +144,6 @@ public class GPSCheckInActivity extends AppCompatActivity implements OnMapReadyC
 
         btnConfirmCheckIn.setText(isCheckInAction ? "Xác nhận Check-in" : "Xác nhận Check-out");
     }
-
-    // ... (Các phần Clock, Map, Location updates giữ nguyên logic UI) ...
     private void setupClock() {
         updateTimeRunnable = new Runnable() {
             @Override
@@ -218,7 +216,9 @@ public class GPSCheckInActivity extends AppCompatActivity implements OnMapReadyC
     @Override
     protected void onPause() {
         super.onPause();
-        if (fusedLocationClient != null) fusedLocationClient.removeLocationUpdates(locationCallback);
+        if (fusedLocationClient != null && locationCallback != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
     }
 
     @Override

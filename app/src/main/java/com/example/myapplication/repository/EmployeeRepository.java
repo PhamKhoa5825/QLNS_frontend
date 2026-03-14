@@ -10,6 +10,7 @@ import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,7 +31,7 @@ public class EmployeeRepository {
     }
 
     public void clearToken() {
-        prefs.edit().remove("token").apply();
+        prefs.edit().clear().apply();
     }
 
     public Long getSavedUserId() {
@@ -67,6 +68,42 @@ public class EmployeeRepository {
                     } else {
                         callback.onError("Lỗi tải thông tin cá nhân");
                     }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Employee> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
+
+    public void getEmployeeDetail(Long id, RepositoryCallback<Employee> callback) {
+        apiService.getEmployeeDetail(id).enqueue(new Callback<Employee>() {
+            @Override
+            public void onResponse(Call<Employee> call, Response<Employee> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Lỗi tải chi tiết nhân viên");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Employee> call, Throwable t) {
+                callback.onError("Lỗi kết nối: " + t.getMessage());
+            }
+        });
+    }
+
+    public void updateEmployeeProfile(Long id, Map<String, Object> data, RepositoryCallback<Employee> callback) {
+        apiService.updateEmployeeProfile(id, data).enqueue(new Callback<Employee>() {
+            @Override
+            public void onResponse(Call<Employee> call, Response<Employee> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Lỗi cập nhật thông tin");
                 }
             }
 

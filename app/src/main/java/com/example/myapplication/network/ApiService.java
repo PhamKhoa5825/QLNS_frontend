@@ -13,6 +13,9 @@ public interface ApiService {
     @POST("api/auth/login")
     Call<AuthenticationResponse> login(@Body AuthenticationRequest request);
 
+    @POST("api/auth/change-password")
+    Call<Void> changePassword(@Body Map<String, String> request);
+
     @GET("api/employees/profile")
     Call<Employee> getMyProfile();
 
@@ -62,12 +65,18 @@ public interface ApiService {
     @DELETE("api/departments/{id}")
     Call<Void> deleteDepartment(@Path("id") Long id);
 
-    // ── EMPLOYEE (TV1) ───────────────────────────
+    // ── EMPLOYEE ───────────────────────────
     @GET("api/employees")
     Call<List<Employee>> getEmployees();
 
     @GET("api/employees/{id}")
     Call<Employee> getEmployeeById(@Path("id") Long id);
+
+    @GET("api/employees/{id}/detail")
+    Call<Employee> getEmployeeDetail(@Path("id") Long id);
+
+    @PUT("api/employees/{id}")
+    Call<Employee> updateEmployeeProfile(@Path("id") Long id, @Body Map<String, Object> data);
 
     @GET("api/employees/department/{deptId}")
     Call<List<Employee>> getEmployeesByDepartmentId(@Path("deptId") Long deptId);

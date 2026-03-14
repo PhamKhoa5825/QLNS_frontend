@@ -49,4 +49,8 @@ dependencies {
     
     // MPAndroidChart for BarChart
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    // Glide for Image Loading
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 }

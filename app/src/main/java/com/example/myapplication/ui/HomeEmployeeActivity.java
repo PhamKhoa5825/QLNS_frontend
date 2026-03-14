@@ -132,7 +132,7 @@ public class HomeEmployeeActivity extends AppCompatActivity {
             bottomNavigation.setOnItemSelectedListener(item -> {
                 int itemId = item.getItemId();
                 if (itemId == R.id.nav_work) {
-                    Toast.makeText(this, "Tính năng Công việc đang được cập nhật", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, TaskManagementActivity.class));
                 } else if (itemId == R.id.nav_message) {
                     startActivity(new Intent(this, InternalMessageActivity.class));
                 } else if (itemId == R.id.nav_profile) {

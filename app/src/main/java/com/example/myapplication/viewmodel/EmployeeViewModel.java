@@ -13,6 +13,7 @@ import com.example.myapplication.repository.EmployeeRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeeViewModel extends AndroidViewModel {
     private final EmployeeRepository repository;
@@ -37,6 +38,9 @@ public class EmployeeViewModel extends AndroidViewModel {
 
     private final MutableLiveData<String> _errorMessage = new MutableLiveData<>();
     public final LiveData<String> errorMessage = _errorMessage;
+
+    private final MutableLiveData<Boolean> _updateSuccess = new MutableLiveData<>();
+    public final LiveData<Boolean> updateSuccess = _updateSuccess;
 
     private List<Employee> fullEmployeeList = new ArrayList<>();
 
@@ -70,20 +74,59 @@ public class EmployeeViewModel extends AndroidViewModel {
     }
 
     public void loadMyProfile() {
+        _isLoading.setValue(true);
         repository.getMyProfile(new EmployeeRepository.RepositoryCallback<Employee>() {
             @Override
             public void onSuccess(Employee data) {
+                _isLoading.setValue(false);
                 _userProfile.setValue(data);
             }
 
             @Override
             public void onError(String message) {
+                _isLoading.setValue(false);
                 if ("UNAUTHORIZED".equals(message)) {
                     repository.clearToken();
                     _isAuthorized.setValue(false);
                 } else {
                     _errorMessage.setValue(message);
                 }
+            }
+        });
+    }
+
+    public void loadEmployeeDetail(Long id) {
+        _isLoading.setValue(true);
+        repository.getEmployeeDetail(id, new EmployeeRepository.RepositoryCallback<Employee>() {
+            @Override
+            public void onSuccess(Employee data) {
+                _isLoading.setValue(false);
+                _userProfile.setValue(data);
+            }
+
+            @Override
+            public void onError(String message) {
+                _isLoading.setValue(false);
+                _errorMessage.setValue(message);
+            }
+        });
+    }
+
+    public void updateEmployeeProfile(Long id, Map<String, Object> data) {
+        _isLoading.setValue(true);
+        repository.updateEmployeeProfile(id, data, new EmployeeRepository.RepositoryCallback<Employee>() {
+            @Override
+            public void onSuccess(Employee updatedEmployee) {
+                _isLoading.setValue(false);
+                _userProfile.setValue(updatedEmployee);
+                _updateSuccess.setValue(true);
+            }
+
+            @Override
+            public void onError(String message) {
+                _isLoading.setValue(false);
+                _errorMessage.setValue(message);
+                _updateSuccess.setValue(false);
             }
         });
     }
@@ -153,6 +196,15 @@ public class EmployeeViewModel extends AndroidViewModel {
             }
         }
         _employees.setValue(filtered);
+    }
+
+    public Long getSavedUserId() {
+        return repository.getSavedUserId();
+    }
+
+    public void logout() {
+        repository.clearToken();
+        _isAuthorized.setValue(false);
     }
 
     public List<Employee> getFullEmployeeList() {
