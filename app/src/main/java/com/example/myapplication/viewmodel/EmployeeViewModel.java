@@ -1,8 +1,10 @@
 package com.example.myapplication.viewmodel;
 
+import android.app.Application;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.myapplication.model.Department;
 import com.example.myapplication.model.Employee;
@@ -11,7 +13,7 @@ import com.example.myapplication.repository.EmployeeRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmployeeViewModel extends ViewModel {
+public class EmployeeViewModel extends AndroidViewModel {
     private final EmployeeRepository repository;
 
     private final MutableLiveData<List<Employee>> _employees = new MutableLiveData<>();
@@ -26,10 +28,14 @@ public class EmployeeViewModel extends ViewModel {
     private final MutableLiveData<String> _errorMessage = new MutableLiveData<>();
     public final LiveData<String> errorMessage = _errorMessage;
 
+    private final MutableLiveData<String> _successMessage = new MutableLiveData<>();
+    public final LiveData<String> successMessage = _successMessage;
+
     private List<Employee> fullEmployeeList = new ArrayList<>();
 
-    public EmployeeViewModel() {
-        this.repository = new EmployeeRepository();
+    public EmployeeViewModel(@NonNull Application application) {
+        super(application);
+        this.repository = new EmployeeRepository(application);
     }
 
     public void loadEmployees() {
@@ -41,9 +47,7 @@ public class EmployeeViewModel extends ViewModel {
                 fullEmployeeList = data;
                 _employees.setValue(data);
             }
-
-            @Override
-            public void onError(String message) {
+            @Override public void onError(String message) {
                 _isLoading.setValue(false);
                 _errorMessage.setValue(message);
             }
@@ -62,24 +66,8 @@ public class EmployeeViewModel extends ViewModel {
                 _isLoading.setValue(false);
                 _employees.setValue(data);
             }
-
-            @Override
-            public void onError(String message) {
+            @Override public void onError(String message) {
                 _isLoading.setValue(false);
-                _errorMessage.setValue(message);
-            }
-        });
-    }
-
-    public void loadDepartments() {
-        repository.getDepartments(new EmployeeRepository.RepositoryCallback<List<Department>>() {
-            @Override
-            public void onSuccess(List<Department> data) {
-                _departments.setValue(data);
-            }
-
-            @Override
-            public void onError(String message) {
                 _errorMessage.setValue(message);
             }
         });
@@ -91,12 +79,16 @@ public class EmployeeViewModel extends ViewModel {
             boolean statusOk = status == null || status.equals(emp.getStatusRaw());
             boolean deptOk = deptId == null || (emp.getDepartmentId() != null && emp.getDepartmentId().equals(deptId));
             boolean roleOk = position == null || position.equals(emp.getPosition());
-
-            if (statusOk && deptOk && roleOk) {
-                filtered.add(emp);
-            }
+            if (statusOk && deptOk && roleOk) filtered.add(emp);
         }
         _employees.setValue(filtered);
+    }
+
+    public void loadDepartments() {
+        repository.getDepartments(new EmployeeRepository.RepositoryCallback<List<Department>>() {
+            @Override public void onSuccess(List<Department> data) { _departments.setValue(data); }
+            @Override public void onError(String message) { _errorMessage.setValue(message); }
+        });
     }
 
     public List<Employee> getFullEmployeeList() {

@@ -59,7 +59,22 @@
             app:layout_constraintStart_toEndOf="@id/tvAvatar"
             app:layout_constraintTop_toBottomOf="@id/tvGreeting" />
 
-        <!-- Date row -->
+        <!-- Nút Đăng xuất - góc trên bên phải -->
+        <ImageView
+            android:id="@+id/btnNavLogout"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="24dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_logout"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Đăng xuất"
+            app:tint="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvAvatar"
+            app:layout_constraintBottom_toBottomOf="@id/tvAvatar" />
+
+        <!-- Date row - dynamic, có ID cho TextView ngày -->
         <LinearLayout
             android:id="@+id/layoutDate"
             android:layout_width="match_parent"
@@ -80,9 +95,10 @@
                 app:tint="@color/white" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -93,16 +109,27 @@
                     android:textSize="12sp" />
 
                 <TextView
+                    android:id="@+id/tvCurrentDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Thứ 2, 19/01/2026"
+                    android:text="--"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
+
+            <!-- Giờ hiện tại -->
+            <TextView
+                android:id="@+id/tvCurrentTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="--:--"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Stats Grid -->
+        <!-- Stats Grid - 4 ô: NV, PB, Chấm công, Nhiệm vụ -->
         <GridLayout
             android:id="@+id/gridStats"
             android:layout_width="match_parent"
@@ -113,13 +140,17 @@
             android:rowCount="2"
             app:layout_constraintTop_toBottomOf="@id/layoutDate">
 
-            <!-- Tổng nhân viên -->
+            <!-- Tổng nhân viên (clickable) -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardStatEmployee"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="6dp">
                 <LinearLayout
@@ -133,10 +164,11 @@
                         android:src="@drawable/outline_contacts_product_24"
                         app:tint="@color/colorPrimary" />
                     <TextView
+                        android:id="@+id/tvStatEmployee"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="156"
+                        android:layout_marginTop="12dp"
+                        android:text="--"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="24sp"
                         android:textStyle="bold" />
@@ -150,13 +182,17 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Phòng ban -->
+            <!-- Phòng ban (clickable) -->
             <androidx.cardview.widget.CardView
+                android:id="@+id/cardStatDept"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:layout_margin="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="6dp">
                 <LinearLayout
@@ -168,12 +204,13 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/company"
-                        app:tint="@color/pinkAccent" />
+                        app:tint="#A855F7" />
                     <TextView
+                        android:id="@+id/tvStatDept"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="12"
+                        android:layout_marginTop="12dp"
+                        android:text="--"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="24sp"
                         android:textStyle="bold" />
@@ -182,6 +219,90 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="Phòng ban"
+                        android:textColor="@color/textColorSecondary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Chấm công hôm nay (clickable) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardStatAttendance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/outline_check_24"
+                        app:tint="#10B981" />
+                    <TextView
+                        android:id="@+id/tvStatAttendance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="--"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Chấm công hôm nay"
+                        android:textColor="@color/textColorSecondary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Nhiệm vụ (clickable) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardStatTask"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/outline_border_color_24"
+                        app:tint="#EA580C" />
+                    <TextView
+                        android:id="@+id/tvStatTask"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="--"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Nhiệm vụ"
                         android:textColor="@color/textColorSecondary"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -203,7 +324,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/gridStats" />
 
-        <!-- Quick access row 1: Nhân viên, Phòng ban, Chấm công, Chat -->
+        <!-- Quick access row 1: Nhân viên, Phòng ban, Chat (XÓA Chấm công) -->
         <LinearLayout
             android:id="@+id/layoutMenu"
             android:layout_width="match_parent"
@@ -211,7 +332,7 @@
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:orientation="horizontal"
-            android:weightSum="4"
+            android:weightSum="3"
             app:layout_constraintTop_toBottomOf="@id/tvQuickAccess">
 
             <!-- Nhân viên -->
@@ -276,37 +397,6 @@
                     android:textSize="12sp" />
             </LinearLayout>
 
-            <!-- Chấm công -->
-            <LinearLayout
-                android:id="@+id/btnNavTimekeeping"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:clickable="true"
-                android:focusable="true">
-                <androidx.cardview.widget.CardView
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="5dp"
-                    app:cardBackgroundColor="@color/greenSuccess">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="16dp"
-                        android:src="@drawable/outline_check_24"
-                        app:tint="@color/white" />
-                </androidx.cardview.widget.CardView>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Chấm công"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
             <!-- Chat -->
             <LinearLayout
                 android:id="@+id/btnNavChat"
@@ -340,16 +430,16 @@
 
         </LinearLayout>
 
-        <!-- Quick access row 2: Công việc, Thông báo, Tài khoản (MỚI) + placeholder -->
+        <!-- Quick access row 2: Công việc, Thông báo, Tài khoản -->
         <LinearLayout
             android:id="@+id/layoutMenu2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="24dp"
-            android:gravity="start"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:weightSum="4"
+            android:weightSum="3"
             app:layout_constraintTop_toBottomOf="@id/layoutMenu">
 
             <!-- Công việc -->
@@ -414,7 +504,7 @@
                     android:textSize="12sp" />
             </LinearLayout>
 
-            <!-- ========== NÚT TÀI KHOẢN (MỚI) ========== -->
+            <!-- Tài khoản -->
             <LinearLayout
                 android:id="@+id/btnNavAccount"
                 android:layout_width="0dp"
@@ -444,12 +534,6 @@
                     android:text="Tài khoản"
                     android:textSize="12sp" />
             </LinearLayout>
-
-            <!-- Placeholder giữ cân bằng layout -->
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
 
         </LinearLayout>
 
