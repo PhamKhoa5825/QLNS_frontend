@@ -51,6 +51,10 @@ public class LoginActivity extends AppCompatActivity {
                 authViewModel.login(username, password);
             }
         });
+
+        findViewById(R.id.tvForgotPassword).setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, ForgotPasswordRequestActivity.class));
+        });
     }
 
     private void observeViewModel() {

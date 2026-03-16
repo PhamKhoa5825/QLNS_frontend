@@ -18,8 +18,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.Attendance;
+import com.example.myapplication.model.EmployeeSummary;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.viewmodel.AttendanceViewModel;
+import com.example.myapplication.viewmodel.EmployeeViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
@@ -36,6 +38,7 @@ public class HomeEmployeeActivity extends AppCompatActivity {
     private Runnable timeRunnable;
     
     private AttendanceViewModel attendanceViewModel;
+    private EmployeeViewModel employeeViewModel;
     private boolean isCheckedIn = false;
     private long currentUserId = -1L;
 
@@ -46,12 +49,14 @@ public class HomeEmployeeActivity extends AppCompatActivity {
 
         RetrofitClient.init(this);
         attendanceViewModel = new ViewModelProvider(this).get(AttendanceViewModel.class);
+        employeeViewModel = new ViewModelProvider(this).get(EmployeeViewModel.class);
         SharedPreferences prefs = getSharedPreferences("qlns_pref", Context.MODE_PRIVATE);
         currentUserId = prefs.getLong("userId", -1L);
 
         initViews();
         startClock();
         observeViewModel();
+        employeeViewModel.loadEmployeeSummary();
     }
 
     @Override
@@ -70,6 +75,27 @@ public class HomeEmployeeActivity extends AppCompatActivity {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
             }
         });
+
+        employeeViewModel.employeeSummary.observe(this, summary -> {
+            if (summary != null) {
+                updateUserNameUI(summary);
+            }
+        });
+
+        employeeViewModel.errorMessage.observe(this, message -> {
+            if (message != null && !message.isEmpty()) {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateUserNameUI(EmployeeSummary summary) {
+        if (summary.getFullName() != null) {
+            tvUserName.setText(summary.getFullName());
+        }
+        if (summary.getAvatarText() != null) {
+            tvAvatarInitials.setText(summary.getAvatarText());
+        }
     }
 
     private void updateAttendanceUI(List<Attendance> attendances) {
