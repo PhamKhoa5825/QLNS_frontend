@@ -161,7 +161,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="3">
+        android:weightSum="2">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEditEmployee"
@@ -215,17 +215,6 @@
             app:icon="@android:drawable/ic_menu_revert"
             app:iconSize="16dp"
             app:iconTint="#10B981" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCloseDialogBottom"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:text="Đóng"
-            android:textAllCaps="false"
-            app:backgroundTint="#F3F4F6"
-            android:textColor="@color/textColorPrimary"
-            app:cornerRadius="8dp" />
 
     </LinearLayout>
 

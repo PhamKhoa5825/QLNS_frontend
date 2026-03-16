@@ -70,24 +70,6 @@ public interface ApiService {
     Call<Void> updateAccountStatus(@Path("userId") Long userId,
                                    @Query("status") String status);
 
-    // ── ATTENDANCE ────────────────────────────────────────────────
-    @POST("api/attendance/checkin")
-    Call<AttendanceModels.AttendanceResponse> checkIn(
-            @Body AttendanceModels.CheckInRequest req);
-
-    @PUT("api/attendance/checkout")
-    Call<AttendanceModels.AttendanceResponse> checkOut(
-            @Body AttendanceModels.CheckOutRequest req);
-
-    @GET("api/attendance/employee/{empId}/month")
-    Call<List<AttendanceModels.AttendanceResponse>> getAttendanceByMonth(
-            @Path("empId") Long empId,
-            @Query("month") int month,
-            @Query("year") int year);
-
-    @GET("api/attendance/today")
-    Call<List<AttendanceModels.AttendanceResponse>> getTodayAttendance();
-
     // ── TASK ──────────────────────────────────────────────────────
     @GET("api/tasks/my/{empId}")
     Call<List<TaskModels.TaskResponse>> getMyTasks(@Path("empId") Long empId);
@@ -161,26 +143,6 @@ public interface ApiService {
 
     @GET("api/notifications/unread-count")
     Call<Long> getUnreadCount(@Query("userId") Long userId);
-
-    // ── CHAT ──────────────────────────────────────────────────────
-    @GET("api/chat/rooms/user/{userId}")
-    Call<List<ChatModels.ChatRoomResponse>> getChatRooms(@Path("userId") Long userId);
-
-    @POST("api/chat/rooms/private")
-    Call<ChatModels.ChatRoomResponse> getOrCreatePrivateRoom(
-            @Query("userId1") Long userId1,
-            @Query("userId2") Long userId2);
-
-    @GET("api/chat/messages/{roomId}")
-    Call<List<ChatModels.MessageResponse>> getMessages(@Path("roomId") Long roomId);
-
-    @GET("api/chat/messages/{roomId}/new")
-    Call<List<ChatModels.MessageResponse>> getNewMessages(
-            @Path("roomId") Long roomId,
-            @Query("lastMessageId") Long lastMessageId);
-
-    @POST("api/chat/messages")
-    Call<ChatModels.MessageResponse> sendMessage(@Body ChatModels.SendMessageBody req);
 
     // ── COMPANY SETTINGS (Admin) ──────────────────────────────────
     @GET("api/settings")

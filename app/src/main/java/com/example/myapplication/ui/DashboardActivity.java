@@ -13,9 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.R;
-import com.example.myapplication.model.AttendanceModels;
 import com.example.myapplication.model.Employee;
 import com.example.myapplication.model.Department;
+import com.example.myapplication.model.RequestModels;
 import com.example.myapplication.model.TaskModels;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
@@ -35,7 +35,6 @@ public class DashboardActivity extends AppCompatActivity {
     private String role;
     private Long employeeId;
 
-    // Date & time
     private TextView tvCurrentDate, tvCurrentTime;
     private final Handler timeHandler = new Handler(Looper.getMainLooper());
 
@@ -56,13 +55,10 @@ public class DashboardActivity extends AppCompatActivity {
         loadStats();
     }
 
-    // ── HEADER ────────────────────────────────────────────────────
-
     private void setupHeader() {
-        String fullName = prefs.getString("fullName", "Admin");
+        String fullName = prefs.getString("fullName", "Người dùng");
         TextView tvUserName = findViewById(R.id.tvUserName);
         TextView tvAvatar   = findViewById(R.id.tvAvatar);
-
         tvUserName.setText(fullName);
         if (fullName != null && !fullName.isEmpty()) {
             String[] parts = fullName.trim().split(" ");
@@ -70,78 +66,63 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
-    // ── NGÀY GIỜ THỰC (layoutDate) ───────────────────────────────
-
     private void setupDateTime() {
         tvCurrentDate = findViewById(R.id.tvCurrentDate);
         tvCurrentTime = findViewById(R.id.tvCurrentTime);
-
         timeHandler.post(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 Date now = new Date();
-
-                // Ngày: "Thứ 2, 16/03/2026"
                 String date = new SimpleDateFormat("EEEE, dd/MM/yyyy", new Locale("vi")).format(now);
-                String capDate = date.substring(0, 1).toUpperCase() + date.substring(1);
-                if (tvCurrentDate != null) tvCurrentDate.setText(capDate);
-
-                // Giờ: "14:30"
-                String time = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(now);
-                if (tvCurrentTime != null) tvCurrentTime.setText(time);
-
-                timeHandler.postDelayed(this, 30_000); // cập nhật mỗi 30s
+                if (tvCurrentDate != null)
+                    tvCurrentDate.setText(date.substring(0, 1).toUpperCase() + date.substring(1));
+                if (tvCurrentTime != null)
+                    tvCurrentTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(now));
+                timeHandler.postDelayed(this, 30_000);
             }
         });
     }
-
-    // ── STATS CARDS (clickable) ───────────────────────────────────
 
     private void setupStatsCards() {
-        // Click vào card → mở trang tương ứng
-        safeClick(R.id.cardStatEmployee, () ->
-                startActivity(new Intent(this, EmployeeActivity.class)));
-
-        safeClick(R.id.cardStatDept, () ->
-                startActivity(new Intent(this, DepartmentActivity.class)));
-
-        safeClick(R.id.cardStatAttendance, () ->
-                startActivity(new Intent(this, TimekeepingActivity.class)));
-
-        safeClick(R.id.cardStatTask, () ->
-                startActivity(new Intent(this, TaskActivity.class)));
+        safeClick(R.id.cardStatEmployee, () -> startActivity(new Intent(this, EmployeeActivity.class)));
+        safeClick(R.id.cardStatDept,     () -> startActivity(new Intent(this, DepartmentActivity.class)));
+        safeClick(R.id.cardStatRequest,  () -> startActivity(new Intent(this, RequestListActivity.class)));
+        safeClick(R.id.cardStatTask,     () -> startActivity(new Intent(this, TaskActivity.class)));
     }
-
-    // ── QUICK ACCESS NAVIGATION ───────────────────────────────────
 
     private void setupNavigation() {
+        // Row 1: Nhân viên · Phòng ban · Thông báo
         safeClick(R.id.btnNavEmployee,     () -> startActivity(new Intent(this, EmployeeActivity.class)));
         safeClick(R.id.btnNavDepartment,   () -> startActivity(new Intent(this, DepartmentActivity.class)));
-        // XÓA: btnNavTimekeeping không còn trong XML
-        safeClick(R.id.btnNavChat,         () -> startActivity(new Intent(this, ChatListActivity.class)));
-        safeClick(R.id.btnNavTask,         () -> startActivity(new Intent(this, TaskActivity.class)));
         safeClick(R.id.btnNavNotification, () -> startActivity(new Intent(this, NotificationCenterActivity.class)));
 
+        // Row 2: Đơn từ · Tài khoản · (Cài đặt - Admin)
+        safeClick(R.id.btnNavRequest, () -> startActivity(new Intent(this, RequestListActivity.class)));
         safeClick(R.id.btnNavAccount, () -> {
-            if ("ADMIN".equals(role)) {
-                startActivity(new Intent(this, AccountManagementActivity.class));
-            } else {
-                startActivity(new Intent(this, ProfileActivity.class));
-            }
+            if ("ADMIN".equals(role)) startActivity(new Intent(this, AccountManagementActivity.class));
+            else startActivity(new Intent(this, ProfileActivity.class));
         });
 
+        // Logout
         safeClick(R.id.btnNavLogout, this::showLogoutDialog);
-    }
 
-    // ── LOAD THỐNG KÊ ─────────────────────────────────────────────
+        // Admin only
+        if ("ADMIN".equals(role)) {
+            View btnSettings = findViewById(R.id.btnNavSettings);
+            if (btnSettings != null) btnSettings.setVisibility(View.VISIBLE);
+            safeClick(R.id.btnNavSettings, () -> startActivity(new Intent(this, CompanySettingsActivity.class)));
+
+            View layoutMenuAdmin = findViewById(R.id.layoutMenuAdmin);
+            if (layoutMenuAdmin != null) layoutMenuAdmin.setVisibility(View.VISIBLE);
+            safeClick(R.id.btnNavSystemLog, () -> startActivity(new Intent(this, SystemLogActivity.class)));
+        }
+    }
 
     private void loadStats() {
         // 1. Tổng nhân viên
         apiService.getEmployees().enqueue(new Callback<List<Employee>>() {
             @Override public void onResponse(Call<List<Employee>> c, Response<List<Employee>> r) {
-                if (r.isSuccessful() && r.body() != null) {
+                if (r.isSuccessful() && r.body() != null)
                     updateStat(R.id.tvStatEmployee, String.valueOf(r.body().size()));
-                }
             }
             @Override public void onFailure(Call<List<Employee>> c, Throwable t) {}
         });
@@ -149,32 +130,40 @@ public class DashboardActivity extends AppCompatActivity {
         // 2. Tổng phòng ban
         apiService.getDepartments().enqueue(new Callback<List<Department>>() {
             @Override public void onResponse(Call<List<Department>> c, Response<List<Department>> r) {
-                if (r.isSuccessful() && r.body() != null) {
+                if (r.isSuccessful() && r.body() != null)
                     updateStat(R.id.tvStatDept, String.valueOf(r.body().size()));
-                }
             }
             @Override public void onFailure(Call<List<Department>> c, Throwable t) {}
         });
 
-        // 3. Chấm công hôm nay (số người đã check-in)
-        apiService.getTodayAttendance().enqueue(new Callback<List<AttendanceModels.AttendanceResponse>>() {
-            @Override public void onResponse(Call<List<AttendanceModels.AttendanceResponse>> c,
-                                             Response<List<AttendanceModels.AttendanceResponse>> r) {
+        // 3. Đơn chờ duyệt
+        // Admin: xem tất cả, Employee: xem đơn của mình
+        Call<List<RequestModels.RequestResponse>> requestCall;
+        if ("ADMIN".equals(role)) {
+            requestCall = apiService.getAllRequests();
+        } else {
+            requestCall = apiService.getMyRequests(employeeId);
+        }
+        requestCall.enqueue(new Callback<List<RequestModels.RequestResponse>>() {
+            @Override public void onResponse(Call<List<RequestModels.RequestResponse>> c,
+                                             Response<List<RequestModels.RequestResponse>> r) {
                 if (r.isSuccessful() && r.body() != null) {
-                    updateStat(R.id.tvStatAttendance, String.valueOf(r.body().size()));
+                    long pending = r.body().stream()
+                            .filter(req -> "PENDING".equals(req.status))
+                            .count();
+                    updateStat(R.id.tvStatRequest, String.valueOf(pending));
                 }
             }
-            @Override public void onFailure(Call<List<AttendanceModels.AttendanceResponse>> c, Throwable t) {
-                updateStat(R.id.tvStatAttendance, "0");
+            @Override public void onFailure(Call<List<RequestModels.RequestResponse>> c, Throwable t) {
+                updateStat(R.id.tvStatRequest, "0");
             }
         });
 
-        // 4. Nhiệm vụ của tôi
+        // 4. Nhiệm vụ chưa hoàn thành
         apiService.getMyTasks(employeeId).enqueue(new Callback<List<TaskModels.TaskResponse>>() {
             @Override public void onResponse(Call<List<TaskModels.TaskResponse>> c,
                                              Response<List<TaskModels.TaskResponse>> r) {
                 if (r.isSuccessful() && r.body() != null) {
-                    // Đếm task chưa hoàn thành
                     long pending = r.body().stream()
                             .filter(t -> !"DONE".equals(t.status))
                             .count();
@@ -187,13 +176,10 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-    // ── LOGOUT ────────────────────────────────────────────────────
-
     private void showLogoutDialog() {
         android.app.Dialog dialog = new android.app.Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_logout_confirmation);
-
         if (dialog.getWindow() != null)
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
@@ -205,43 +191,23 @@ public class DashboardActivity extends AppCompatActivity {
         if (btnCancel != null) btnCancel.setOnClickListener(v -> dialog.dismiss());
         if (btnConfirm != null) btnConfirm.setOnClickListener(v -> {
             dialog.dismiss();
-            doLogout();
+            prefs.edit().clear().apply();
+            startActivity(new Intent(this, LoginActivity.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         });
         dialog.show();
     }
 
-    private void doLogout() {
-        prefs.edit().clear().apply();
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+    private void updateStat(int id, String val) {
+        try { TextView tv = findViewById(id); if (tv != null) tv.setText(val); }
+        catch (Exception ignored) {}
     }
 
-    // ── UTILS ─────────────────────────────────────────────────────
-
-    private void updateStat(int viewId, String value) {
-        try {
-            TextView tv = findViewById(viewId);
-            if (tv != null) tv.setText(value);
-        } catch (Exception ignored) {}
+    private void safeClick(int id, Runnable action) {
+        try { View v = findViewById(id); if (v != null) v.setOnClickListener(view -> action.run()); }
+        catch (Exception ignored) {}
     }
 
-    private void safeClick(int viewId, Runnable action) {
-        try {
-            View v = findViewById(viewId);
-            if (v != null) v.setOnClickListener(view -> action.run());
-        } catch (Exception ignored) {}
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadStats(); // refresh khi quay lại
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        timeHandler.removeCallbacksAndMessages(null);
-    }
+    @Override protected void onResume() { super.onResume(); loadStats(); }
+    @Override protected void onDestroy() { super.onDestroy(); timeHandler.removeCallbacksAndMessages(null); }
 }

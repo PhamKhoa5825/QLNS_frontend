@@ -23,7 +23,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaS" />
+            android:value="AIzaSyDFe8UGOtV8if60BszPuQk8D0lxqN5NHJI" />
 
         <!-- Launcher -->
         <activity
@@ -48,10 +48,8 @@
 
         <!-- Tài khoản (Admin) -->
         <activity android:name=".ui.AccountManagementActivity" android:exported="false" />
-
-        <!-- Chấm công -->
-        <activity android:name=".ui.TimekeepingActivity" android:exported="false" />
-        <activity android:name=".ui.GPSCheckInActivity" android:exported="false" />
+        <activity android:name=".ui.CompanySettingsActivity" android:exported="false" />
+        <activity android:name=".ui.SystemLogActivity" android:exported="false" />
 
         <!-- Công việc -->
         <activity android:name=".ui.TaskActivity" android:exported="false" />
@@ -62,10 +60,7 @@
 
         <!-- Đơn từ -->
         <activity android:name=".ui.LeaveApplicationActivity" android:exported="false" />
-
-        <!-- Chat -->
-        <activity android:name=".ui.ChatListActivity" android:exported="false" />
-        <activity android:name=".ui.ChatRoomActivity" android:exported="false" />
+        <activity android:name=".ui.RequestListActivity" android:exported="false" />
 
         <!-- Cá nhân -->
         <activity android:name=".ui.ProfileActivity" android:exported="false" />

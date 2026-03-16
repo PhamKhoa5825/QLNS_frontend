@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F3F4F6">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:elevation="4dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@android:drawable/ic_menu_revert"
+            app:navigationIconTint="@color/white"
+            app:title="Quản lý đơn từ"
+            app:titleTextColor="@color/white" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayoutRequest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="fixed"
+            app:tabGravity="fill"
+            app:tabTextColor="#BBDEFB"
+            app:tabSelectedTextColor="@color/white"
+            app:tabIndicatorColor="@color/white">
+            <com.google.android.material.tabs.TabItem android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="Tất cả" />
+            <com.google.android.material.tabs.TabItem android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="Chờ duyệt" />
+            <com.google.android.material.tabs.TabItem android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="Đã duyệt" />
+            <com.google.android.material.tabs.TabItem android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="Từ chối" />
+        </com.google.android.material.tabs.TabLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Content bên dưới AppBar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- Thống kê nhanh -->
+        <LinearLayout
+            android:id="@+id/layoutStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:background="@color/white"
+            android:elevation="2dp"
+            android:weightSum="3">
+            <TextView android:id="@+id/tvStatPending" android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:gravity="center" android:text="0 chờ duyệt"
+                android:textColor="#F59E0B" android:textSize="13sp" android:textStyle="bold" />
+            <TextView android:id="@+id/tvStatApproved" android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:gravity="center" android:text="0 đã duyệt"
+                android:textColor="#10B981" android:textSize="13sp" android:textStyle="bold" />
+            <TextView android:id="@+id/tvStatRejected" android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:gravity="center" android:text="0 từ chối"
+                android:textColor="#EF4444" android:textSize="13sp" android:textStyle="bold" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewRequests"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingTop="4dp"
+            android:paddingBottom="80dp" />
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabCreateRequest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:backgroundTint="#F59E0B"
+        app:tint="@color/white" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
