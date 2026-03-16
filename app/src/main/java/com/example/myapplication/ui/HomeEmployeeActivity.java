@@ -20,7 +20,6 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.Attendance;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.viewmodel.AttendanceViewModel;
-import com.example.myapplication.viewmodel.EmployeeViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
@@ -38,15 +37,18 @@ public class HomeEmployeeActivity extends AppCompatActivity {
     
     private AttendanceViewModel attendanceViewModel;
     private boolean isCheckedIn = false;
+    private long currentUserId = -1L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_employee);
-        
+
         RetrofitClient.init(this);
         attendanceViewModel = new ViewModelProvider(this).get(AttendanceViewModel.class);
-        
+        SharedPreferences prefs = getSharedPreferences("qlns_pref", Context.MODE_PRIVATE);
+        currentUserId = prefs.getLong("userId", -1L);
+
         initViews();
         startClock();
         observeViewModel();
@@ -72,24 +74,49 @@ public class HomeEmployeeActivity extends AppCompatActivity {
 
     private void updateAttendanceUI(List<Attendance> attendances) {
         if (attendances == null || attendances.isEmpty()) {
-            isCheckedIn = false;
-            btnCheckIn.setText("Check-in");
-            btnCheckIn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#1A73E8")));
-            btnCheckIn.setEnabled(true);
-        } else {
-            Attendance last = attendances.get(0);
-            if (last.getCheckOut() == null) {
-                isCheckedIn = true;
-                btnCheckIn.setText("Check-out");
-                btnCheckIn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F59E0B")));
-                btnCheckIn.setEnabled(true);
-            } else {
-                isCheckedIn = true;
-                btnCheckIn.setText("Đã hoàn thành");
-                btnCheckIn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#94A3B8")));
-                btnCheckIn.setEnabled(false);
+            showCheckInState();
+            return;
+        }
+
+        boolean hasCurrentUserRecord = false;
+        boolean hasOpenAttendance = false;
+
+        for (Attendance attendance : attendances) {
+            if (attendance == null) continue;
+
+            Long employeeId = attendance.getEmployeeId();
+            if (currentUserId != -1L && employeeId != null && !employeeId.equals(currentUserId)) {
+                continue;
+            }
+
+            hasCurrentUserRecord = true;
+            String checkOut = attendance.getCheckOut();
+            if (checkOut == null || checkOut.trim().isEmpty()) {
+                hasOpenAttendance = true;
+                break;
             }
         }
+
+        if (!hasCurrentUserRecord) {
+            showCheckInState();
+        } else if (hasOpenAttendance) {
+            isCheckedIn = true;
+            btnCheckIn.setText("Check-out");
+            btnCheckIn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F59E0B")));
+            btnCheckIn.setEnabled(true);
+        } else {
+            isCheckedIn = true;
+            btnCheckIn.setText("Đã hoàn thành");
+            btnCheckIn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#94A3B8")));
+            btnCheckIn.setEnabled(false);
+        }
+    }
+
+    private void showCheckInState() {
+        isCheckedIn = false;
+        btnCheckIn.setText("Check-in");
+        btnCheckIn.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#1A73E8")));
+        btnCheckIn.setEnabled(true);
     }
 
     private void initViews() {

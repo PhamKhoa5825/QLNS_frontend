@@ -7,6 +7,7 @@ public class Attendance {
     private String checkOut;
     private String status;
 
+    public Long getEmployeeId() { return employeeId; }
     public Long getId() { return id; }
     public String getCheckIn() { return checkIn; }
     public String getCheckOut() { return checkOut; }
