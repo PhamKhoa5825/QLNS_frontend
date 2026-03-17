@@ -1,8 +1,6 @@
 package com.example.myapplication.ui;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,6 +18,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.Attendance;
 import com.example.myapplication.model.EmployeeSummary;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.utils.SharedPrefsManager;
 import com.example.myapplication.viewmodel.AttendanceViewModel;
 import com.example.myapplication.viewmodel.EmployeeViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -50,8 +49,7 @@ public class HomeEmployeeActivity extends AppCompatActivity {
         RetrofitClient.init(this);
         attendanceViewModel = new ViewModelProvider(this).get(AttendanceViewModel.class);
         employeeViewModel = new ViewModelProvider(this).get(EmployeeViewModel.class);
-        SharedPreferences prefs = getSharedPreferences("qlns_pref", Context.MODE_PRIVATE);
-        currentUserId = prefs.getLong("userId", -1L);
+        currentUserId = SharedPrefsManager.getInstance(this).getUserId();
 
         initViews();
         startClock();
@@ -187,7 +185,7 @@ public class HomeEmployeeActivity extends AppCompatActivity {
                 if (itemId == R.id.nav_work) {
                     startActivity(new Intent(this, TaskManagementActivity.class));
                 } else if (itemId == R.id.nav_message) {
-                    startActivity(new Intent(this, InternalMessageActivity.class));
+                    startActivity(new Intent(this, ChatActivity.class));
                 } else if (itemId == R.id.nav_profile) {
                     startActivity(new Intent(this, ProfileActivity.class));
                 }

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="24dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Avatar Section -->
+        <FrameLayout
+            android:layout_width="60dp"
+            android:layout_height="60dp">
+            
+            <View
+                android:id="@+id/viewAvatarBg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_avatar_circle"
+                android:backgroundTint="#EFF6FF" />
+
+            <TextView
+                android:id="@+id/tvAvatarText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="TB"
+                android:textColor="#2563EB"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+                
+            <!-- Presence indicator -->
+            <View
+                android:id="@+id/presenceIndicator"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="2dp"
+                android:background="@drawable/bg_online_dot"
+                android:backgroundTint="#10B981" />
+        </FrameLayout>
+
+        <!-- Content Section -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvRoomNameItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/tvLastMessageTime"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Trần Thị B"
+                    android:textColor="#111827"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvLastMessageTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="10 phút trước"
+                    android:textColor="#9CA3AF"
+                    android:textSize="12sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp">
+
+                <TextView
+                    android:id="@+id/tvLastMessagePreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/tvUnreadCountBadge"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Báo cáo đã gửi cho anh rồi ạ..."
+                    android:textColor="#6B7280"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tvUnreadCountBadge"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/bg_unread_badge"
+                    android:gravity="center"
+                    android:text="3"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+            </RelativeLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

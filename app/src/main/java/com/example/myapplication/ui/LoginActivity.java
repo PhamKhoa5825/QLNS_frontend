@@ -1,8 +1,6 @@
 package com.example.myapplication.ui;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.myapplication.R;
 import com.example.myapplication.model.AuthenticationResponse;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.utils.SharedPrefsManager;
 import com.example.myapplication.viewmodel.AuthViewModel;
 
 public class LoginActivity extends AppCompatActivity {
@@ -79,13 +78,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void saveAuthData(AuthenticationResponse authResponse) {
-        SharedPreferences prefs = getSharedPreferences("qlns_pref", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("token", authResponse.getToken());
-        editor.putLong("userId", authResponse.getUserId());
-        editor.putString("username", authResponse.getUsername());
-        editor.putString("email", authResponse.getEmail());
-        editor.putString("role", authResponse.getRole());
-        editor.apply();
+        SharedPrefsManager.getInstance(this).saveUserLogin(
+            authResponse.getToken(),
+            authResponse.getUserId(),
+            authResponse.getUsername(),
+            authResponse.getEmail(),
+            authResponse.getRole(),
+            authResponse.getDepartmentId(),
+            authResponse.getEmployeeId()
+        );
     }
 }
