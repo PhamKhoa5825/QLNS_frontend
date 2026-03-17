@@ -20,6 +20,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.adapter.TaskAdapter;
 import com.example.myapplication.model.Task;
 import com.example.myapplication.model.CreateTaskRequest;
+import com.example.myapplication.model.UpdateTaskStatusRequest;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.utils.SharedPrefsManager;
@@ -61,11 +62,19 @@ public class TaskActivity extends AppCompatActivity {
         setupRecyclerView();
         setupFilters();
         
-        fabAddTask.setOnClickListener(v -> showCreateTaskDialog());
+        // Only MANAGER and ADMIN can create tasks
+        String role = SharedPrefsManager.getInstance(this).getRole();
+        if ("EMPLOYEE".equals(role)) {
+            fabAddTask.setVisibility(android.view.View.GONE);
+        } else {
+            fabAddTask.setOnClickListener(v -> showCreateTaskDialog());
+        }
         btnBackTask.setOnClickListener(v -> finish());
         
         fetchTasks();
-        fetchDepartmentEmployees();
+        if (!"EMPLOYEE".equals(role)) {
+            fetchDepartmentEmployees();
+        }
     }
 
     private void initViews() {
@@ -85,13 +94,126 @@ public class TaskActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         recyclerViewTask.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new TaskAdapter(this, taskList);
+        adapter = new TaskAdapter(this, taskList, task -> {
+            String role = SharedPrefsManager.getInstance(this).getRole();
+            if ("EMPLOYEE".equals(role)) {
+                handleTaskInteraction(task);
+            }
+        });
         recyclerViewTask.setAdapter(adapter);
+    }
+
+    private void handleTaskInteraction(Task task) {
+        String status = task.getStatus() != null ? task.getStatus() : "PENDING";
+        if ("PENDING".equals(status)) {
+            // Hiển thị dialog xác nhận nhận việc
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Nhận nhiệm vụ")
+                    .setMessage("Bạn có muốn nhận nhiệm vụ này không?")
+                    .setPositiveButton("Nhận", (dialog, which) -> acceptTaskAPI(task))
+                    .setNegativeButton("Hủy", null)
+                    .show();
+        } else if ("ACCEPTED".equals(status) || "IN_PROGRESS".equals(status) || "OVERDUE".equals(status)) {
+            // Hiển thị dialog cập nhật hoàn thành
+            showUpdateStatusDialog(task);
+        }
+    }
+
+    private void acceptTaskAPI(Task task) {
+        ApiService apiService = RetrofitClient.getApiService(this);
+        java.util.Map<String, Long> body = new java.util.HashMap<>();
+        body.put("employeeId", SharedPrefsManager.getInstance(this).getEmployeeId());
+
+        apiService.acceptTask(task.getId(), body).enqueue(new Callback<Task>() {
+            @Override
+            public void onResponse(Call<Task> call, Response<Task> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(TaskActivity.this, "Đã nhận nhiệm vụ", Toast.LENGTH_SHORT).show();
+                    fetchTasks();
+                } else {
+                    Toast.makeText(TaskActivity.this, "Lỗi: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Task> call, Throwable t) {
+                Toast.makeText(TaskActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showUpdateStatusDialog(Task task) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_task_form); // Reusing or creating a simple one
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        TextView tvTitle = dialog.findViewById(R.id.tvTaskFormTitle);
+        if (tvTitle != null) tvTitle.setText("Hoàn thành nhiệm vụ");
+        
+        EditText edtNote = dialog.findViewById(R.id.edtTaskDescription);
+        if (edtNote != null) {
+            edtNote.setHint("Nhập ghi chú hoàn thành...");
+            edtNote.setText("");
+        }
+
+        // Ẩn các field không cần thiết nếu dùng chung layout
+        if (dialog.findViewById(R.id.edtTaskTitle) != null) dialog.findViewById(R.id.edtTaskTitle).setVisibility(android.view.View.GONE);
+        if (dialog.findViewById(R.id.spinnerTaskPriority) != null) dialog.findViewById(R.id.spinnerTaskPriority).setVisibility(android.view.View.GONE);
+        if (dialog.findViewById(R.id.tvTaskDeadline) != null) dialog.findViewById(R.id.tvTaskDeadline).setVisibility(android.view.View.GONE);
+        if (dialog.findViewById(R.id.spinnerTaskAssignees) != null) dialog.findViewById(R.id.spinnerTaskAssignees).setVisibility(android.view.View.GONE);
+
+        Button btnSave = dialog.findViewById(R.id.btnSaveTask);
+        if (btnSave != null) {
+            btnSave.setText("Hoàn thành");
+            btnSave.setOnClickListener(v -> {
+                String note = edtNote.getText().toString().trim();
+                updateTaskStatusAPI(task, "DONE", note, dialog);
+            });
+        }
+        dialog.show();
+    }
+
+    private void updateTaskStatusAPI(Task task, String status, String note, Dialog dialog) {
+        ApiService apiService = RetrofitClient.getApiService(this);
+        UpdateTaskStatusRequest req = new UpdateTaskStatusRequest(status, note);
+        Long empId = SharedPrefsManager.getInstance(this).getEmployeeId();
+
+        apiService.updateTaskStatus(task.getId(), req, empId).enqueue(new Callback<Task>() {
+            @Override
+            public void onResponse(Call<Task> call, Response<Task> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(TaskActivity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    fetchTasks();
+                } else {
+                    Toast.makeText(TaskActivity.this, "Lỗi: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Task> call, Throwable t) {
+                Toast.makeText(TaskActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void fetchTasks() {
         ApiService apiService = RetrofitClient.getApiService(this);
-        Call<List<Task>> call = apiService.getTasksByDepartment(currentDeptId);
+        String role = SharedPrefsManager.getInstance(this).getRole();
+        
+        Call<List<Task>> call;
+        if ("ADMIN".equals(role)) {
+            // Admin xem tất cả tasks
+            call = apiService.getAllTasks();
+        } else if ("EMPLOYEE".equals(role)) {
+            // Employee xem tasks của mình
+            Long empId = SharedPrefsManager.getInstance(this).getEmployeeId();
+            call = apiService.getMyTasks(empId);
+        } else {
+            // Manager xem tasks theo phòng ban
+            call = apiService.getTasksByDepartment(currentDeptId);
+        }
         
         call.enqueue(new Callback<List<Task>>() {
             @Override

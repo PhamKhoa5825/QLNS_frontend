@@ -95,22 +95,45 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
 
     private void fetchNotifications() {
         ApiService apiService = RetrofitClient.getApiService(this);
-        apiService.getNotifications(currentDeptId, currentUserId).enqueue(new Callback<List<Notification>>() {
-            @Override
-            public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    allNotiList = response.body();
-                    updateStats();
-                    applyFilter(currentFilter);
-                } else {
-                    Toast.makeText(NotificationActivity.this, "Không thể tải thông báo: " + response.code(), Toast.LENGTH_SHORT).show();
+        String role = SharedPrefsManager.getInstance(this).getRole();
+        
+        if ("ADMIN".equals(role)) {
+            // Admin xem tất cả notifications
+            apiService.getAllNotifications().enqueue(new Callback<List<Notification>>() {
+                @Override
+                public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        allNotiList = response.body();
+                        updateStats();
+                        applyFilter(currentFilter);
+                    } else {
+                        Toast.makeText(NotificationActivity.this, "Không thể tải thông báo: " + response.code(), Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
-            @Override
-            public void onFailure(Call<List<Notification>> call, Throwable t) {
-                Toast.makeText(NotificationActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<List<Notification>> call, Throwable t) {
+                    Toast.makeText(NotificationActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // Manager/Employee xem thông báo theo phòng ban
+            apiService.getNotifications(currentDeptId, currentUserId).enqueue(new Callback<List<Notification>>() {
+                @Override
+                public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        allNotiList = response.body();
+                        updateStats();
+                        applyFilter(currentFilter);
+                    } else {
+                        Toast.makeText(NotificationActivity.this, "Không thể tải thông báo: " + response.code(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                @Override
+                public void onFailure(Call<List<Notification>> call, Throwable t) {
+                    Toast.makeText(NotificationActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void updateStats() {

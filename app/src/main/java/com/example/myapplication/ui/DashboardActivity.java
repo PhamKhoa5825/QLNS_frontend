@@ -53,6 +53,12 @@ public class DashboardActivity extends AppCompatActivity {
         
         updateUserUI();
 
+        // Hide Department navigation for Employees
+        String role = SharedPrefsManager.getInstance(this).getRole();
+        if ("EMPLOYEE".equals(role)) {
+            btnNavDepartment.setVisibility(View.GONE);
+        }
+
         btnNavEmployee.setOnClickListener(v -> startActivity(new Intent(this, EmployeeActivity.class)));
         btnNavDepartment.setOnClickListener(v -> startActivity(new Intent(this, DepartmentActivity.class)));
         btnNavTask.setOnClickListener(v -> startActivity(new Intent(this, TaskActivity.class)));
@@ -77,6 +83,10 @@ public class DashboardActivity extends AppCompatActivity {
     }
     
     private void fetchDashboardStats() {
+        if (currentDeptId == null || currentDeptId == -1L) {
+            // Admin might not have a specific dept, skip dashboard stats or handle differently
+            return;
+        }
         ApiService apiService = RetrofitClient.getApiService(this);
         Call<DepartmentDashboardDTO> call = apiService.getDepartmentDashboard(currentDeptId);
         

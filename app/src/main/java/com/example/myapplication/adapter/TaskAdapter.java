@@ -20,10 +20,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     private Context context;
     private List<Task> taskList;
+    private OnTaskStatusClickListener listener;
 
-    public TaskAdapter(Context context, List<Task> taskList) {
+    public interface OnTaskStatusClickListener {
+        void onStatusClick(Task task);
+    }
+
+    public TaskAdapter(Context context, List<Task> taskList, OnTaskStatusClickListener listener) {
         this.context = context;
         this.taskList = taskList;
+        this.listener = listener;
     }
 
     public void setTaskList(List<Task> taskList) {
@@ -90,6 +96,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 holder.tvStatus.setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#EA580C")));
                 break;
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onStatusClick(task);
+        });
     }
 
     @Override

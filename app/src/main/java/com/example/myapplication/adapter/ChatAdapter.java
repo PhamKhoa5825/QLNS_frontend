@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.R;
 import com.example.myapplication.model.ChatRoom;
 
 import java.util.List;
@@ -18,10 +19,18 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     private Context context;
     private List<ChatRoom> roomList;
+    private OnRoomClickListener listener;
+    private Long currentUserId;
 
-    public ChatAdapter(Context context, List<ChatRoom> roomList) {
+    public interface OnRoomClickListener {
+        void onRoomSelected(ChatRoom room);
+    }
+
+    public ChatAdapter(Context context, List<ChatRoom> roomList, Long currentUserId, OnRoomClickListener listener) {
         this.context = context;
         this.roomList = roomList;
+        this.currentUserId = currentUserId;
+        this.listener = listener;
     }
 
     public void setRoomList(List<ChatRoom> roomList) {
@@ -32,17 +41,40 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_2, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_item_chat_room, parent, false);
         return new ChatViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         ChatRoom room = roomList.get(position);
-        holder.tvTitle.setText(room.getName());
         
-        holder.tvDetails.setText("Loại: " + room.getType());
-        holder.tvDetails.setTextColor(Color.parseColor("#6B7280"));
+        String name = room.getName();
+        if ("PRIVATE".equals(room.getType()) && room.getOtherParticipantName() != null) {
+            name = room.getOtherParticipantName();
+        } else if (name == null) {
+            name = "Phòng chat " + room.getId();
+        }
+        
+        holder.tvRoomName.setText(name);
+        
+        holder.tvRoomType.setText(room.getType().equals("DEPARTMENT") ? "Phòng ban" : "Cá nhân");
+        
+        // Avatar logic
+        String firstChar = name.isEmpty() ? "?" : String.valueOf(name.charAt(0)).toUpperCase();
+        holder.tvAvatar.setText(firstChar);
+        
+        if ("DEPARTMENT".equals(room.getType())) {
+            holder.viewAvatarBg.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#DBEAFE")));
+            holder.tvAvatar.setTextColor(Color.parseColor("#2563EB"));
+            holder.typeIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#10B981")));
+        } else {
+            holder.viewAvatarBg.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#FCE7F3")));
+            holder.tvAvatar.setTextColor(Color.parseColor("#DB2777"));
+            holder.typeIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#F59E0B")));
+        }
+
+        holder.itemView.setOnClickListener(v -> listener.onRoomSelected(room));
     }
 
     @Override
@@ -51,15 +83,16 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     }
 
     public static class ChatViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvDetails;
+        TextView tvRoomName, tvRoomType, tvAvatar;
+        View viewAvatarBg, typeIndicator;
 
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(android.R.id.text1);
-            tvDetails = itemView.findViewById(android.R.id.text2);
-            tvTitle.setTextSize(16f);
-            tvTitle.setTypeface(null, android.graphics.Typeface.BOLD);
-            tvDetails.setTextSize(14f);
+            tvRoomName = itemView.findViewById(R.id.tvRoomNameItem);
+            tvRoomType = itemView.findViewById(R.id.tvRoomTypeItem);
+            tvAvatar = itemView.findViewById(R.id.tvAvatarText);
+            viewAvatarBg = itemView.findViewById(R.id.viewAvatarBg);
+            typeIndicator = itemView.findViewById(R.id.typeIndicator);
         }
     }
 }

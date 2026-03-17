@@ -11,6 +11,7 @@ public class SharedPrefsManager {
     private static final String KEY_USERNAME = "username";
     private static final String KEY_ROLE = "role";
     private static final String KEY_DEPT_ID = "dept_id";
+    private static final String KEY_EMPLOYEE_ID = "employee_id";
 
     private static SharedPrefsManager mInstance;
     private static Context mCtx;
@@ -45,6 +46,13 @@ public class SharedPrefsManager {
         editor.apply();
     }
 
+    public void setEmployeeId(Long empId) {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong(KEY_EMPLOYEE_ID, empId);
+        editor.apply();
+    }
+
     public boolean isLoggedIn() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_TOKEN, null) != null;
@@ -73,6 +81,11 @@ public class SharedPrefsManager {
     public String getRole() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_ROLE, "");
+    }
+
+    public Long getEmployeeId() {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getLong(KEY_EMPLOYEE_ID, -1L);
     }
 
     public void logout() {

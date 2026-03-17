@@ -5,11 +5,14 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.R;
 import com.example.myapplication.model.Attendance;
 
 import java.util.List;
@@ -32,27 +35,47 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.At
     @NonNull
     @Override
     public AttendanceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_2, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_item_attendance_history, parent, false);
         return new AttendanceViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull AttendanceViewHolder holder, int position) {
         Attendance attendance = attendanceList.get(position);
-        holder.tvName.setText(attendance.getEmployeeName() != null ? attendance.getEmployeeName() : "No Name");
-        
-        String in = attendance.getCheckInTime() != null ? attendance.getCheckInTime() : "--:--";
-        String out = attendance.getCheckOutTime() != null ? attendance.getCheckOutTime() : "--:--";
+
+        // Date
+        String date = attendance.getDate() != null ? attendance.getDate() : "--/--/----";
+        holder.tvDate.setText(date);
+
+        // Check-in / Check-out times
+        String inTime = attendance.getCheckInTime() != null ? attendance.getCheckInTime() : "--:--";
+        String outTime = attendance.getCheckOutTime() != null ? attendance.getCheckOutTime() : "--:--";
+        holder.tvCheckIn.setText("Vào: " + inTime);
+        holder.tvCheckOut.setText("Ra: " + outTime);
+
+        // Status badge & icon color
         String status = attendance.getStatus();
-        
-        holder.tvDetails.setText("In: " + in + " | Out: " + out + " | " + status);
-        
-        if ("PRESENT".equalsIgnoreCase(status)) {
-            holder.tvDetails.setTextColor(Color.parseColor("#10B981")); // Green
+        if ("ON_TIME".equalsIgnoreCase(status)) {
+            holder.tvStatusBadge.setText("Đúng giờ");
+            holder.tvStatusBadge.setTextColor(Color.parseColor("#10B981"));
+            holder.tvStatusBadge.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#D1FAE5")));
+            holder.iconContainer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#D1FAE5")));
+            holder.ivStatusIcon.setColorFilter(Color.parseColor("#10B981"));
+            holder.ivStatusIcon.setImageResource(android.R.drawable.checkbox_on_background);
         } else if ("LATE".equalsIgnoreCase(status)) {
-            holder.tvDetails.setTextColor(Color.parseColor("#EF4444")); // Red
+            holder.tvStatusBadge.setText("Đi muộn");
+            holder.tvStatusBadge.setTextColor(Color.parseColor("#F59E0B"));
+            holder.tvStatusBadge.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#FEF3C7")));
+            holder.iconContainer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#FEF3C7")));
+            holder.ivStatusIcon.setColorFilter(Color.parseColor("#F59E0B"));
+            holder.ivStatusIcon.setImageResource(android.R.drawable.ic_dialog_alert);
         } else {
-            holder.tvDetails.setTextColor(Color.parseColor("#6B7280")); // Gray
+            holder.tvStatusBadge.setText("Vắng");
+            holder.tvStatusBadge.setTextColor(Color.parseColor("#EF4444"));
+            holder.tvStatusBadge.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#FEE2E2")));
+            holder.iconContainer.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#FEE2E2")));
+            holder.ivStatusIcon.setColorFilter(Color.parseColor("#EF4444"));
+            holder.ivStatusIcon.setImageResource(android.R.drawable.ic_delete);
         }
     }
 
@@ -62,15 +85,18 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.At
     }
 
     public static class AttendanceViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvDetails;
+        TextView tvDate, tvCheckIn, tvCheckOut, tvStatusBadge;
+        LinearLayout iconContainer;
+        ImageView ivStatusIcon;
 
         public AttendanceViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvName = itemView.findViewById(android.R.id.text1);
-            tvDetails = itemView.findViewById(android.R.id.text2);
-            tvName.setTextSize(16f);
-            tvName.setTypeface(null, android.graphics.Typeface.BOLD);
-            tvDetails.setTextSize(14f);
+            tvDate = itemView.findViewById(R.id.tvDate);
+            tvCheckIn = itemView.findViewById(R.id.tvCheckIn);
+            tvCheckOut = itemView.findViewById(R.id.tvCheckOut);
+            tvStatusBadge = itemView.findViewById(R.id.tvStatusBadge);
+            iconContainer = itemView.findViewById(R.id.iconContainer);
+            ivStatusIcon = itemView.findViewById(R.id.ivStatusIcon);
         }
     }
 }

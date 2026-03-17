@@ -62,10 +62,18 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
 
         // Status
         String status = request.getStatus();
+        String currentRole = com.example.myapplication.utils.SharedPrefsManager.getInstance(context).getRole();
+        
         if ("PENDING".equalsIgnoreCase(status)) {
             holder.tvRequestStatus.setText("Chờ duyệt");
             holder.tvRequestStatus.setTextColor(android.graphics.Color.parseColor("#D97706")); // Orange
-            holder.layoutActionButtons.setVisibility(View.VISIBLE);
+            
+            // Only show action buttons for Manager/Admin
+            if ("EMPLOYEE".equals(currentRole)) {
+                holder.layoutActionButtons.setVisibility(View.GONE);
+            } else {
+                holder.layoutActionButtons.setVisibility(View.VISIBLE);
+            }
         } else if ("APPROVED".equalsIgnoreCase(status)) {
             holder.tvRequestStatus.setText("Đã duyệt");
             holder.tvRequestStatus.setTextColor(android.graphics.Color.parseColor("#10B981")); // Green

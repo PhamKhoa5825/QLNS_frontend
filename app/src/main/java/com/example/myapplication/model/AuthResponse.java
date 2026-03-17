@@ -24,6 +24,9 @@ public class AuthResponse {
     @SerializedName("departmentId")
     private Long departmentId;
 
+    @SerializedName("employeeId")
+    private Long employeeId;
+
     public String getToken() { return token; }
     public Long getUserId() { return userId; }
     public String getUsername() { return username; }
@@ -31,4 +34,5 @@ public class AuthResponse {
     public String getRole() { return role; }
     public String getTokenType() { return tokenType; }
     public Long getDepartmentId() { return departmentId; }
+    public Long getEmployeeId() { return employeeId; }
 }

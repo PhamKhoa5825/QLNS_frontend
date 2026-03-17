@@ -28,6 +28,8 @@
         <activity android:name=".ui.TaskActivity" android:exported="false" />
         <activity android:name=".ui.TimekeepingActivity" android:exported="false" />
         <activity android:name=".ui.ChatActivity" android:exported="false" />
+        <activity android:name=".ui.MessageActivity" android:exported="false" />
+        <activity android:name=".ui.SelectEmployeeActivity" android:exported="false" />
         <activity android:name=".ui.NotificationActivity" android:exported="false" />
     </application>
 

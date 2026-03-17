@@ -39,7 +39,7 @@ public class EmployeeRepository {
     }
 
     public void getEmployeesByDepartment(Long deptId, RepositoryCallback<List<Employee>> callback) {
-        apiService.getEmployeesByDepartmentId(deptId).enqueue(new Callback<List<Employee>>() {
+        apiService.getEmployeesByDepartment(deptId).enqueue(new Callback<List<Employee>>() {
             @Override
             public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
                 if (response.isSuccessful() && response.body() != null) {

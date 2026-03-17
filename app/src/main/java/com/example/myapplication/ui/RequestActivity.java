@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.adapter.RequestAdapter;
+import com.example.myapplication.model.CreateRequestRequest;
 import com.example.myapplication.model.Request;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
@@ -36,17 +37,23 @@ public class RequestActivity extends AppCompatActivity {
     private TextView tabPending, tabApproved, tabRejected;
     private TextView tvStatPending, tvStatApproved, tvStatRejected;
     private ImageView btnBackRequest;
+    private com.google.android.material.floatingactionbutton.FloatingActionButton fabAddRequest;
     
     // Current manager's department
     private Long currentDeptId; 
+    private Long currentEmployeeId;
     private String currentStatusFilter = "PENDING";
+    private String userRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request);
 
-        currentDeptId = SharedPrefsManager.getInstance(this).getDepartmentId();
+        SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
+        currentDeptId = prefs.getDepartmentId();
+        currentEmployeeId = prefs.getEmployeeId();
+        userRole = prefs.getRole();
 
         initViews();
         setupRecyclerView();
@@ -68,6 +75,11 @@ public class RequestActivity extends AppCompatActivity {
         tvStatRejected = findViewById(R.id.tvStatRejected);
         
         btnBackRequest = findViewById(R.id.btnBackRequest);
+        fabAddRequest = findViewById(R.id.fabAddRequest);
+
+        if ("EMPLOYEE".equalsIgnoreCase(userRole)) {
+            fabAddRequest.setVisibility(android.view.View.VISIBLE);
+        }
     }
 
     private void setupRecyclerView() {
@@ -106,6 +118,8 @@ public class RequestActivity extends AppCompatActivity {
             updateTabUI(tabRejected);
             fetchRequests(currentStatusFilter);
         });
+
+        fabAddRequest.setOnClickListener(v -> showCreateRequestDialog());
     }
 
     private void updateTabUI(TextView selectedTab) {
@@ -123,13 +137,34 @@ public class RequestActivity extends AppCompatActivity {
 
     private void fetchRequests(String status) {
         ApiService apiService = RetrofitClient.getApiService(this);
-        Call<List<Request>> call = apiService.getRequestsByDepartmentAndStatus(currentDeptId, status);
+        
+        Call<List<Request>> call;
+        if ("ADMIN".equals(userRole)) {
+            call = apiService.getAllRequestsByStatus(status);
+        } else if ("MANAGER".equals(userRole)) {
+            call = apiService.getRequestsByDepartmentAndStatus(currentDeptId, status);
+        } else {
+            // EMPLOYEE
+            call = apiService.getMyRequests(currentEmployeeId);
+        }
         
         call.enqueue(new Callback<List<Request>>() {
             @Override
             public void onResponse(Call<List<Request>> call, Response<List<Request>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    requestList = response.body();
+                    List<Request> allMyRequests = response.body();
+                    if ("EMPLOYEE".equals(userRole)) {
+                        // Filter by status locally for employee if needed, but backend returns all orders?
+                        // Let's filter locally for consistency with UI tabs
+                        requestList = new ArrayList<>();
+                        for (Request r : allMyRequests) {
+                            if (status.equalsIgnoreCase(r.getStatus())) {
+                                requestList.add(r);
+                            }
+                        }
+                    } else {
+                        requestList = allMyRequests;
+                    }
                     adapter.setRequestList(requestList);
                 } else {
                     Toast.makeText(RequestActivity.this, "Failed to load requests", Toast.LENGTH_SHORT).show();
@@ -145,8 +180,36 @@ public class RequestActivity extends AppCompatActivity {
     
     private void fetchStatsForHeader() {
         ApiService apiService = RetrofitClient.getApiService(this);
+        
+        if ("EMPLOYEE".equals(userRole)) {
+            apiService.getMyRequests(currentEmployeeId).enqueue(new Callback<List<Request>>() {
+                @Override
+                public void onResponse(Call<List<Request>> call, Response<List<Request>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        int p = 0, a = 0, r = 0;
+                        for (Request req : response.body()) {
+                            if ("PENDING".equalsIgnoreCase(req.getStatus())) p++;
+                            else if ("APPROVED".equalsIgnoreCase(req.getStatus())) a++;
+                            else if ("REJECTED".equalsIgnoreCase(req.getStatus())) r++;
+                        }
+                        tvStatPending.setText(String.valueOf(p));
+                        tvStatApproved.setText(String.valueOf(a));
+                        tvStatRejected.setText(String.valueOf(r));
+                    }
+                }
+                @Override
+                public void onFailure(Call<List<Request>> call, Throwable t) {}
+            });
+            return;
+        }
+
+        boolean isAdmin = "ADMIN".equals(userRole);
+        
         // Pending
-        apiService.getRequestsByDepartmentAndStatus(currentDeptId, "PENDING").enqueue(new Callback<List<Request>>() {
+        Call<List<Request>> pendingCall = isAdmin 
+            ? apiService.getAllRequestsByStatus("PENDING")
+            : apiService.getRequestsByDepartmentAndStatus(currentDeptId, "PENDING");
+        pendingCall.enqueue(new Callback<List<Request>>() {
             @Override
             public void onResponse(Call<List<Request>> call, Response<List<Request>> response) {
                 if(response.isSuccessful() && response.body() != null) {
@@ -158,7 +221,10 @@ public class RequestActivity extends AppCompatActivity {
         });
         
         // Approved
-        apiService.getRequestsByDepartmentAndStatus(currentDeptId, "APPROVED").enqueue(new Callback<List<Request>>() {
+        Call<List<Request>> approvedCall = isAdmin 
+            ? apiService.getAllRequestsByStatus("APPROVED")
+            : apiService.getRequestsByDepartmentAndStatus(currentDeptId, "APPROVED");
+        approvedCall.enqueue(new Callback<List<Request>>() {
             @Override
             public void onResponse(Call<List<Request>> call, Response<List<Request>> response) {
                 if(response.isSuccessful() && response.body() != null) {
@@ -170,7 +236,10 @@ public class RequestActivity extends AppCompatActivity {
         });
         
         // Rejected
-        apiService.getRequestsByDepartmentAndStatus(currentDeptId, "REJECTED").enqueue(new Callback<List<Request>>() {
+        Call<List<Request>> rejectedCall = isAdmin 
+            ? apiService.getAllRequestsByStatus("REJECTED")
+            : apiService.getRequestsByDepartmentAndStatus(currentDeptId, "REJECTED");
+        rejectedCall.enqueue(new Callback<List<Request>>() {
             @Override
             public void onResponse(Call<List<Request>> call, Response<List<Request>> response) {
                 if(response.isSuccessful() && response.body() != null) {
@@ -225,6 +294,52 @@ public class RequestActivity extends AppCompatActivity {
             updateRequestStatus(request.getId(), "REJECTED"); // Ideally send comment too, but backend status endpoint only takes status string right now based on our recent fix
         });
         
+        dialog.show();
+    }
+
+    private void showCreateRequestDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_request_create);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        EditText edtTitle = dialog.findViewById(R.id.edtRequestTitle);
+        EditText edtDesc = dialog.findViewById(R.id.edtRequestDesc);
+        Button btnCancel = dialog.findViewById(R.id.btnRequestCancel);
+        Button btnSubmit = dialog.findViewById(R.id.btnRequestSubmit);
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        btnSubmit.setOnClickListener(v -> {
+            String title = edtTitle.getText().toString().trim();
+            String desc = edtDesc.getText().toString().trim();
+
+            if (title.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập tiêu đề", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            CreateRequestRequest req = new CreateRequestRequest(title, desc);
+            ApiService apiService = RetrofitClient.getApiService(this);
+            apiService.createRequest(currentEmployeeId, req).enqueue(new Callback<Request>() {
+                @Override
+                public void onResponse(Call<Request> call, Response<Request> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(RequestActivity.this, "Tạo đơn thành công", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                        fetchRequests(currentStatusFilter);
+                        fetchStatsForHeader();
+                    } else {
+                        Toast.makeText(RequestActivity.this, "Lỗi tạo đơn", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Request> call, Throwable t) {
+                    Toast.makeText(RequestActivity.this, "Lỗi mạng", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
         dialog.show();
     }
 }

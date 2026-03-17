@@ -29,13 +29,43 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // If already logged in, go straight to Dashboard
+        // If already logged in, validate the token first
         if (SharedPrefsManager.getInstance(this).isLoggedIn()) {
-            startActivity(new Intent(this, DashboardActivity.class));
-            finish();
+            validateTokenAndProceed();
             return;
         }
         
+        showLoginScreen();
+    }
+
+    private void validateTokenAndProceed() {
+        ApiService apiService = RetrofitClient.getApiService(this);
+        apiService.validateToken().enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    // Token is valid, go to Dashboard
+                    startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                    finish();
+                } else {
+                    // Token is invalid/expired, force re-login
+                    SharedPrefsManager.getInstance(LoginActivity.this).logout();
+                    showLoginScreen();
+                    Toast.makeText(LoginActivity.this, "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                // Network error - can't validate. Try to proceed anyway since 
+                // the backend might just be starting up
+                startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                finish();
+            }
+        });
+    }
+
+    private void showLoginScreen() {
         setContentView(R.layout.activity_login);
 
         edtEmail = findViewById(R.id.edtEmail);
@@ -71,9 +101,14 @@ public class LoginActivity extends AppCompatActivity {
                             authResponse.getRole()
                     );
                     
-                    // Save department ID from login response (real value for managers)
+                    // Save department ID from login response
                     if (authResponse.getDepartmentId() != null) {
                         SharedPrefsManager.getInstance(LoginActivity.this).setDepartmentId(authResponse.getDepartmentId());
+                    }
+                    
+                    // Save employee ID from login response
+                    if (authResponse.getEmployeeId() != null) {
+                        SharedPrefsManager.getInstance(LoginActivity.this).setEmployeeId(authResponse.getEmployeeId());
                     }
                     
                     Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();

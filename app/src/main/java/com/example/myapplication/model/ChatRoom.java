@@ -15,6 +15,12 @@ public class ChatRoom {
     @SerializedName("departmentId")
     private Long departmentId;
 
+    @SerializedName("memberNames")
+    private java.util.List<String> memberNames;
+
+    @SerializedName("otherParticipantName")
+    private String otherParticipantName;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -26,4 +32,10 @@ public class ChatRoom {
 
     public Long getDepartmentId() { return departmentId; }
     public void setDepartmentId(Long departmentId) { this.departmentId = departmentId; }
+
+    public java.util.List<String> getMemberNames() { return memberNames; }
+    public void setMemberNames(java.util.List<String> memberNames) { this.memberNames = memberNames; }
+
+    public String getOtherParticipantName() { return otherParticipantName; }
+    public void setOtherParticipantName(String otherParticipantName) { this.otherParticipantName = otherParticipantName; }
 }
