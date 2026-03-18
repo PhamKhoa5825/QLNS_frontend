@@ -1,9 +1,13 @@
 package com.example.myapplication.ui;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
@@ -36,7 +40,21 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
         setContentView(R.layout.activity_task);
+
+        // Đẩy header xuống bằng chiều cao status bar
+        View header = findViewById(R.id.headerTaskLayout);
+        ViewCompat.setOnApplyWindowInsetsListener(header, (v, insets) -> {
+            int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            v.setPadding(v.getPaddingLeft(), statusBarHeight,
+                    v.getPaddingRight(), v.getPaddingBottom());
+            return insets;
+        });
 
         prefs      = getSharedPreferences("qlns_pref", MODE_PRIVATE);
         employeeId = prefs.getLong("employeeId", -1);

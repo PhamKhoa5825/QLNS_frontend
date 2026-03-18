@@ -12,6 +12,8 @@
         android:id="@+id/headerBg"
         android:layout_width="match_parent"
         android:layout_height="180dp"
+        android:clickable="false"
+        android:focusable="false"
         android:background="@drawable/bg_header_rounded_bottom"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="0dp" />

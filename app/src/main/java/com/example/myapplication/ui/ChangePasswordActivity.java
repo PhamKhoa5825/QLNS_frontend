@@ -1,10 +1,14 @@
 package com.example.myapplication.ui;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import com.example.myapplication.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -25,7 +29,21 @@ public class ChangePasswordActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
         setContentView(R.layout.activity_change_password);
+
+        View headerBar = findViewById(R.id.headerBar);
+        ViewCompat.setOnApplyWindowInsetsListener(headerBar, (v, insets) -> {
+            int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            int dp48 = (int) (48 * getResources().getDisplayMetrics().density);
+            v.setPadding(v.getPaddingLeft(), dp48 + statusBarHeight,
+                    v.getPaddingRight(), v.getPaddingBottom());
+            return insets;
+        });
 
         initViews();
         setupListeners();

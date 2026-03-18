@@ -2,10 +2,14 @@ package com.example.myapplication.ui;
 
 import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import com.example.myapplication.R;
 import com.example.myapplication.model.RequestModels;
 import com.example.myapplication.network.ApiService;
@@ -34,7 +38,24 @@ public class LeaveApplicationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
         setContentView(R.layout.activity_leave_application);
+
+        // Đẩy btnBack xuống bằng chiều cao status bar
+        View back = findViewById(R.id.btnBack);
+        ViewCompat.setOnApplyWindowInsetsListener(back, (v, insets) -> {
+            int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            int dp16 = (int) (16 * getResources().getDisplayMetrics().density);
+            ConstraintLayout.LayoutParams params =
+                    (ConstraintLayout.LayoutParams) v.getLayoutParams();
+            params.topMargin = dp16 + statusBarHeight;
+            v.setLayoutParams(params);
+            return insets;
+        });
 
         prefs      = getSharedPreferences("qlns_pref", MODE_PRIVATE);
         employeeId = prefs.getLong("employeeId", -1);

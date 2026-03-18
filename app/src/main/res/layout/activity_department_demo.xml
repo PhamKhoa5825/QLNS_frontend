@@ -7,6 +7,7 @@
     android:background="#FBF8FF">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#A855F7"
@@ -19,31 +20,31 @@
             app:contentInsetStart="0dp">
 
             <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
 
-            <ImageView
-                android:id="@+id/btnBackDept"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="@drawable/bg_input"
-                android:backgroundTint="#B026FF"
-                android:padding="6dp"
-                android:src="@android:drawable/ic_menu_revert"
-                app:tint="@color/white" />
+                <ImageView
+                    android:id="@+id/btnBackDept"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_input"
+                    android:backgroundTint="#B026FF"
+                    android:padding="6dp"
+                    android:src="@android:drawable/ic_menu_revert"
+                    app:tint="@color/white" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Quản lý phòng ban"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="Quản lý phòng ban"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
         </com.google.android.material.appbar.MaterialToolbar>
 

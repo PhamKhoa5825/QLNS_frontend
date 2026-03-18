@@ -9,6 +9,8 @@
     <!-- Blue Header Background with Rounded Bottom -->
     <View
         android:id="@+id/headerBackground"
+        android:clickable="false"
+        android:focusable="false"
         android:layout_width="match_parent"
         android:layout_height="240dp"
         android:background="@drawable/bg_home_header"
@@ -17,6 +19,9 @@
     <!-- Back Button -->
     <ImageView
         android:id="@+id/btnBack"
+        android:clickable="true"
+        android:focusable="true"
+        android:elevation="8dp"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
@@ -44,6 +49,7 @@
     <!-- Mark All Read -->
     <LinearLayout
         android:id="@+id/btnMarkAllRead"
+        android:elevation="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"

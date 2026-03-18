@@ -11,6 +11,8 @@
         android:id="@+id/headerBackground"
         android:layout_width="match_parent"
         android:layout_height="180dp"
+        android:clickable="false"
+        android:focusable="false"
         android:background="@drawable/bg_leave_header"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -5,9 +5,12 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import com.example.myapplication.R;
 import com.google.android.material.button.MaterialButton;
 
@@ -22,7 +25,22 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
         setContentView(R.layout.activity_profile);
+
+        // Đẩy headerContent xuống bằng chiều cao status bar
+        View headerContent = findViewById(R.id.headerContent);
+        ViewCompat.setOnApplyWindowInsetsListener(headerContent, (v, insets) -> {
+            int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            int dp48 = (int) (48 * getResources().getDisplayMetrics().density);
+            v.setPadding(v.getPaddingLeft(), dp48 + statusBarHeight,
+                    v.getPaddingRight(), v.getPaddingBottom());
+            return insets;
+        });
 
         prefs = getSharedPreferences("qlns_pref", MODE_PRIVATE);
 
@@ -92,10 +110,12 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void doLogout() {
-        // Xóa toàn bộ SharedPreferences
-        prefs.edit().clear().apply();
+        String savedEmail = prefs.getString("saved_username", null);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        if (savedEmail != null) editor.putString("saved_username", savedEmail);
+        editor.apply();
 
-        // Về LoginActivity, xóa back stack
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

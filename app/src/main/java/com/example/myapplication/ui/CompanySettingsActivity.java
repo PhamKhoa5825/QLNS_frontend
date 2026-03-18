@@ -11,8 +11,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import com.example.myapplication.R;
 import com.example.myapplication.model.AdminModels;
 import com.example.myapplication.network.ApiService;
@@ -65,7 +68,24 @@ public class CompanySettingsActivity extends AppCompatActivity implements OnMapR
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
         setContentView(R.layout.activity_company_setting);
+
+        // Đẩy topBar xuống bằng chiều cao status bar
+        View topBar = findViewById(R.id.topBar);
+        ViewCompat.setOnApplyWindowInsetsListener(topBar, (v, insets) -> {
+            int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            int dp16 = (int) (16 * getResources().getDisplayMetrics().density);
+            ConstraintLayout.LayoutParams params =
+                    (ConstraintLayout.LayoutParams) v.getLayoutParams();
+            params.topMargin = dp16 + statusBarHeight;
+            v.setLayoutParams(params);
+            return insets;
+        });
 
         apiService = RetrofitClient.getClient().create(ApiService.class);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);

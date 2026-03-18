@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         cbRemember  = findViewById(R.id.cbRemember);
         btnLogin    = findViewById(R.id.btnLogin);
 
-        String savedUsername = prefs.getString("saved_email", "");
+        String savedUsername = prefs.getString("saved_username", "");
         if (!savedUsername.isEmpty()) {
             edtUsername.setText(savedUsername);
             cbRemember.setChecked(true);
@@ -83,9 +83,9 @@ public class LoginActivity extends AppCompatActivity {
                             editor.putString("avatarUrl",  auth.avatarUrl);
 
                             if (cbRemember.isChecked()) {
-                                editor.putString("saved_email", username);
+                                editor.putString("saved_username", username);
                             } else {
-                                editor.remove("saved_email");
+                                editor.remove("saved_username");
                             }
                             editor.apply();
 
