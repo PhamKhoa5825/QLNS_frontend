@@ -53,7 +53,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     private String formatTime(String iso) {
         if (iso == null) return "";
-        try { return iso.substring(11, 16); } catch (Exception e) { return iso; }
+        try {
+            return iso.length() >= 16 ? iso.substring(11, 16) : iso;
+        } catch (Exception e) { return iso; }
     }
 
     @Override public int getItemCount() { return list.size(); }

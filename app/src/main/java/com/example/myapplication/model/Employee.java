@@ -67,8 +67,14 @@ public class Employee {
     // Adapter cũ dùng getAvatarText() → lấy chữ cái đầu
     public String getAvatarText() {
         if (fullName != null && !fullName.isEmpty()) {
-            String[] parts = fullName.trim().split(" ");
-            return String.valueOf(parts[parts.length - 1].charAt(0)).toUpperCase();
+            String trimmed = fullName.trim();
+            if (!trimmed.isEmpty()) {
+                String[] parts = trimmed.split(" ");
+                String lastWord = parts[parts.length - 1];
+                if (!lastWord.isEmpty()) {
+                    return String.valueOf(lastWord.charAt(0)).toUpperCase();
+                }
+            }
         }
         return "?";
     }

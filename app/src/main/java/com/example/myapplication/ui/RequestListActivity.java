@@ -199,8 +199,15 @@ public class RequestListActivity extends AppCompatActivity {
 
             // Avatar chữ cái đầu
             if (req.employeeName != null && !req.employeeName.isEmpty()) {
-                String[] parts = req.employeeName.trim().split(" ");
-                h.tvAvatar.setText(String.valueOf(parts[parts.length - 1].charAt(0)).toUpperCase());
+                String trimmed = req.employeeName.trim();
+                if (!trimmed.isEmpty()) {
+                    String[] parts = trimmed.split(" ");
+                    String lastWord = parts[parts.length - 1];
+                    h.tvAvatar.setText(!lastWord.isEmpty()
+                            ? String.valueOf(lastWord.charAt(0)).toUpperCase() : "?");
+                } else {
+                    h.tvAvatar.setText("?");
+                }
             } else { h.tvAvatar.setText("?"); }
 
             h.tvEmployeeName.setText(req.employeeName != null ? req.employeeName : "");
@@ -239,14 +246,24 @@ public class RequestListActivity extends AppCompatActivity {
         }
 
         private void setBadge(TextView tv, String text, String color) {
-            tv.setText(text); tv.setTextColor(Color.WHITE);
-            tv.setBackgroundResource(R.drawable.bg_status_working);
-            tv.getBackground().setTint(Color.parseColor(color));
+            tv.setText(text);
+            tv.setTextColor(Color.WHITE);
+            android.graphics.drawable.GradientDrawable gd = new android.graphics.drawable.GradientDrawable();
+            gd.setColor(Color.parseColor(color));
+            gd.setCornerRadius(40f);
+            tv.setPadding(24, 8, 24, 8);
+            tv.setBackground(gd);
         }
 
         private String formatDate(String iso) {
             if (iso == null) return "";
-            try { return iso.substring(8, 10) + "/" + iso.substring(5, 7) + " " + iso.substring(11, 16); }
+            try {
+                String datePart = iso.length() >= 10
+                        ? iso.substring(8, 10) + "/" + iso.substring(5, 7) : iso;
+                String timePart = iso.length() >= 16
+                        ? " " + iso.substring(11, 16) : "";
+                return datePart + timePart;
+                }
             catch (Exception e) { return iso; }
         }
 

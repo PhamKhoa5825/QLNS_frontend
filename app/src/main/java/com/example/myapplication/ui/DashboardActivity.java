@@ -84,9 +84,17 @@ public class DashboardActivity extends AppCompatActivity {
         TextView tvAvatar   = findViewById(R.id.tvAvatar);
         tvUserName.setText(fullName);
         if (fullName != null && !fullName.isEmpty()) {
-            String[] parts = fullName.trim().split(" ");
-            tvAvatar.setText(String.valueOf(parts[parts.length - 1].charAt(0)).toUpperCase());
+            String trimmed = fullName.trim();
+            if (!trimmed.isEmpty()) {
+                String[] parts = trimmed.split(" ");
+                String lastWord = parts[parts.length - 1];
+                tvAvatar.setText(!lastWord.isEmpty()
+                        ? String.valueOf(lastWord.charAt(0)).toUpperCase() : "?");
+            } else {
+                tvAvatar.setText("?");
+            }
         }
+
     }
 
     private void setupDateTime() {

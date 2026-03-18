@@ -90,6 +90,11 @@ public class NotificationCenterActivity extends AppCompatActivity {
             return;
         }
 
+        if (employeeId == -1) {
+            Toast.makeText(this, "Chưa có employeeId, vui lòng đăng nhập lại", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // departmentId chưa có → gọi API lấy employee info
         apiService.getEmployeeById(employeeId).enqueue(new Callback<Employee>() {
             @Override
@@ -100,19 +105,21 @@ public class NotificationCenterActivity extends AppCompatActivity {
                         prefs.edit().putLong("departmentId", deptId).apply();
                         loadNotifications(deptId);
                     } else {
-                        Toast.makeText(NotificationCenterActivity.this,
-                                "Không tìm thấy phòng ban", Toast.LENGTH_SHORT).show();
+                        // Employee chưa được gán phòng ban → load thông báo COMPANY
+                        loadNotifications(0L);
                     }
                 } else {
+                    // DEBUG: hiện ID đang dùng để biết sai ở đâu
                     Toast.makeText(NotificationCenterActivity.this,
-                            "Lỗi lấy thông tin nhân viên: " + response.code(), Toast.LENGTH_SHORT).show();
+                            "Lỗi " + response.code() + " khi lấy NV (employeeId=" + employeeId + ")",
+                            Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Employee> call, Throwable t) {
                 Toast.makeText(NotificationCenterActivity.this,
-                        "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                        "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
