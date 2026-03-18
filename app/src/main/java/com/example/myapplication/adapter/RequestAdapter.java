@@ -99,7 +99,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
             return "--";
         }
 
-        return String.format(Locale.getDefault(), "EMP%03d", employeeId);
+        return String.format(Locale.getDefault(), "ID: %03d", employeeId);
     }
 
     private boolean canEditOrDelete(String status) {
@@ -111,15 +111,15 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
         String normalized = status == null ? "" : status.trim().toUpperCase(Locale.ROOT);
 
         if (normalized.equals("APPROVED") || normalized.equals("DA_DUYET") || normalized.equals("DADUYET")) {
-            chip.setText("Da duyet");
+            chip.setText("Đã duyệt");
             chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#DCFCE7")));
             chip.setTextColor(Color.parseColor("#15803D"));
         } else if (normalized.equals("REJECTED") || normalized.equals("TU_CHOI") || normalized.equals("TUCHOI")) {
-            chip.setText("Tu choi");
+            chip.setText("Từ chối");
             chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#FEE2E2")));
             chip.setTextColor(Color.parseColor("#B91C1C"));
         } else {
-            chip.setText("Cho duyet");
+            chip.setText("Chờ duyệt");
             chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#FEF3C7")));
             chip.setTextColor(Color.parseColor("#B45309"));
         }

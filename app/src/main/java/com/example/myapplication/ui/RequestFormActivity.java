@@ -121,8 +121,8 @@ public class RequestFormActivity extends AppCompatActivity {
             edtDescription.setText(description);
         }
 
-        tvTitle.setText("Cap nhat don tu");
-        btnSubmit.setText("Cap nhat don");
+        tvTitle.setText("Cập nhật đơn từ");
+        btnSubmit.setText("Cập nhật đơn");
     }
 
     private void validateAndSubmit() {
@@ -162,7 +162,7 @@ public class RequestFormActivity extends AppCompatActivity {
 
         viewModel.submitSuccess.observe(this, success -> {
             if (Boolean.TRUE.equals(success)) {
-                String message = isEditMode ? "Cap nhat don thanh cong" : "Da gui don thanh cong";
+                String message = isEditMode ? "Cập nhật đơn thành công" : "Đã gửi đơn thành công";
                 if (selectedAttachmentUri != null && !isEditMode) {
                     message = "Da gui don thanh cong. API hien tai chua luu tep dinh kem.";
                 }

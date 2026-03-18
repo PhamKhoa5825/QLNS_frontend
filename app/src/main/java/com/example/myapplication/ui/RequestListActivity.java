@@ -128,7 +128,7 @@ public class RequestListActivity extends AppCompatActivity implements RequestAda
 
         viewModel.deleteSuccess.observe(this, success -> {
             if (Boolean.TRUE.equals(success)) {
-                Toast.makeText(this, "Da xoa don", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Đã xoá đơn", Toast.LENGTH_SHORT).show();
                 viewModel.clearDeleteSuccessEvent();
                 loadRequests();
             }
@@ -173,10 +173,10 @@ public class RequestListActivity extends AppCompatActivity implements RequestAda
         }
 
         new AlertDialog.Builder(this)
-                .setTitle("Xoa don")
+                .setTitle("Xoá đơn")
                 .setMessage("Bạn có chắc chắn muốn xoá đơn này?")
-                .setNegativeButton("Khong", null)
-                .setPositiveButton("Xoa", (dialog, which) -> deleteRequest(requestId))
+                .setNegativeButton("Không", null)
+                .setPositiveButton("Xoá", (dialog, which) -> deleteRequest(requestId))
                 .show();
     }
 
