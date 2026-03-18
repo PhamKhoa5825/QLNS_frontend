@@ -2,14 +2,21 @@ package com.example.myapplication.network;
 
 import com.example.myapplication.model.*;
 
-import retrofit2.Call;
-import retrofit2.http.*;
 import java.util.List;
 import java.util.Map;
 
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.DELETE;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+
 public interface ApiService {
 
-    // ── AUTH ─────────────────────────────────────
+    // AUTH
     @POST("api/auth/login")
     Call<AuthenticationResponse> login(@Body AuthenticationRequest request);
 
@@ -22,13 +29,7 @@ public interface ApiService {
     @GET("api/employees/{id}/summary")
     Call<EmployeeSummary> getEmployeeSummary(@Path("id") Long id);
 
-    @POST("api/requests/employee/{empId}")
-    Call<Void> createRequest(
-            @Path("empId") Long empId,
-            @Body CreateRequestRequest request
-    );
-
-    // ── ATTENDANCE ───────────────────────────────
+    // ATTENDANCE
     @POST("api/attendance/checkin")
     Call<Attendance> checkIn(@Body Map<String, Object> data);
 
@@ -52,7 +53,7 @@ public interface ApiService {
             @Query("year") int year
     );
 
-    // ── DEPARTMENT (TV1) ────────────────────────
+    // DEPARTMENT
     @GET("api/departments")
     Call<List<Department>> getDepartments();
 
@@ -71,7 +72,7 @@ public interface ApiService {
     @DELETE("api/departments/{id}")
     Call<Void> deleteDepartment(@Path("id") Long id);
 
-    // ── EMPLOYEE ───────────────────────────
+    // EMPLOYEE
     @GET("api/employees")
     Call<List<Employee>> getEmployees();
 
@@ -96,7 +97,7 @@ public interface ApiService {
     @PUT("api/employees/{id}/resign")
     Call<Void> resignEmployee(@Path("id") Long id);
 
-    // ── CHAT ─────────────────────────────────────
+    // CHAT
     @GET("api/chat/rooms/user/{userId}")
     Call<List<ChatRoom>> getChatRooms(@Path("userId") Long userId);
 
@@ -112,7 +113,7 @@ public interface ApiService {
     @POST("api/chat/messages")
     Call<Message> sendMessage(@Body SendMessageRequest request);
 
-    // ── TASKS ────────────────────────────────────
+    // TASKS
     @GET("api/tasks/my/{empId}")
     Call<List<Task>> getMyTasks(@Path("empId") Long empId);
 
@@ -124,12 +125,35 @@ public interface ApiService {
     );
 
     @PUT("api/tasks/{id}/accept")
-    Call<Task> acceptTask(@Path("id") Long id, @Body java.util.Map<String, Long> body);
+    Call<Task> acceptTask(@Path("id") Long id, @Body Map<String, Long> body);
 
-    // ── NOTIFICATIONS ────────────────────────────
+    // NOTIFICATIONS
     @GET("api/notifications/department/{deptId}")
     Call<List<Notification>> getNotifications(@Path("deptId") Long deptId, @Query("userId") Long userId);
 
     @PUT("api/notifications/{id}/read")
     Call<Void> markNotificationAsRead(@Path("id") Long id, @Query("userId") Long userId);
+
+    // REQUEST
+    @GET("api/requests/employee/{empId}")
+    Call<List<Request>> getMyRequests(@Path("empId") Long empId);
+
+    @POST("api/requests/employee/{empId}")
+    Call<Request> createRequest(
+            @Path("empId") Long empId,
+            @Body CreateRequestRequest request
+    );
+
+    @PUT("api/requests/{id}/employee/{empId}")
+    Call<Request> updateRequest(
+            @Path("id") Long requestId,
+            @Path("empId") Long empId,
+            @Body CreateRequestRequest request
+    );
+
+    @DELETE("api/requests/{id}/employee/{empId}")
+    Call<Void> cancelRequest(
+            @Path("id") Long requestId,
+            @Path("empId") Long empId
+    );
 }

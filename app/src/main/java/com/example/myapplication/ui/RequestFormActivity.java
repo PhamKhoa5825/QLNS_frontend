@@ -15,29 +15,30 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.CreateRequestRequest;
-import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.viewmodel.RequestViewModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.io.IOException;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class RequestFormActivity extends AppCompatActivity {
+
+    private static final String EXTRA_EMP_ID = "empId";
+    private static final String EXTRA_REQUEST_ID = "requestId";
+    private static final String EXTRA_REQUEST_TITLE = "requestTitle";
+    private static final String EXTRA_REQUEST_DESCRIPTION = "requestDescription";
 
     private TextInputEditText edtTitle;
     private TextInputEditText edtDescription;
     private TextView tvSelectedFile;
     private MaterialButton btnSubmit;
     private Uri selectedAttachmentUri;
-    private ApiService apiService;
+    private RequestViewModel viewModel;
     private long employeeId;
+    private long requestId = -1L;
+    private boolean isEditMode = false;
 
     private ActivityResultLauncher<String[]> filePickerLauncher;
 
@@ -54,9 +55,13 @@ public class RequestFormActivity extends AppCompatActivity {
         ImageButton btnBack = findViewById(R.id.btnBack);
         LinearLayout layoutAttachmentPicker = findViewById(R.id.layoutAttachmentPicker);
         tvSelectedFile = findViewById(R.id.tvSelectedFile);
+        TextView tvTitle = findViewById(R.id.tvTitle);
 
-        apiService = RetrofitClient.getApiService();
+        viewModel = new ViewModelProvider(this).get(RequestViewModel.class);
+
         employeeId = resolveEmployeeId();
+        configureFormMode(tvTitle);
+        observeViewModel();
 
         filePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.OpenDocument(),
@@ -98,6 +103,28 @@ public class RequestFormActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(v -> validateAndSubmit());
     }
 
+    private void configureFormMode(TextView tvTitle) {
+        requestId = getIntent().getLongExtra(EXTRA_REQUEST_ID, -1L);
+        isEditMode = requestId > 0;
+
+        if (!isEditMode) {
+            return;
+        }
+
+        String title = getIntent().getStringExtra(EXTRA_REQUEST_TITLE);
+        String description = getIntent().getStringExtra(EXTRA_REQUEST_DESCRIPTION);
+
+        if (title != null) {
+            edtTitle.setText(title);
+        }
+        if (description != null) {
+            edtDescription.setText(description);
+        }
+
+        tvTitle.setText("Cap nhat don tu");
+        btnSubmit.setText("Cap nhat don");
+    }
+
     private void validateAndSubmit() {
         String title = edtTitle.getText() != null ? edtTitle.getText().toString().trim() : "";
         String desc = edtDescription.getText() != null ? edtDescription.getText().toString().trim() : "";
@@ -123,76 +150,52 @@ public class RequestFormActivity extends AppCompatActivity {
         submitRequest(title, desc);
     }
 
+    private void observeViewModel() {
+        viewModel.isLoading.observe(this, isLoading -> btnSubmit.setEnabled(!Boolean.TRUE.equals(isLoading)));
+
+        viewModel.errorMessage.observe(this, message -> {
+            if (message != null && !message.trim().isEmpty()) {
+                Toast.makeText(RequestFormActivity.this, message, Toast.LENGTH_LONG).show();
+                viewModel.clearError();
+            }
+        });
+
+        viewModel.submitSuccess.observe(this, success -> {
+            if (Boolean.TRUE.equals(success)) {
+                String message = isEditMode ? "Cap nhat don thanh cong" : "Da gui don thanh cong";
+                if (selectedAttachmentUri != null && !isEditMode) {
+                    message = "Da gui don thanh cong. API hien tai chua luu tep dinh kem.";
+                }
+                Toast.makeText(RequestFormActivity.this, message, Toast.LENGTH_LONG).show();
+                viewModel.clearSubmitSuccessEvent();
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
+    }
+
     private long resolveEmployeeId() {
-        long intentEmployeeId = getIntent().getLongExtra("empId", -1L);
+        long intentEmployeeId = getIntent().getLongExtra(EXTRA_EMP_ID, -1L);
         if (intentEmployeeId > 0) {
             return intentEmployeeId;
         }
 
         SharedPreferences prefs = getSharedPreferences("qlns_pref", Context.MODE_PRIVATE);
+        long storedEmployeeId = prefs.getLong("employeeId", -1L);
+        if (storedEmployeeId > 0) {
+            return storedEmployeeId;
+        }
+
         return prefs.getLong("userId", -1L);
     }
 
     private void submitRequest(String title, String description) {
-        btnSubmit.setEnabled(false);
-
-        CreateRequestRequest request = new CreateRequestRequest(title, description);
-
-        apiService.createRequest(employeeId, request)
-                .enqueue(new Callback<>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        btnSubmit.setEnabled(true);
-
-                        if (response.isSuccessful()) {
-                            if (selectedAttachmentUri != null) {
-                                Toast.makeText(
-                                        RequestFormActivity.this,
-                                        "Đã gửi đơn thành công. API hiện tại chưa lưu tệp đính kèm.",
-                                        Toast.LENGTH_LONG
-                                ).show();
-                            } else {
-                                Toast.makeText(RequestFormActivity.this, "Đã gửi đơn thành công", Toast.LENGTH_SHORT).show();
-                            }
-                            finish();
-                            return;
-                        }
-
-                        Toast.makeText(
-                                RequestFormActivity.this,
-                                getErrorMessage(response),
-                                Toast.LENGTH_LONG
-                        ).show();
-                    }
-
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        btnSubmit.setEnabled(true);
-                        String message = t.getMessage() == null || t.getMessage().trim().isEmpty()
-                                ? "Không thể kết nối tới máy chủ"
-                                : t.getMessage();
-                        Toast.makeText(
-                                RequestFormActivity.this,
-                                "Gửi đơn thất bại: " + message,
-                                Toast.LENGTH_LONG
-                        ).show();
-                    }
-                });
-    }
-
-    private String getErrorMessage(Response<Void> response) {
-        try (okhttp3.ResponseBody errorBody = response.errorBody()) {
-            if (errorBody != null) {
-                String errorText = errorBody.string();
-                if (!errorText.trim().isEmpty()) {
-                    return "Gửi đơn thất bại: " + errorText;
-                }
-            }
-        } catch (IOException ignored) {
-            // Fallback to status code below.
+        if (isEditMode && requestId <= 0) {
+            Toast.makeText(this, "Don khong hop le", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        return "Gửi đơn thất bại: " + response.code();
+        viewModel.submitRequest(employeeId, isEditMode ? requestId : null, title, description, isEditMode);
     }
 
     private String getFileName(Uri uri) {

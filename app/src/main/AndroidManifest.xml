@@ -40,6 +40,7 @@
         <activity android:name=".ui.AttendanceHistoryActivity" android:exported="false" />
         <activity android:name=".ui.ForgotPasswordRequestActivity" android:exported="false" />
         <activity android:name=".ui.RequestFormActivity" android:exported="false" />
+        <activity android:name=".ui.RequestListActivity" android:exported="false" />
         <activity android:name=".ui.ChatActivity" android:exported="false" />
         <activity android:name=".ui.MessageActivity" android:exported="false" />
         <activity android:name=".ui.SelectEmployeeActivity" android:exported="false" />

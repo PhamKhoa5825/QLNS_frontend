@@ -164,8 +164,8 @@ public class HomeEmployeeActivity extends AppCompatActivity {
         ViewGroup menuGrid = findViewById(R.id.menuGrid);
         if (menuGrid != null) {
             // Xin nghỉ phép (Card 1)
-            menuGrid.getChildAt(0).setOnClickListener(v -> startActivity(new Intent(this, RequestFormActivity.class)));
-            
+            menuGrid.getChildAt(0).setOnClickListener(v -> startActivity(new Intent(this, RequestListActivity.class)));
+
             // Lịch sử điểm danh (Card 2)
             menuGrid.getChildAt(1).setOnClickListener(v -> {
                 Intent intent = new Intent(this, AttendanceHistoryActivity.class);
