@@ -91,14 +91,14 @@
                         android:id="@+id/rgTarget"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
+                        android:orientation="vertical"
                         android:layout_marginBottom="12dp">
 
                         <RadioButton
                             android:id="@+id/rbCompany"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+
                             android:checked="true"
                             android:text="Toàn công ty"
                             android:textSize="14sp"
@@ -106,13 +106,22 @@
 
                         <RadioButton
                             android:id="@+id/rbDepartment"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+
                             android:text="Theo phòng ban"
                             android:textSize="14sp"
                             android:buttonTint="#EF4444" />
 
+
+                        <RadioButton
+                            android:id="@+id/rbEmployee"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+                            android:text="Nhân viên"
+                            android:textSize="14sp"
+                            android:buttonTint="#EF4444" />
                     </RadioGroup>
 
                     <!-- Chọn phòng ban (ẩn mặc định) -->
@@ -134,6 +143,85 @@
                         android:paddingHorizontal="12dp"
                         android:layout_marginBottom="8dp"
                         android:visibility="gone" />
+
+                    <!-- Chọn nhân viên (ẩn mặc định) - AutoComplete tìm kiếm -->
+                    <TextView
+                        android:id="@+id/tvEmpLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tìm nhân viên"
+                        android:textColor="@color/textColorSecondary"
+                        android:textSize="13sp"
+                        android:layout_marginBottom="6dp"
+                        android:visibility="gone" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilEmployee"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:hint="Gõ tên để tìm kiếm..."
+                        app:endIconMode="dropdown_menu"
+                        android:visibility="gone">
+                        <AutoCompleteTextView
+                            android:id="@+id/actvEmployee"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"
+                            android:completionThreshold="1" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Thông tin NV đã chọn -->
+                    <LinearLayout
+                        android:id="@+id/layoutSelectedEmployee"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="12dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/bg_search_bar"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tvSelectedAvatar"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_avatar_circle"
+                            android:gravity="center"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tvSelectedName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/textColorPrimary"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:id="@+id/tvSelectedInfo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/textColorSecondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/btnClearEmployee"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_close"
+                            android:background="?attr/selectableItemBackgroundBorderless" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

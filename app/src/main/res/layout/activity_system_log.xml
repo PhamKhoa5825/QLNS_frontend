@@ -19,7 +19,8 @@
             app:navigationIcon="@android:drawable/ic_menu_revert"
             app:navigationIconTint="@color/white"
             app:title="Nhật ký hệ thống"
-            app:titleTextColor="@color/white" />
+            app:titleTextColor="@color/white"
+            app:menu="@menu/menu_system_log" />
 
         <!-- Chip filter theo action -->
         <HorizontalScrollView
@@ -39,6 +40,17 @@
         </HorizontalScrollView>
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Empty state -->
+    <TextView
+        android:id="@+id/tvEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Không có nhật ký nào"
+        android:textColor="#9CA3AF"
+        android:textSize="15sp"
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/progressBar"

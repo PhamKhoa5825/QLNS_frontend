@@ -141,6 +141,11 @@ public interface ApiService {
     @DELETE("api/notifications/{id}")
     Call<Void> deleteNotification(@Path("id") Long id);
 
+    @PUT("api/notifications/{id}")
+    Call<NotificationModels.NotificationResponse> updateNotification(
+            @Path("id") Long id,
+            @Body NotificationModels.UpdateNotificationRequest req);
+
     @GET("api/notifications/unread-count")
     Call<Long> getUnreadCount(@Query("userId") Long userId);
 
@@ -159,4 +164,7 @@ public interface ApiService {
     @GET("api/admin/logs/filter")
     Call<List<AdminModels.SystemLogResponse>> filterLogsByAction(
             @Query("action") String action);
+
+    // Dùng cho autocomplete trong filter dialog (nhân viên, phòng ban, chức vụ)
+    // Reuse getEmployees() ở trên — trong SystemLogActivity sẽ map Employee → thông tin cần thiết
 }

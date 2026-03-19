@@ -32,5 +32,15 @@ public class AdminModels {
         public String action;
         public String description;
         public String createdAt;
+        public String department;   // Phòng ban (trả từ backend)
+        public String position;     // Chức vụ (trả từ backend)
+    }
+
+    /** Dùng cho autocomplete trong filter dialog */
+    public static class EmployeeResponse {
+        public Long id;
+        public String fullName;
+        public String departmentName;
+        public String position;
     }
 }
