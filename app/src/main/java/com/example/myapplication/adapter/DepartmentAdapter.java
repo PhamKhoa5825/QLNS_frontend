@@ -44,7 +44,7 @@ public class DepartmentAdapter extends RecyclerView.Adapter<DepartmentAdapter.Vi
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_department_demo, parent, false);
+                .inflate(R.layout.item_department, parent, false);
         return new ViewHolder(view);
     }
 

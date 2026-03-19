@@ -34,6 +34,7 @@ import com.example.myapplication.model.RequestModels;
 import com.example.myapplication.model.TaskModels;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.network.TokenUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import java.text.SimpleDateFormat;
@@ -532,6 +533,14 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override protected void onResume() {
         super.onResume();
+
+        // Kiểm tra token còn hạn không trước khi load dữ liệu
+        String token = prefs.getString("token", null);
+        if (token == null || TokenUtils.isTokenExpired(token)) {
+            handleSessionExpired();
+            return;
+        }
+
         loadStats();
         // Reset bottom nav về Home khi quay lại
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);

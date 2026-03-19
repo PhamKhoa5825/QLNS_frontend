@@ -36,9 +36,6 @@
 
     <!-- Toast Messages -->
     <string name="avatar_change_developing">Chức năng thay đổi ảnh đại diện đang phát triển</string>
-    <string name="please_fill_all">Vui lòng điền đầy đủ thông tin</string>
-    <string name="invalid_phone">Số điện thoại không hợp lệ</string>
-    <string name="invalid_email">Email không hợp lệ</string>
     <string name="save_success">Đã lưu thay đổi thành công!</string>
 
     <!-- Change Password Screen -->
@@ -70,11 +67,7 @@
     <string name="confirm">Xác nhận</string>
 
     <!-- Toast Messages Password -->
-    <string name="please_fill_all_passwords">Vui lòng điền đầy đủ thông tin</string>
-    <string name="password_not_match">Mật khẩu xác nhận không khớp</string>
-    <string name="password_too_short">Mật khẩu mới phải có ít nhất 8 ký tự</string>
     <string name="change_password_success">Đổi mật khẩu thành công!</string>
-    <string name="wrong_old_password">Mật khẩu cũ không đúng</string>
 
     <!-- Logout Confirmation -->
     <string name="logout_confirm_title">Xác nhận đăng xuất</string>
@@ -82,34 +75,4 @@
     <string name="logout_btn_text">Đăng xuất</string>
 
     <!-- Notification Center -->
-    <string name="notification_center">Thông báo</string>
-    <string name="tab_all">Tất cả</string>
-    <string name="tab_unread">Chưa đọc</string>
-    <string name="tab_read">Đã đọc</string>
-    <string name="filter_all">Tất cả</string>
-    <string name="filter_approval">Phê duyệt</string>
-    <string name="filter_task">Công việc</string>
-    <string name="filter_system">Hệ thống</string>
-    <string name="filter_announcement">Thông báo</string>
-    <string name="mark_all_read">Đánh dấu tất cả đã đọc</string>
-    <string name="mark_as_read">Đánh dấu đã đọc</string>
-    <string name="mark_as_unread">Đánh dấu chưa đọc</string>
-    <string name="delete_notification">Xóa thông báo</string>
-    <string name="search_notification">Tìm kiếm</string>
-    <string name="empty_title">Không có thông báo</string>
-    <string name="empty_message">Bạn chưa có thông báo nào</string>
-    <string name="empty_unread_title">Không có thông báo chưa đọc</string>
-    <string name="empty_unread_message">Tất cả thông báo đã được đọc</string>
-    <string name="type_approval">Phê duyệt</string>
-    <string name="type_task">Công việc</string>
-    <string name="type_system">Hệ thống</string>
-    <string name="type_announcement">Thông báo</string>
-    <string name="time_just_now">Vừa xong</string>
-    <string name="time_minutes_ago">%d phút trước</string>
-    <string name="time_hours_ago">%d giờ trước</string>
-    <string name="time_days_ago">%d ngày trước</string>
-    <string name="time_weeks_ago">%d tuần trước</string>
-    <string name="success_mark_all_read">Đã đánh dấu tất cả đã đọc</string>
-    <string name="success_delete">Đã xóa thông báo</string>
-    <string name="error_load_failed">Không thể tải thông báo</string>
 </resources>

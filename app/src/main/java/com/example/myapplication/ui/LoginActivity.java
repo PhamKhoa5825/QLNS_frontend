@@ -11,6 +11,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.AuthModels;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.network.TokenUtils;
 import com.google.android.material.button.MaterialButton;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,9 +34,20 @@ public class LoginActivity extends AppCompatActivity {
         RetrofitClient.init(this);
         prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
 
-        if (prefs.getString("token", null) != null) {
-            goToDashboard();
-            return;
+        String token = prefs.getString("token", null);
+        if (token != null) {
+            if (!TokenUtils.isTokenExpired(token)) {
+                // Token còn hạn → vào Dashboard
+                goToDashboard();
+                return;
+            } else {
+                // Token hết hạn → xóa session, giữ lại saved_username
+                String savedUsername = prefs.getString("saved_username", null);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.clear();
+                if (savedUsername != null) editor.putString("saved_username", savedUsername);
+                editor.apply();
+            }
         }
 
         edtUsername = findViewById(R.id.edtEmail);
