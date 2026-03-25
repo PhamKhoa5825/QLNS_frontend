@@ -10,8 +10,8 @@
         android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        app:elevation="4dp">
+        android:background="@drawable/bg_header_inner"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -90,7 +90,7 @@
                             app:backgroundTint="@color/colorPrimary"
                             app:tint="@color/white"
                             app:fabSize="mini"
-                            app:elevation="4dp" />
+                            app:elevation="0dp" />
                     </FrameLayout>
 
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"

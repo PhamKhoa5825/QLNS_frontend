@@ -13,7 +13,7 @@
         android:layout_height="180dp"
         android:clickable="false"
         android:focusable="false"
-        android:background="@drawable/bg_leave_header"
+        android:background="@drawable/bg_header_dashboard"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Back Button -->

@@ -18,7 +18,7 @@
             android:layout_height="220dp"
             android:clickable="false"
             android:focusable="false"
-            android:background="#1976D2"
+            android:background="@drawable/bg_header_dashboard"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout

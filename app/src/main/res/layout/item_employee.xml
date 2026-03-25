@@ -10,8 +10,8 @@
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
     app:strokeWidth="1dp"
-    app:strokeColor="#E6E0E9"
-    app:cardBackgroundColor="?attr/colorSurface">
+    app:strokeColor="@color/border"
+    app:cardBackgroundColor="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             app:cardCornerRadius="24dp"
-            app:cardBackgroundColor="#EADDFF"
+            app:cardBackgroundColor="@color/soft_purple"
             app:strokeWidth="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -56,7 +56,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
             android:text="Nguyễn Văn A"
-            android:textColor="#1D1B20"
+            android:textColor="@color/textColorPrimary"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/tvStatus"
@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:text="Trưởng phòng IT"
-            android:textColor="#49454F"
+            android:textColor="@color/textColorSecondary"
             android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="@+id/tvName"
             app:layout_constraintStart_toStartOf="@+id/tvName"
@@ -83,9 +83,9 @@
             android:drawableStart="@android:drawable/ic_menu_myplaces"
             android:drawablePadding="4dp"
             android:text="Công nghệ thông tin"
-            android:textColor="#49454F"
+            android:textColor="@color/textColorSecondary"
             android:textSize="12sp"
-            app:drawableTint="#49454F"
+            app:drawableTint="@color/textColorSecondary"
             app:layout_constraintStart_toStartOf="@+id/tvName"
             app:layout_constraintTop_toBottomOf="@id/tvRole" />
 

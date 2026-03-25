@@ -17,7 +17,7 @@
             android:id="@+id/headerBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/primary"
+            android:background="@drawable/bg_header_inner"
             android:orientation="horizontal"
             android:paddingTop="48dp"
             android:paddingBottom="16dp"
@@ -117,7 +117,7 @@
                             app:fabSize="mini"
                             app:tint="@color/white"
                             app:backgroundTint="@color/primary"
-                            app:elevation="8dp" />
+                            app:elevation="0dp" />
 
                     </FrameLayout>
 
@@ -391,7 +391,7 @@
                 android:textAllCaps="false"
                 app:backgroundTint="@color/primary"
                 app:cornerRadius="12dp"
-                app:elevation="4dp" />
+                app:elevation="0dp" />
 
         </LinearLayout>
 

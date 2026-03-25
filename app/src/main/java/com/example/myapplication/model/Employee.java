@@ -2,11 +2,13 @@ package com.example.myapplication.model;
 
 import com.google.gson.annotations.SerializedName;
 
-// Model nhận JSON từ Spring Boot API
 public class Employee {
 
     @SerializedName("id")
     private Long id;
+
+    @SerializedName("userId")
+    private Long userId;            // THÊM: User.id (cho account management)
 
     @SerializedName("fullName")
     private String fullName;
@@ -38,6 +40,9 @@ public class Employee {
     @SerializedName("status")
     private String status;          // ACTIVE / RESIGNED
 
+    @SerializedName("accountStatus")
+    private String accountStatus;   // THÊM: ACTIVE / INACTIVE (trạng thái tài khoản)
+
     @SerializedName("departmentId")
     private Long departmentId;
 
@@ -47,43 +52,49 @@ public class Employee {
     @SerializedName("role")
     private String role;            // EMPLOYEE / MANAGER / ADMIN
 
-    // ===== Hàm tiện ích giữ nguyên để Adapter không phải sửa =====
+    // ===== Hàm tiện ích =====
 
     public String getFullName() { return fullName; }
 
-    // Adapter cũ dùng getRole() → vẫn trả về position (chức vụ)
+    // Adapter cũ dùng getRole() → trả position (chức vụ)
     public String getRole() { return position; }
 
-    // Adapter cũ dùng getDepartment() → trả về tên phòng ban
+    // Adapter cũ dùng getDepartment() → trả tên phòng ban
     public String getDepartment() {
         return departmentName != null ? departmentName : "";
     }
 
-    // Adapter cũ dùng getStatus() → trả về chuỗi tiếng Việt
+    // Adapter cũ dùng getStatus() → trả chuỗi tiếng Việt
     public String getStatus() {
         return "ACTIVE".equals(status) ? "Đang làm việc" : "Đã nghỉ việc";
     }
 
-    // Adapter cũ dùng getAvatarText() → lấy chữ cái đầu
     public String getAvatarText() {
         if (fullName != null && !fullName.isEmpty()) {
             String trimmed = fullName.trim();
             if (!trimmed.isEmpty()) {
                 String[] parts = trimmed.split(" ");
-                String lastWord = parts[parts.length - 1];
-                if (!lastWord.isEmpty()) {
-                    return String.valueOf(lastWord.charAt(0)).toUpperCase();
-                }
+                String last = parts[parts.length - 1];
+                return !last.isEmpty() ? String.valueOf(last.charAt(0)).toUpperCase() : "?";
             }
         }
         return "?";
     }
 
-    // Adapter cũ dùng isWorking() → dựa vào status
     public boolean isWorking() { return "ACTIVE".equals(status); }
 
-    // Getters mới
+    // Trạng thái tài khoản đăng nhập
+    public boolean isAccountActive() {
+        return accountStatus == null || "ACTIVE".equalsIgnoreCase(accountStatus);
+    }
+
+    public String getAccountStatusDisplay() {
+        return isAccountActive() ? "Hoạt động" : "Bị khoá";
+    }
+
+    // Getters
     public Long getId() { return id; }
+    public Long getUserId() { return userId; }
     public String getEmail() { return email; }
     public String getPhone() { return phone; }
     public String getAddress() { return address; }
@@ -92,8 +103,9 @@ public class Employee {
     public String getAvatarUrl() { return avatarUrl; }
     public String getPosition() { return position; }
     public String getJoinDate() { return joinDate; }
-    public String getStatusRaw() { return status; }     // ACTIVE / RESIGNED
+    public String getStatusRaw() { return status; }
+    public String getAccountStatus() { return accountStatus; }
     public Long getDepartmentId() { return departmentId; }
     public String getDepartmentName() { return departmentName; }
-    public String getRoleRaw() { return role; }         // EMPLOYEE / MANAGER / ADMIN
+    public String getRoleRaw() { return role; }
 }

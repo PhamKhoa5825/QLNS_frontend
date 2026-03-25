@@ -13,7 +13,7 @@
         android:focusable="false"
         android:layout_width="match_parent"
         android:layout_height="240dp"
-        android:background="@drawable/bg_home_header"
+        android:background="@drawable/bg_header_dashboard"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Back Button -->
@@ -83,7 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="3 thông báo chưa đọc"
-        android:textColor="#E3F2FD"
+        android:textColor="#CCFFFFFF"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@id/tvHeaderTitle"
         app:layout_constraintTop_toBottomOf="@id/tvHeaderTitle" />
@@ -108,7 +108,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:visibility="gone"
-        app:backgroundTint="#EF4444"
+        app:backgroundTint="@color/colorPrimary"
         app:srcCompat="@android:drawable/ic_input_add"
         app:tint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
