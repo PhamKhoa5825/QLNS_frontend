@@ -1,116 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F9FAFB">
+    android:background="@color/gray_50">
 
-    <!-- Blue Header Section -->
+    <!-- [Chat] Nền tiêu đề để tạo chiều sâu cho màn hình danh sách chat. -->
     <View
-        android:id="@+id/headerBg"
+        android:id="@+id/headerBackground"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="210dp"
         android:background="@drawable/bg_header_rounded_bottom" />
 
     <LinearLayout
-        android:id="@+id/headerContent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:paddingHorizontal="24dp">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/btnBackChat"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/ic_back"
-                app:tint="@color/white" />
-
-            <TextView
-                android:id="@+id/tvChatTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="Tin nhắn nội bộ"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/tvUnreadSummary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="0 tin nhắn chưa đọc"
-            android:textColor="#E0E7FF"
-            android:textSize="14sp" />
-    </LinearLayout>
-
-    <!-- Search Bar Card -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/searchCard"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_below="@id/headerContent"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="20dp"
-        app:cardCornerRadius="28dp"
-        app:cardElevation="8dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="20dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_menu_search"
-                app:tint="#9CA3AF" />
-
-            <EditText
-                android:id="@+id/edtSearchChat"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="12dp"
-                android:background="@null"
-                android:hint="Tìm kiếm tin nhắn..."
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:textSize="14sp" />
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- Chat List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewChat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/searchCard"
-        android:layout_marginTop="16dp"
-        android:clipToPadding="false"
-        android:paddingBottom="80dp" />
+        android:orientation="vertical">
 
-    <!-- FAB -->
+        <!-- [Chat] Toolbar chính với title và icon tạo nhóm trong menu. -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginTop="12dp"
+            android:background="@android:color/transparent"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            app:menu="@menu/menu_chat"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@android:color/white"
+            app:title="@string/chat_title"
+            app:titleTextColor="@android:color/white" />
+
+        <!-- [Chat] Dòng mô tả nhỏ giúp UI sinh động và thân thiện hơn. -->
+        <TextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/chat_internal_messages"
+            android:textColor="@color/white_80"
+            android:textSize="13sp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="0dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="10dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- [Chat] RecyclerView hiển thị toàn bộ phòng chat. -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvRooms"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="96dp" />
+
+                <!-- [Chat] Trạng thái rỗng khi chưa có phòng chat nào. -->
+                <TextView
+                    android:id="@+id/tvEmpty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:text="@string/chat_empty_rooms"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
+
+                <!-- [Chat] Loading hiển thị khi đang lấy dữ liệu từ server. -->
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+
+    <!-- [Chat] FAB tạo cuộc trò chuyện mới / tạo nhóm nhanh. -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnAddGroupChat"
+        android:id="@+id/fabAddRoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="24dp"
-        android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="#2563EB"
-        app:fabSize="normal"
-        app:tint="@color/white" />
+        android:layout_gravity="bottom|end"
+        android:layout_margin="18dp"
+        android:contentDescription="@string/chat_add_room"
+        android:src="@drawable/ic_chat_add"
+        app:backgroundTint="@color/colorPrimary"
+        app:elevation="12dp"
+        app:maxImageSize="24dp"
+        app:tint="@android:color/white" />
 
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

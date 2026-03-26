@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.Employee;
+import com.example.myapplication.service.ChatForegroundService;
 import com.example.myapplication.viewmodel.EmployeeViewModel;
 import com.google.android.material.button.MaterialButton;
 
@@ -143,6 +144,11 @@ public class ProfileActivity extends AppCompatActivity {
         
         btnConfirm.setOnClickListener(v -> {
             dialog.dismiss();
+            
+            // Stop Chat Service
+            Intent serviceIntent = new Intent(this, ChatForegroundService.class);
+            stopService(serviceIntent);
+
             viewModel.logout();
         });
 

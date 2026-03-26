@@ -3,135 +3,184 @@ package com.example.myapplication.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.adapter.ChatAdapter;
+import com.example.myapplication.adapter.RoomListAdapter;
 import com.example.myapplication.model.ChatRoom;
-import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.repository.ChatRepository;
 import com.example.myapplication.utils.SharedPrefsManager;
+import com.example.myapplication.viewmodel.ChatViewModel;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ChatActivity extends AppCompatActivity implements CreateGroupDialog.OnGroupCreatedListener {
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class ChatActivity extends AppCompatActivity {
-
-    private RecyclerView recyclerViewChat;
-    private ChatAdapter adapter;
-    private List<ChatRoom> roomList = new ArrayList<>();
-    private ImageView btnBack, btnAddChat;
-    
-    private TextView tvUnreadSummary;
-    private Long currentUserId;
-    private ApiService apiService;
+    private RecyclerView rvRooms;
+    private ProgressBar progressBar;
+    private TextView tvEmpty;
+    private RoomListAdapter adapter;
+    private ChatViewModel viewModel;
+    private Long userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        currentUserId = SharedPrefsManager.getInstance(this).getEmployeeId();
-        apiService = RetrofitClient.getApiService();
+        initViews();
+        setupRecyclerView();
+        setupViewModel();
+        setupActions();
+        observeData();
+        loadRooms();
+    }
 
-        recyclerViewChat = findViewById(R.id.recyclerViewChat);
-        btnBack = findViewById(R.id.btnBackChat);
-        btnAddChat = findViewById(R.id.btnAddGroupChat);
-        tvUnreadSummary = findViewById(R.id.tvUnreadSummary);
-        EditText edtSearch = findViewById(R.id.edtSearchChat);
+    private void initViews() {
+        rvRooms = findViewById(R.id.rvRooms);
+        progressBar = findViewById(R.id.progressBar);
+        tvEmpty = findViewById(R.id.tvEmpty);
+    }
 
-        btnBack.setOnClickListener(v -> finish());
-        btnAddChat.setOnClickListener(v -> {
-            Intent intent = new Intent(ChatActivity.this, SelectEmployeeActivity.class);
-            startActivity(intent);
-        });
-
-        edtSearch.addTextChangedListener(new android.text.TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterRooms(s.toString());
-            }
-            @Override
-            public void afterTextChanged(android.text.Editable s) {}
-        });
-
-        recyclerViewChat.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ChatAdapter(this, roomList, currentUserId, room -> {
+    private void setupRecyclerView() {
+        rvRooms.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new RoomListAdapter(room -> {
             Intent intent = new Intent(ChatActivity.this, MessageActivity.class);
+            String roomName = resolveRoomName(room);
+
+            intent.putExtra("roomId", room.getId());
+            intent.putExtra("roomName", roomName);
+            intent.putExtra("roomType", room.getType());
+            intent.putExtra("otherParticipantName", room.getOtherParticipantName());
+
+            // [Chat] Truyền thêm key cũ để tương thích với MessageActivity hiện tại.
             intent.putExtra("ROOM_ID", room.getId());
-            
-            String displayName = room.getName();
-            if ("PRIVATE".equals(room.getType()) && room.getOtherParticipantName() != null) {
-                displayName = room.getOtherParticipantName();
-            } else if (displayName == null) {
-                displayName = "Phòng chat " + room.getId();
-            }
-            
-            intent.putExtra("ROOM_NAME", displayName);
+            intent.putExtra("ROOM_NAME", roomName);
+            intent.putExtra("ROOM_TYPE", room.getType());
+
             startActivity(intent);
         });
-        recyclerViewChat.setAdapter(adapter);
-
-        fetchChatRooms();
+        rvRooms.setAdapter(adapter);
     }
 
-    private void fetchChatRooms() {
-        apiService.getChatRooms(currentUserId).enqueue(new Callback<List<ChatRoom>>() {
-            @Override
-            public void onResponse(Call<List<ChatRoom>> call, Response<List<ChatRoom>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    roomList.clear();
-                    roomList.addAll(response.body());
-                    adapter.setRoomList(roomList);
-                    updateUnreadSummary();
-                }
-            }
+    private String resolveRoomName(ChatRoom room) {
+        String type = room.getType() != null ? room.getType() : "";
+        if ("PRIVATE".equalsIgnoreCase(type) && room.getOtherParticipantName() != null && !room.getOtherParticipantName().isEmpty()) {
+            return room.getOtherParticipantName();
+        }
+        if (room.getName() != null && !room.getName().isEmpty()) {
+            return room.getName();
+        }
+        return getString(R.string.chat_room_fallback, room.getId() != null ? room.getId() : 0L);
+    }
 
-            @Override
-            public void onFailure(Call<List<ChatRoom>> call, Throwable t) {
-                Toast.makeText(ChatActivity.this, "Lỗi tải phòng chat", Toast.LENGTH_SHORT).show();
+    private void setupViewModel() {
+        ChatRepository repository = new ChatRepository(this);
+        ChatViewModel.Factory factory = new ChatViewModel.Factory(repository);
+        viewModel = new ViewModelProvider(this, factory).get(ChatViewModel.class);
+    }
+
+    private void setupActions() {
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        FloatingActionButton fabAddRoom = findViewById(R.id.fabAddRoom);
+
+        toolbar.setNavigationOnClickListener(v -> finish());
+
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_create_group) {
+                showCreateGroupDialog();
+                return true;
+            }
+            return false;
+        });
+
+        fabAddRoom.setOnClickListener(v -> {
+            // [Chat] FAB cũng mở ContactsActivity theo yêu cầu.
+            startActivity(new Intent(ChatActivity.this, ContactsActivity.class));
+        });
+    }
+
+    private void observeData() {
+        // [Chat] Observe danh sách room để cập nhật RecyclerView.
+        viewModel.getRooms().observe(this, chatRooms -> {
+            if (chatRooms != null) {
+                adapter.submitList(chatRooms);
+                tvEmpty.setVisibility(chatRooms.isEmpty() ? View.VISIBLE : View.GONE);
+            } else {
+                adapter.submitList(null);
+                tvEmpty.setVisibility(View.VISIBLE);
+                tvEmpty.setText(getString(R.string.chat_load_rooms_failed));
+                Toast.makeText(ChatActivity.this, getString(R.string.chat_load_rooms_failed), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // [Chat] Observe loading để hiển thị/ẩn ProgressBar.
+        viewModel.getIsLoading().observe(this, loading -> {
+            boolean showLoading = loading != null && loading;
+            progressBar.setVisibility(showLoading ? View.VISIBLE : View.GONE);
+        });
+
+        // Theo dõi việc tạo nhóm ở Activity để điều hướng và reset state
+        viewModel.getCreatedGroup().observe(this, room -> {
+            if (room != null) {
+                onGroupCreated(room);
+                // Không reset ngay tại đây để Fragment kịp nhận sự kiện và tự đóng.
             }
         });
     }
 
-    private void updateUnreadSummary() {
-        int totalUnread = 0;
-        for (ChatRoom room : roomList) {
-            totalUnread += room.getUnreadCount();
-        }
-        if (tvUnreadSummary != null) {
-            tvUnreadSummary.setText(totalUnread + " tin nhắn chưa đọc");
-        }
-    }
+    private void loadRooms() {
+        userId = SharedPrefsManager.getInstance(this).getUserId();
 
-    private void filterRooms(String query) {
-        if (query.isEmpty()) {
-            adapter.setRoomList(roomList);
+        if (userId <= 0) {
+            tvEmpty.setVisibility(View.VISIBLE);
+            tvEmpty.setText(getString(R.string.chat_user_id_missing));
+            Toast.makeText(this, getString(R.string.chat_user_id_missing), Toast.LENGTH_SHORT).show();
             return;
         }
-        List<ChatRoom> filteredList = new ArrayList<>();
-        for (ChatRoom room : roomList) {
-            String name = room.getName();
-            if ("PRIVATE".equals(room.getType()) && room.getOtherParticipantName() != null) {
-                name = room.getOtherParticipantName();
-            }
-            if (name != null && name.toLowerCase().contains(query.toLowerCase())) {
-                filteredList.add(room);
-            }
+
+        // [Chat] Trigger ViewModel gọi Repository -> API GET /api/chat/rooms/me.
+        viewModel.loadRooms(userId);
+    }
+
+    private void showCreateGroupDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        CreateGroupDialog dialog = CreateGroupDialog.newInstance();
+        dialog.show(fm, "CreateGroupDialog");
+    }
+
+    @Override
+    public void onGroupCreated(ChatRoom room) {
+        if (room == null) {
+            return;
         }
-        adapter.setRoomList(filteredList);
+        adapter.addRoomToTop(room);
+        Intent intent = new Intent(this, MessageActivity.class);
+        String roomName = resolveRoomName(room);
+        intent.putExtra("ROOM_ID", room.getId());
+        intent.putExtra("ROOM_NAME", roomName);
+        intent.putExtra("ROOM_TYPE", room.getType());
+        intent.putExtra("roomId", room.getId());
+        intent.putExtra("roomName", roomName);
+        intent.putExtra("roomType", room.getType());
+        intent.putExtra("otherParticipantName", room.getOtherParticipantName());
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Clear sự kiện createdGroup cũ để không tự động mở lại dialog khi quay về
+        viewModel.resetCreatedGroup();
+        // Reload phòng chat mỗi khi quay lại để thấy phòng mới tạo hoặc tin mới nhất
+        loadRooms();
     }
 }

@@ -96,22 +96,6 @@ public interface ApiService {
     @PUT("api/employees/{id}/resign")
     Call<Void> resignEmployee(@Path("id") Long id);
 
-    // ── CHAT ─────────────────────────────────────
-    @GET("api/chat/rooms/user/{userId}")
-    Call<List<ChatRoom>> getChatRooms(@Path("userId") Long userId);
-
-    @POST("api/chat/rooms/private")
-    Call<ChatRoom> getOrCreatePrivateRoom(@Query("userId1") Long userId1, @Query("userId2") Long userId2);
-
-    @POST("api/chat/rooms/group")
-    Call<ChatRoom> createDepartmentGroupChat(@Query("name") String name, @Query("departmentId") Long deptId, @Query("creatorId") Long creatorId);
-
-    @GET("api/chat/messages/{roomId}")
-    Call<List<Message>> getMessages(@Path("roomId") Long roomId);
-
-    @POST("api/chat/messages")
-    Call<Message> sendMessage(@Body SendMessageRequest request);
-
     // ── TASKS ────────────────────────────────────
     @GET("api/tasks/my/{empId}")
     Call<List<Task>> getMyTasks(@Path("empId") Long empId);

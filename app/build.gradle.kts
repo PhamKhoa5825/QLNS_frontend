@@ -47,6 +47,15 @@ dependencies {
     implementation(libs.gson)
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     
+    // ViewModel + LiveData cho MVVM architecture
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.7.0")
+
+    // WebSocket STOMP cho real-time messaging
+    implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.21")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
+
     // MPAndroidChart for BarChart
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 

@@ -21,6 +21,9 @@ public class ChatRoom {
     @SerializedName("otherParticipantName")
     private String otherParticipantName;
 
+    @SerializedName("otherParticipantId")
+    private Long otherParticipantId;
+
     @SerializedName("lastMessage")
     private String lastMessage;
 
@@ -29,6 +32,16 @@ public class ChatRoom {
 
     @SerializedName("unreadCount")
     private int unreadCount;
+
+    // [Chat] Các field bổ sung theo DTO backend.
+    @SerializedName("createdBy")
+    private Long createdBy;
+
+    @SerializedName("createdByName")
+    private String createdByName;
+
+    @SerializedName("createdAt")
+    private String createdAt;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -48,6 +61,9 @@ public class ChatRoom {
     public String getOtherParticipantName() { return otherParticipantName; }
     public void setOtherParticipantName(String otherParticipantName) { this.otherParticipantName = otherParticipantName; }
 
+    public Long getOtherParticipantId() { return otherParticipantId; }
+    public void setOtherParticipantId(Long otherParticipantId) { this.otherParticipantId = otherParticipantId; }
+
     public String getLastMessage() { return lastMessage; }
     public void setLastMessage(String lastMessage) { this.lastMessage = lastMessage; }
 
@@ -56,4 +72,13 @@ public class ChatRoom {
 
     public int getUnreadCount() { return unreadCount; }
     public void setUnreadCount(int unreadCount) { this.unreadCount = unreadCount; }
+
+    public Long getCreatedBy() { return createdBy; }
+    public void setCreatedBy(Long createdBy) { this.createdBy = createdBy; }
+
+    public String getCreatedByName() { return createdByName; }
+    public void setCreatedByName(String createdByName) { this.createdByName = createdByName; }
+
+    public String getCreatedAt() { return createdAt; }
+    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 }

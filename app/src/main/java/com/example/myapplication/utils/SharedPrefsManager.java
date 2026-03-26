@@ -7,7 +7,8 @@ public class SharedPrefsManager {
 
     private static final String PREF_NAME = "qlns_pref";
     private static final String KEY_TOKEN = "token";
-    private static final String KEY_USER_ID = "userId";
+    private static final String KEY_USER_ID = "user_id"; // canonical key for user id
+    private static final String KEY_USER_ID_LEGACY = "userId"; // keep compatibility with old writes
     private static final String KEY_USERNAME = "username";
     private static final String KEY_ROLE = "role";
     private static final String KEY_EMAIL = "email";
@@ -33,7 +34,9 @@ public class SharedPrefsManager {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString(KEY_TOKEN, token);
+        // store both canonical and legacy keys so old screens continue to work
         editor.putLong(KEY_USER_ID, userId);
+        editor.putLong(KEY_USER_ID_LEGACY, userId);
         editor.putString(KEY_USERNAME, username);
         editor.putString(KEY_EMAIL, email);
         editor.putString(KEY_ROLE, role);
@@ -64,7 +67,11 @@ public class SharedPrefsManager {
     
     public Long getUserId() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getLong(KEY_USER_ID, -1L);
+        long userId = sharedPreferences.getLong(KEY_USER_ID, -1L);
+        if (userId <= 0) {
+            userId = sharedPreferences.getLong(KEY_USER_ID_LEGACY, -1L);
+        }
+        return userId;
     }
     
     public String getRole() {

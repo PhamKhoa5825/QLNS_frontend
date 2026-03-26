@@ -1,13 +1,14 @@
 package com.example.myapplication.repository;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.myapplication.model.Department;
 import com.example.myapplication.model.Employee;
 import com.example.myapplication.model.EmployeeSummary;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.utils.SharedPrefsManager;
 
 import java.util.List;
 import java.util.Map;
@@ -18,39 +19,48 @@ import retrofit2.Response;
 
 public class EmployeeRepository {
     private final ApiService apiService;
-    private final SharedPreferences prefs;
+    private final SharedPrefsManager prefsManager;
 
     public EmployeeRepository(Context context) {
         this.apiService = RetrofitClient.getApiService();
-        this.prefs = context.getSharedPreferences("qlns_pref", Context.MODE_PRIVATE);
+        this.prefsManager = SharedPrefsManager.getInstance(context);
     }
 
     public boolean hasToken() {
-        String token = prefs.getString("token", null);
+        String token = prefsManager.getToken();
         return token != null && !token.isEmpty();
     }
 
     public void clearToken() {
-        prefs.edit().clear().apply();
+        prefsManager.logout();
     }
 
     public Long getSavedUserId() {
-        return prefs.getLong("userId", -1);
+        return prefsManager.getUserId();
     }
 
     public void getEmployeeSummary(Long id, RepositoryCallback<EmployeeSummary> callback) {
+        if (id == null || id <= 0) {
+            callback.onError("ID nhân viên không hợp lệ");
+            return;
+        }
+        
+        Log.d("EmployeeRepo", "Fetching summary for id: " + id);
         apiService.getEmployeeSummary(id).enqueue(new Callback<EmployeeSummary>() {
             @Override
             public void onResponse(Call<EmployeeSummary> call, Response<EmployeeSummary> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     callback.onSuccess(response.body());
                 } else {
-                    callback.onError("Lỗi tải thông tin tóm tắt");
+                    String errorMsg = "Lỗi tải thông tin (Code: " + response.code() + ")";
+                    Log.e("EmployeeRepo", errorMsg);
+                    callback.onError(errorMsg);
                 }
             }
 
             @Override
             public void onFailure(Call<EmployeeSummary> call, Throwable t) {
+                Log.e("EmployeeRepo", "Network error fetching summary", t);
                 callback.onError("Lỗi kết nối: " + t.getMessage());
             }
         });

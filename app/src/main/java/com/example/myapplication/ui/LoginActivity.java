@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.myapplication.R;
 import com.example.myapplication.model.AuthenticationResponse;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.service.ChatForegroundService;
 import com.example.myapplication.utils.SharedPrefsManager;
 import com.example.myapplication.viewmodel.AuthViewModel;
 
@@ -65,6 +66,15 @@ public class LoginActivity extends AppCompatActivity {
             if (response != null) {
                 saveAuthData(response);
                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                
+                // Start ChatForegroundService
+                Intent serviceIntent = new Intent(this, ChatForegroundService.class);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    startForegroundService(serviceIntent);
+                } else {
+                    startService(serviceIntent);
+                }
+
                 startActivity(new Intent(LoginActivity.this, HomeEmployeeActivity.class));
                 finish();
             }
