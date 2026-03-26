@@ -6,17 +6,25 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.*;
-import android.widget.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.myapplication.R;
 import com.example.myapplication.adapter.EmployeeAdapter;
 import com.example.myapplication.model.Department;
 import com.example.myapplication.model.Employee;
+import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.viewmodel.EmployeeViewModel;
@@ -25,10 +33,12 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -63,7 +73,7 @@ public class EmployeeActivity extends AppCompatActivity {
         // Status bar trong suốt, trùng màu toolbar
         getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
         getWindow().getDecorView().setSystemUiVisibility(
-                android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE | android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         setContentView(R.layout.activity_employee);
 
         viewModel  = new ViewModelProvider(this).get(EmployeeViewModel.class);
@@ -101,7 +111,7 @@ public class EmployeeActivity extends AppCompatActivity {
         if ("ADMIN".equals(role) || "MANAGER".equals(role)) {
             fabAdd.setVisibility(View.VISIBLE);
             fabAdd.setOnClickListener(v ->
-                    startActivity(new Intent(this, AddEmployeeActivity.class)));
+                    startActivity(new Intent(this, AddEditEmployeeActivity.class)));
         } else {
             fabAdd.setVisibility(View.GONE);
         }
@@ -306,6 +316,18 @@ public class EmployeeActivity extends AppCompatActivity {
 
         view.findViewById(R.id.btnCloseDialog).setOnClickListener(v -> dialog.dismiss());
 
+        // MỚI: Nút xem chi tiết cross-reference
+        View btnViewDetail = view.findViewById(R.id.btnViewDetail);
+        if (btnViewDetail != null) {
+            btnViewDetail.setVisibility(View.VISIBLE);
+            btnViewDetail.setOnClickListener(v -> {
+                dialog.dismiss();
+                Intent intent = new Intent(this, EmployeeDetailActivity.class);
+                intent.putExtra("employeeId", emp.getId());
+                startActivity(intent);
+            });
+        }
+
         if ("ADMIN".equals(role) || "MANAGER".equals(role)) {
             MaterialButton btnEdit       = view.findViewById(R.id.btnEditEmployee);
             MaterialButton btnDelete     = view.findViewById(R.id.btnDeleteEmployee);
@@ -315,7 +337,8 @@ public class EmployeeActivity extends AppCompatActivity {
                 btnEdit.setVisibility(View.VISIBLE);
                 btnEdit.setOnClickListener(v -> {
                     dialog.dismiss();
-                    Intent intent = new Intent(this, EditEmployeeActivity.class);
+                    // Sửa (truyền employeeId)
+                    Intent intent = new Intent(this, AddEditEmployeeActivity.class);
                     intent.putExtra("employeeId", emp.getId());
                     startActivity(intent);
                 });
@@ -366,8 +389,7 @@ public class EmployeeActivity extends AppCompatActivity {
                                                 "Đã cho nghỉ việc", Toast.LENGTH_SHORT).show();
                                         viewModel.loadEmployees();
                                     } else {
-                                        Toast.makeText(EmployeeActivity.this,
-                                                "Lỗi: " + r.code(), Toast.LENGTH_SHORT).show();
+                                        ApiErrorHelper.show(EmployeeActivity.this, r, "Cho nghỉ việc thất bại");
                                     }
                                 }
                                 @Override public void onFailure(Call<Void> c, Throwable t) {
@@ -399,8 +421,7 @@ public class EmployeeActivity extends AppCompatActivity {
                                                 "Đã khôi phục nhân viên", Toast.LENGTH_SHORT).show();
                                         viewModel.loadEmployees();
                                     } else {
-                                        Toast.makeText(EmployeeActivity.this,
-                                                "Lỗi: " + r.code(), Toast.LENGTH_SHORT).show();
+                                        ApiErrorHelper.show(EmployeeActivity.this, r, "Khôi phục nhân viên thất bại");
                                     }
                                 }
                                 @Override public void onFailure(Call<Void> c, Throwable t) {

@@ -4,6 +4,7 @@ import com.example.myapplication.model.*;
 import retrofit2.Call;
 import retrofit2.http.*;
 import java.util.List;
+import java.util.Map;
 
 public interface ApiService {
 
@@ -165,6 +166,42 @@ public interface ApiService {
     Call<List<AdminModels.SystemLogResponse>> filterLogsByAction(
             @Query("action") String action);
 
-    // Dùng cho autocomplete trong filter dialog (nhân viên, phòng ban, chức vụ)
-    // Reuse getEmployees() ở trên — trong SystemLogActivity sẽ map Employee → thông tin cần thiết
+    // ── ADMIN DASHBOARD STATS (MỚI) ──────────────────────────────
+    @GET("api/admin/dashboard/stats")
+    Call<Map<String, Object>> getDashboardStats();
+
+    // ── EMPLOYEE RESIGN CHECK (MỚI) ──────────────────────────────
+    @GET("api/employees/{id}/resign-check")
+    Call<Map<String, Object>> checkResignImpact(@Path("id") Long empId);
+
+    // ── EMPLOYEE RESIGN CASCADE (CẬP NHẬT - giờ trả JSON) ───────
+    // Method resignEmployee() hiện có vẫn hoạt động vì chỉ check isSuccessful()
+    // Nhưng nếu muốn đọc kết quả chi tiết, dùng method mới này:
+    @PUT("api/employees/{id}/resign")
+    Call<Map<String, Object>> resignEmployeeWithDetails(@Path("id") Long id);
+
+    // ── BACKUP/RESTORE (MỚI) ─────────────────────────────────────
+    @POST("api/admin/backup")
+    Call<Map<String, Object>> createBackup();
+
+    @GET("api/admin/backup/list")
+    Call<List<Map<String, Object>>> listBackups();
+
+    @POST("api/admin/backup/{filename}/restore")
+    Call<Map<String, Object>> restoreBackup(@Path("filename") String filename);
+
+    @DELETE("api/admin/backup/{filename}")
+    Call<Void> deleteBackup(@Path("filename") String filename);
+
+    @GET("api/admin/backup/status")
+    Call<Map<String, Object>> getBackupStatus();
+
+    // ── ATTENDANCE (cho cross-ref chi tiết NV) ───────────────────
+    // Đã có: getAttendanceByMonth — dùng lại cho tab chấm công
+    @GET("api/attendance/employee/{empId}/month")
+    Call<List<Map<String, Object>>> getAttendanceByMonth(
+            @Path("empId") Long empId,
+            @Query("month") int month,
+            @Query("year") int year);
+
 }

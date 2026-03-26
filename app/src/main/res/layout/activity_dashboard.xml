@@ -169,7 +169,16 @@
                         android:layout_marginTop="8dp" android:text="Tài khoản" android:textSize="12sp" android:textColor="@color/textColorPrimary" />
                 </LinearLayout>
 
-                <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
+                <LinearLayout android:id="@+id/btnNavBackup" android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:gravity="center" android:orientation="vertical" android:clickable="true" android:focusable="true">
+                    <com.google.android.material.card.MaterialCardView android:layout_width="60dp" android:layout_height="60dp"
+                        app:cardCornerRadius="20dp" app:cardElevation="0dp" app:cardBackgroundColor="#EDE9FE">
+                        <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:padding="16dp"
+                            android:src="@android:drawable/ic_menu_save" app:tint="#7C3AED" />
+                    </com.google.android.material.card.MaterialCardView>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp" android:text="Sao lưu" android:textSize="12sp" android:textColor="@color/textColorPrimary" />
+                </LinearLayout>
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

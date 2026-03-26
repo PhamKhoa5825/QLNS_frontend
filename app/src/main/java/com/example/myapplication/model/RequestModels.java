@@ -15,6 +15,7 @@ public class RequestModels {
         public Long reviewedById;           // SỬA: backend trả "reviewedById" không phải "reviewedBy"
         public String reviewedByName;       // SỬA: backend trả "reviewedByName" không phải "reviewerName"
         public String rejectionReason;
+        public String targetRole;      // "MANAGER" hoặc "ADMIN"
         public String createdAt;
         public String updatedAt;
 
@@ -25,9 +26,16 @@ public class RequestModels {
     public static class CreateRequestBody {
         public String title;
         public String description;
-        public CreateRequestBody(String title, String description) {
+        public String targetRole;
+        public CreateRequestBody(String title, String description, String targetRole) {
             this.title       = title;
             this.description = description;
+            this.targetRole  = targetRole;
+        }
+
+        // Giữ constructor cũ cho tương thích:
+        public CreateRequestBody(String title, String description) {
+            this(title, description, "MANAGER");
         }
     }
 

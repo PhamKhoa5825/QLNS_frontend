@@ -7,12 +7,24 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.widget.*;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
 import com.example.myapplication.R;
+import com.example.myapplication.model.Employee;
+import com.example.myapplication.network.ApiService;
+import com.example.myapplication.network.RetrofitClient;
 import com.google.android.material.button.MaterialButton;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -63,12 +75,43 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadFromPrefs() {
-        // Hiển thị thông tin đã lưu lúc login
+        // Hiển thị tạm từ prefs (nhanh)
         String fullName = prefs.getString("fullName", "");
-        String role     = prefs.getString("role", "");
-
         if (tvProfileName != null) tvProfileName.setText(fullName);
-        if (tvProfilePosition != null) tvProfilePosition.setText(role);
+
+        // Load đầy đủ từ API
+        Long empId = prefs.getLong("employeeId", -1);
+        if (empId != -1) {
+            loadProfileFromApi(empId);
+        }
+    }
+
+    private void loadProfileFromApi(Long empId) {
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+        apiService.getEmployeeById(empId).enqueue(new Callback<Employee>() {
+            @Override
+            public void onResponse(Call<Employee> c, Response<Employee> r) {
+                if (r.isSuccessful() && r.body() != null) {
+                    Employee emp = r.body();
+                    if (tvProfileName != null)
+                        tvProfileName.setText(emp.getFullName() != null ? emp.getFullName() : "—");
+                    if (tvProfilePosition != null)
+                        tvProfilePosition.setText(emp.getPosition() != null ? emp.getPosition() : "—");
+                    if (tvProfileDept != null)
+                        tvProfileDept.setText(emp.getDepartmentName() != null ? emp.getDepartmentName() : "Chưa phân công");
+                    if (tvProfileEmail != null)
+                        tvProfileEmail.setText(emp.getEmail() != null ? emp.getEmail() : "—");
+                    if (tvProfilePhone != null)
+                        tvProfilePhone.setText(emp.getPhone() != null ? emp.getPhone() : "—");
+                    if (tvProfileCode != null)
+                        tvProfileCode.setText("NV" + String.format("%04d", emp.getId()));
+                }
+            }
+            @Override
+            public void onFailure(Call<Employee> c, Throwable t) {
+                Toast.makeText(ProfileActivity.this, "Lỗi tải hồ sơ", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setupListeners() {

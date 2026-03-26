@@ -4,24 +4,34 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.*;
-import android.widget.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.myapplication.R;
 import com.example.myapplication.model.RequestModels;
+import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputEditText;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -138,15 +148,56 @@ public class RequestListActivity extends AppCompatActivity {
                                 .enqueue(new Callback<RequestModels.RequestResponse>() {
                                     @Override public void onResponse(Call<RequestModels.RequestResponse> c,
                                                                      Response<RequestModels.RequestResponse> r) {
-                                        Toast.makeText(RequestListActivity.this,
-                                                r.isSuccessful() ? "Đã duyệt" : "Lỗi: " + r.code(), Toast.LENGTH_SHORT).show();
-                                        if (r.isSuccessful()) loadRequests();
+
+                                        if (r.isSuccessful()) {
+                                            Toast.makeText(RequestListActivity.this, "Đã duyệt", Toast.LENGTH_SHORT).show();
+                                            loadRequests();
+                                            // MỚI: Gợi ý tạo thông báo phản hồi
+                                            showQuickNotifyDialog(req);
+                                        } else {
+                                            ApiErrorHelper.show(RequestListActivity.this, r, "Duyệt đơn thất bại");
+                                        }
                                     }
                                     @Override public void onFailure(Call<RequestModels.RequestResponse> c, Throwable t) {
                                         Toast.makeText(RequestListActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
                                     }
                                 }))
                 .setNegativeButton("Huỷ", null).show();
+    }
+
+    private void showQuickNotifyDialog(RequestModels.RequestResponse req) {
+        String[] options = {
+                "Gửi TB cho " + req.employeeName,
+                "Gửi TB cho phòng " + (req.departmentName != null ? req.departmentName : ""),
+                "Gửi TB toàn công ty",
+                "Không cần"
+        };
+
+        new AlertDialog.Builder(this)
+                .setTitle("Tạo thông báo phản hồi?")
+                .setItems(options, (d, which) -> {
+                    if (which == 3) return; // Không cần
+
+                    Intent intent = new Intent(this, CreateNotificationActivity.class);
+                    intent.putExtra("prefillTitle", "Phản hồi đơn: " + req.title);
+                    intent.putExtra("prefillContent",
+                            "Đơn \"" + req.title + "\" của " + req.employeeName + " đã được duyệt.");
+
+                    if (which == 0) {
+                        // Gửi cho cá nhân
+                        intent.putExtra("targetType", "EMPLOYEE");
+                        intent.putExtra("targetEmployeeId", req.employeeId);
+                    } else if (which == 1) {
+                        // Gửi cho phòng ban
+                        intent.putExtra("targetType", "DEPARTMENT");
+                    } else {
+                        // Gửi toàn công ty
+                        intent.putExtra("targetType", "COMPANY");
+                    }
+
+                    startActivity(intent);
+                })
+                .show();
     }
 
     private void showRejectDialog(RequestModels.RequestResponse req) {
@@ -167,9 +218,12 @@ public class RequestListActivity extends AppCompatActivity {
                         @Override public void onResponse(Call<RequestModels.RequestResponse> c,
                                                          Response<RequestModels.RequestResponse> r) {
                             dialog.dismiss();
-                            Toast.makeText(RequestListActivity.this,
-                                    r.isSuccessful() ? "Đã từ chối" : "Lỗi: " + r.code(), Toast.LENGTH_SHORT).show();
-                            if (r.isSuccessful()) loadRequests();
+                            if (r.isSuccessful()) {
+                                Toast.makeText(RequestListActivity.this, "Đã từ chối", Toast.LENGTH_SHORT).show();
+                                loadRequests();
+                            } else {
+                                ApiErrorHelper.show(RequestListActivity.this, r, "Từ chối đơn thất bại");
+                            }
                         }
                         @Override public void onFailure(Call<RequestModels.RequestResponse> c, Throwable t) {
                             dialog.dismiss();

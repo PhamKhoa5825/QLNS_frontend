@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:layout_marginBottom="24dp">
+        android:layout_marginBottom="8dp">
 
         <TextView
             android:id="@+id/tvDialogAvatar"
@@ -68,6 +68,23 @@
             android:src="@android:drawable/ic_menu_close_clear_cancel"
             app:tint="@color/textColorSecondary" />
     </LinearLayout>
+
+    <!-- MỚI: Nút Xem chi tiết — đặt riêng 1 hàng, NGOÀI hàng Avatar -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnViewDetail"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginBottom="16dp"
+        android:text="Xem chi tiết (Chấm công · Đơn từ)"
+        android:textAllCaps="false"
+        android:textSize="13sp"
+        app:cornerRadius="8dp"
+        app:strokeColor="@color/colorPrimary"
+        app:icon="@android:drawable/ic_menu_info_details"
+        app:iconSize="16dp"
+        app:iconTint="@color/colorPrimary"
+        android:visibility="gone" />
 
     <View
         android:layout_width="match_parent"
@@ -156,7 +173,7 @@
         android:background="#F3F4F6"
         android:layout_marginBottom="16dp" />
 
-    <!-- Action buttons: Sửa + Nghỉ việc/Khôi phục + Đóng -->
+    <!-- Action buttons: Sửa + Nghỉ việc/Khôi phục -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -180,7 +197,6 @@
             app:iconSize="16dp"
             app:iconTint="@color/colorPrimary" />
 
-        <!-- Nút Nghỉ việc (cho NV đang ACTIVE) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDeleteEmployee"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -198,7 +214,6 @@
             app:iconSize="16dp"
             app:iconTint="#EF4444" />
 
-        <!-- ĐÃ THÊM: Nút Khôi phục (cho NV đã RESIGNED) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnReactivateEmployee"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"

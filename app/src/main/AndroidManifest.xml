@@ -25,6 +25,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDFe8UGOtV8if60BszPuQk8D0lxqN5NHJI" />
+<!--            android:value="AIzaSyBtwsNWDtFgG5-3phTMawhCwutKILE_9rw" />-->
 
         <!-- Launcher -->
         <activity
@@ -41,8 +42,7 @@
 
         <!-- Nhân viên -->
         <activity android:name=".ui.EmployeeActivity" android:exported="false" />
-        <activity android:name=".ui.AddEmployeeActivity" android:exported="false" />
-        <activity android:name=".ui.EditEmployeeActivity" android:exported="false" />
+        <activity android:name=".ui.EmployeeDetailActivity" />
 
         <!-- Phòng ban -->
         <activity android:name=".ui.DepartmentActivity" android:exported="false" />

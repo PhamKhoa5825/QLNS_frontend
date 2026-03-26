@@ -1,117 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="#F3F4F6">
 
-    <!-- Blue Header Background with Rounded Bottom -->
-    <View
-        android:id="@+id/headerBackground"
-        android:clickable="false"
-        android:focusable="false"
+    <!-- Header chuẩn giống các trang khác -->
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:background="@drawable/bg_header_dashboard"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Back Button -->
-    <ImageView
-        android:id="@+id/btnBack"
-        android:clickable="true"
-        android:focusable="true"
-        android:elevation="8dp"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="48dp"
-        android:padding="8dp"
-        android:src="@drawable/ic_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/white" />
-
-    <!-- Header Title -->
-    <TextView
-        android:id="@+id/tvHeaderTitle"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Trung tâm\nthông báo"
-        android:textColor="@color/white"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:lineSpacingExtra="-4dp"
-        app:layout_constraintStart_toEndOf="@id/btnBack"
-        app:layout_constraintTop_toTopOf="@id/btnBack" />
+        android:fitsSystemWindows="true"
+        android:background="@drawable/bg_header_inner"
+        app:elevation="0dp">
 
-    <!-- Mark All Read -->
-    <LinearLayout
-        android:id="@+id/btnMarkAllRead"
-        android:elevation="8dp"
-        android:layout_width="wrap_content"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@android:drawable/ic_menu_revert"
+            app:navigationIconTint="@color/white"
+            app:title="Trung tâm thông báo"
+            app:titleTextColor="@color/white">
+
+            <!-- Nút đọc tất cả ở góc phải -->
+            <ImageView
+                android:id="@+id/btnMarkAllRead"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="16dp"
+                android:padding="4dp"
+                android:src="@drawable/ic_check_circle"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/white"
+                android:contentDescription="Đọc tất cả" />
+
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Tabs: Tất cả | Đã gửi (chỉ Admin thấy tab Đã gửi) -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:background="?attr/selectableItemBackground"
-        android:padding="4dp"
-        app:layout_constraintBottom_toBottomOf="@id/tvHeaderTitle"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:background="@color/white"
+        app:tabIndicatorColor="@color/colorPrimary"
+        app:tabSelectedTextColor="@color/colorPrimary"
+        app:tabTextColor="@color/textColorSecondary"
+        app:tabMode="fixed"
+        app:tabGravity="fill" />
 
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@drawable/ic_check_circle"
-            app:tint="@color/white" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:text="Đọc tất cả"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-    <!-- Unread Count -->
+    <!-- Unread count -->
     <TextView
         android:id="@+id/tvUnreadCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:text="0 thông báo chưa đọc"
+        android:textSize="13sp"
+        android:textColor="@color/textColorSecondary"
+        android:background="@color/white" />
+
+    <!-- Empty state -->
+    <TextView
+        android:id="@+id/tvEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="60dp"
+        android:text="Không có thông báo"
+        android:textSize="14sp"
+        android:textColor="@color/textColorSecondary"
+        android:visibility="gone" />
+
+    <!-- Progress -->
+    <ProgressBar
+        android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="3 thông báo chưa đọc"
-        android:textColor="#CCFFFFFF"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@id/tvHeaderTitle"
-        app:layout_constraintTop_toBottomOf="@id/tvHeaderTitle" />
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
 
-    <!-- Notifications List -->
+    <!-- Notification list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewNotifications"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_weight="1"
         android:clipToPadding="false"
-        android:paddingTop="8dp"
-        android:paddingBottom="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerBackground"
-        tools:listitem="@layout/item_notification" />
+        android:paddingTop="4dp"
+        android:paddingBottom="80dp" />
 
+    <!-- FAB tạo thông báo (chỉ Admin) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCreateNoti"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
         android:visibility="gone"
         app:backgroundTint="@color/colorPrimary"
         app:srcCompat="@android:drawable/ic_input_add"
-        app:tint="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:tint="@color/white" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

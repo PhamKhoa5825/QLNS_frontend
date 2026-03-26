@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -26,10 +26,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
+
 import com.example.myapplication.R;
-import com.example.myapplication.model.Employee;
-import com.example.myapplication.model.Department;
 import com.example.myapplication.model.AdminModels;
+import com.example.myapplication.model.Department;
+import com.example.myapplication.model.Employee;
 import com.example.myapplication.model.RequestModels;
 import com.example.myapplication.model.TaskModels;
 import com.example.myapplication.network.ApiService;
@@ -37,11 +38,13 @@ import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.network.TokenUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -352,6 +355,7 @@ public class DashboardActivity extends AppCompatActivity {
             if ("ADMIN".equals(role)) startActivity(new Intent(this, AccountManagementActivity.class));
             else startActivity(new Intent(this, ProfileActivity.class));
         });
+        safeClick(R.id.btnNavBackup, () -> startActivity(new Intent(this, BackupActivity.class)));
         safeClick(R.id.btnNavLogout, this::showLogoutDialog);
     }
 
@@ -461,7 +465,7 @@ public class DashboardActivity extends AppCompatActivity {
                         companyRadius = s.allowedRadius + " m";
                     }
                     if (s.baseLat != null && s.baseLng != null) {
-                        companyLocation = String.format(java.util.Locale.US,
+                        companyLocation = String.format(Locale.US,
                                 "%.5f, %.5f", s.baseLat, s.baseLng);
                     }
                 } else {

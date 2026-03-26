@@ -1,7 +1,5 @@
 package com.example.myapplication.model;
 
-import com.google.gson.annotations.SerializedName;
-
 public class AdminModels {
 
     /** Cài đặt công ty - nhận từ GET /api/settings */

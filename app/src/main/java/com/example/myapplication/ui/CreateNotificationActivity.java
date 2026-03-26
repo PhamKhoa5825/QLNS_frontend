@@ -3,20 +3,36 @@ package com.example.myapplication.ui;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Filter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.myapplication.R;
 import com.example.myapplication.model.Department;
 import com.example.myapplication.model.Employee;
 import com.example.myapplication.model.NotificationModels;
+import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,7 +66,7 @@ public class CreateNotificationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
         getWindow().getDecorView().setSystemUiVisibility(
-                android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE | android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         setContentView(R.layout.activity_create_notification);
 
         // Đẩy AppBarLayout xuống bằng chiều cao status bar
@@ -70,6 +86,13 @@ public class CreateNotificationActivity extends AppCompatActivity {
         createdById = getSharedPreferences("qlns_pref", MODE_PRIVATE).getLong("employeeId", -1);
 
         bindViews();
+        // Nhận prefill từ RequestListActivity (nếu có)
+        String prefillTitle = getIntent().getStringExtra("prefillTitle");
+        if (prefillTitle != null && etTitle != null) etTitle.setText(prefillTitle);
+
+        String prefillContent = getIntent().getStringExtra("prefillContent");
+        if (prefillContent != null && etContent != null) etContent.setText(prefillContent);
+
         loadDepartments();
         loadEmployees();
     }
@@ -231,8 +254,8 @@ public class CreateNotificationActivity extends AppCompatActivity {
         }
 
         @Override
-        public android.widget.Filter getFilter() {
-            return new android.widget.Filter() {
+        public Filter getFilter() {
+            return new Filter() {
                 @Override protected FilterResults performFiltering(CharSequence constraint) {
                     FilterResults results = new FilterResults();
                     if (constraint == null || constraint.length() == 0) {
@@ -354,7 +377,7 @@ public class CreateNotificationActivity extends AppCompatActivity {
                     Toast.makeText(CreateNotificationActivity.this, "Đã gửi thông báo", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(CreateNotificationActivity.this, "Lỗi: " + r.code(), Toast.LENGTH_SHORT).show();
+                    ApiErrorHelper.show(CreateNotificationActivity.this, r, "Gửi thông báo thất bại");
                 }
             }
             @Override public void onFailure(Call<NotificationModels.NotificationResponse> c, Throwable t) {
