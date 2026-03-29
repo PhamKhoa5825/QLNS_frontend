@@ -10,7 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.AuthModels;
+import com.example.myapplication.model.dto.AuthDto;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.network.TokenUtils;
@@ -78,16 +78,16 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setText("Đang đăng nhập...");
 
         ApiService api = RetrofitClient.getClient().create(ApiService.class);
-        api.login(new AuthModels.LoginRequest(username, password))
-                .enqueue(new Callback<AuthModels.AuthResponse>() {
+        api.login(new AuthDto.LoginRequest(username, password))
+                .enqueue(new Callback<AuthDto.AuthResponse>() {
                     @Override
-                    public void onResponse(Call<AuthModels.AuthResponse> call,
-                                           Response<AuthModels.AuthResponse> response) {
+                    public void onResponse(Call<AuthDto.AuthResponse> call,
+                                           Response<AuthDto.AuthResponse> response) {
                         btnLogin.setEnabled(true);
                         btnLogin.setText("Đăng nhập");
 
                         if (response.isSuccessful() && response.body() != null) {
-                            AuthModels.AuthResponse auth = response.body();
+                            AuthDto.AuthResponse auth = response.body();
 
                             SharedPreferences.Editor editor = prefs.edit();
                             editor.putString("token",      auth.token);
@@ -118,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<AuthModels.AuthResponse> call, Throwable t) {
+                    public void onFailure(Call<AuthDto.AuthResponse> call, Throwable t) {
                         btnLogin.setEnabled(true);
                         btnLogin.setText("Đăng nhập");
                         Toast.makeText(LoginActivity.this,

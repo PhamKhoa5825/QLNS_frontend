@@ -1,6 +1,11 @@
-package com.example.myapplication.model;
+package com.example.myapplication.model.dto;
 
-public class AuthModels {
+/**
+ * AuthDto — DTO cho authentication.
+ * AuthResponse giữ ở đây vì nó là response 1 lần (login),
+ * không phải entity lưu trữ.
+ */
+public class AuthDto {
 
     public static class LoginRequest {
         public String username;

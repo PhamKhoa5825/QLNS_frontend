@@ -93,12 +93,12 @@ public class NotificationDetailActivity extends AppCompatActivity {
             }
         }
 
-        // Mark as read
+        // Mark as read — gọi ApiService trực tiếp
         if (notiId != -1 && userId != -1) {
             ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
             apiService.markNotiRead(notiId, userId).enqueue(new Callback<Void>() {
-                @Override public void onResponse(Call<Void> c, Response<Void> r) {}
-                @Override public void onFailure(Call<Void> c, Throwable t) {}
+                @Override public void onResponse(Call<Void> c, Response<Void> r) { /* silent */ }
+                @Override public void onFailure(Call<Void> c, Throwable t) { /* silent */ }
             });
         }
     }

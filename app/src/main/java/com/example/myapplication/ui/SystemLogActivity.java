@@ -18,8 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.AdminModels;
-import com.example.myapplication.model.Employee;
+import com.example.myapplication.model.entity.Employee;
+import com.example.myapplication.model.entity.SystemLog;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.google.android.material.appbar.AppBarLayout;
@@ -265,15 +265,15 @@ public class SystemLogActivity extends AppCompatActivity {
     private void applyFilter(String action, String employee, String department,
                              String position, String fromDate, String toDate) {
         showLoading();
-        apiService.getSystemLogs().enqueue(new Callback<List<AdminModels.SystemLogResponse>>() {
+        apiService.getSystemLogs().enqueue(new Callback<List<SystemLog>>() {
             @Override
-            public void onResponse(Call<List<AdminModels.SystemLogResponse>> c,
-                                   Response<List<AdminModels.SystemLogResponse>> r) {
+            public void onResponse(Call<List<SystemLog>> c,
+                                   Response<List<SystemLog>> r) {
                 hideLoading();
                 if (r.isSuccessful() && r.body() != null) {
-                    List<AdminModels.SystemLogResponse> filtered = new ArrayList<>();
+                    List<SystemLog> filtered = new ArrayList<>();
 
-                    for (AdminModels.SystemLogResponse log : r.body()) {
+                    for (SystemLog log : r.body()) {
                         // Lọc theo action
                         if (!action.isEmpty() && !"Tất cả".equals(action)) {
                             if (log.action == null || !log.action.equalsIgnoreCase(action)) continue;
@@ -316,7 +316,7 @@ public class SystemLogActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<AdminModels.SystemLogResponse>> c, Throwable t) {
+            public void onFailure(Call<List<SystemLog>> c, Throwable t) {
                 hideLoading();
                 Toast.makeText(SystemLogActivity.this, "Lỗi lọc nhật ký", Toast.LENGTH_SHORT).show();
             }
@@ -327,17 +327,17 @@ public class SystemLogActivity extends AppCompatActivity {
 
     private void loadLogs() {
         showLoading();
-        apiService.getSystemLogs().enqueue(new Callback<List<AdminModels.SystemLogResponse>>() {
+        apiService.getSystemLogs().enqueue(new Callback<List<SystemLog>>() {
             @Override
-            public void onResponse(Call<List<AdminModels.SystemLogResponse>> c,
-                                   Response<List<AdminModels.SystemLogResponse>> r) {
+            public void onResponse(Call<List<SystemLog>> c,
+                                   Response<List<SystemLog>> r) {
                 hideLoading();
                 if (r.isSuccessful() && r.body() != null) {
                     updateList(r.body());
                 }
             }
             @Override
-            public void onFailure(Call<List<AdminModels.SystemLogResponse>> c, Throwable t) {
+            public void onFailure(Call<List<SystemLog>> c, Throwable t) {
                 hideLoading();
                 Toast.makeText(SystemLogActivity.this, "Lỗi tải nhật ký", Toast.LENGTH_SHORT).show();
             }
@@ -346,17 +346,17 @@ public class SystemLogActivity extends AppCompatActivity {
 
     private void loadLogsByAction(String action) {
         showLoading();
-        apiService.filterLogsByAction(action).enqueue(new Callback<List<AdminModels.SystemLogResponse>>() {
+        apiService.filterLogsByAction(action).enqueue(new Callback<List<SystemLog>>() {
             @Override
-            public void onResponse(Call<List<AdminModels.SystemLogResponse>> c,
-                                   Response<List<AdminModels.SystemLogResponse>> r) {
+            public void onResponse(Call<List<SystemLog>> c,
+                                   Response<List<SystemLog>> r) {
                 hideLoading();
                 if (r.isSuccessful() && r.body() != null) {
                     updateList(r.body());
                 }
             }
             @Override
-            public void onFailure(Call<List<AdminModels.SystemLogResponse>> c, Throwable t) {
+            public void onFailure(Call<List<SystemLog>> c, Throwable t) {
                 hideLoading();
                 Toast.makeText(SystemLogActivity.this, "Lỗi lọc nhật ký", Toast.LENGTH_SHORT).show();
             }
@@ -374,7 +374,7 @@ public class SystemLogActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
     }
 
-    private void updateList(List<AdminModels.SystemLogResponse> list) {
+    private void updateList(List<SystemLog> list) {
         adapter.updateData(list);
         tvEmpty.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
         recyclerView.setVisibility(list.isEmpty() ? View.GONE : View.VISIBLE);
@@ -384,13 +384,13 @@ public class SystemLogActivity extends AppCompatActivity {
 
     static class LogAdapter extends RecyclerView.Adapter<LogAdapter.VH> {
 
-        private List<AdminModels.SystemLogResponse> list;
+        private List<SystemLog> list;
 
-        LogAdapter(List<AdminModels.SystemLogResponse> list) {
+        LogAdapter(List<SystemLog> list) {
             this.list = list;
         }
 
-        void updateData(List<AdminModels.SystemLogResponse> newList) {
+        void updateData(List<SystemLog> newList) {
             this.list = newList;
             notifyDataSetChanged();
         }
@@ -405,7 +405,7 @@ public class SystemLogActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull VH h, int position) {
-            AdminModels.SystemLogResponse log = list.get(position);
+            SystemLog log = list.get(position);
 
             h.tvUsername.setText(log.username != null ? log.username : "System");
             h.tvDescription.setText(log.description != null ? log.description : "");

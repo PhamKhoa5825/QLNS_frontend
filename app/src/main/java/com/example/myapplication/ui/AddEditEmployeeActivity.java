@@ -29,9 +29,9 @@ import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
-import com.example.myapplication.model.CreateEmployeeRequest;
-import com.example.myapplication.model.Department;
-import com.example.myapplication.model.Employee;
+import com.example.myapplication.model.dto.CreateEmployeeRequest;
+import com.example.myapplication.model.entity.Department;
+import com.example.myapplication.model.entity.Employee;
 import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;

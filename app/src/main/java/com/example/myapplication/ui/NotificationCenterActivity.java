@@ -1,7 +1,6 @@
 package com.example.myapplication.ui;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,11 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.adapter.NotificationAdapter;
-import com.example.myapplication.model.Employee;
-import com.example.myapplication.model.NotificationModels;
+import com.example.myapplication.model.dto.NotificationDto;
+import com.example.myapplication.model.entity.Employee;
+import com.example.myapplication.model.entity.Notification;
 import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.utils.SharedPrefsManager;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -35,12 +36,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * NotificationCenterActivity v2 — Sửa 3 vấn đề:
- * 1. Header chuẩn (AppBarLayout + MaterialToolbar) giống các trang khác
- * 2. Tabs: "Tất cả" | "Đã gửi" (Admin thấy TB mình đã tạo)
- * 3. Click vào TB → mở NotificationDetailActivity
- */
 public class NotificationCenterActivity extends AppCompatActivity
         implements NotificationAdapter.OnActionListener {
 
@@ -49,14 +44,13 @@ public class NotificationCenterActivity extends AppCompatActivity
     private ProgressBar progressBar;
     private FloatingActionButton fabCreate;
     private TabLayout tabLayout;
+
     private ApiService apiService;
-    private SharedPreferences prefs;
+    private SharedPrefsManager pm;
     private Long userId, employeeId;
-    private String role;
     private boolean isAdmin;
     private NotificationAdapter adapter;
-    private List<NotificationModels.NotificationResponse> allNotis = new ArrayList<>();
-    private List<NotificationModels.NotificationResponse> sentNotis = new ArrayList<>();
+    private List<Notification> allNotis = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,16 +62,15 @@ public class NotificationCenterActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_notification_center);
 
-        prefs      = getSharedPreferences("qlns_pref", MODE_PRIVATE);
+        pm = SharedPrefsManager.getInstance(this);
         apiService = RetrofitClient.getClient().create(ApiService.class);
-        userId     = prefs.getLong("userId", -1);
-        employeeId = prefs.getLong("employeeId", -1);
-        role       = prefs.getString("role", "EMPLOYEE");
-        isAdmin    = "ADMIN".equals(role) || "MANAGER".equals(role);
+        userId = pm.getUserId();
+        employeeId = pm.getEmployeeId();
+        isAdmin = pm.isAdminOrManager();
 
         bindViews();
         setupTabs();
-        fetchDeptAndLoadNotifications();
+        fetchDeptAndLoad();
     }
 
     private void bindViews() {
@@ -95,13 +88,9 @@ public class NotificationCenterActivity extends AppCompatActivity
         adapter = new NotificationAdapter(new ArrayList<>(), this, isAdmin);
         recyclerView.setAdapter(adapter);
 
-        // Nút đọc tất cả
         View btnMarkAll = findViewById(R.id.btnMarkAllRead);
-        if (btnMarkAll != null) {
-            btnMarkAll.setOnClickListener(v -> markAllRead());
-        }
+        if (btnMarkAll != null) btnMarkAll.setOnClickListener(v -> markAllRead());
 
-        // FAB tạo TB (Admin/Manager)
         if (isAdmin) {
             fabCreate.setVisibility(View.VISIBLE);
             fabCreate.setOnClickListener(v ->
@@ -111,82 +100,64 @@ public class NotificationCenterActivity extends AppCompatActivity
         }
     }
 
-    // ── TABS ──────────────────────────────────────────────────────
-
     private void setupTabs() {
         tabLayout.addTab(tabLayout.newTab().setText("Tất cả"));
-
-        // Chỉ Admin/Manager mới thấy tab "Đã gửi"
-        if (isAdmin) {
-            tabLayout.addTab(tabLayout.newTab().setText("Đã gửi"));
-        }
+        if (isAdmin) tabLayout.addTab(tabLayout.newTab().setText("Đã gửi"));
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override public void onTabSelected(TabLayout.Tab tab) {
-                showTab(tab.getPosition());
-            }
+            @Override public void onTabSelected(TabLayout.Tab tab) { showTab(tab.getPosition()); }
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
     }
 
+    // ── TABS ──────────────────────────────────────────────────
+
     private void showTab(int position) {
         if (position == 0) {
-            // Tab "Tất cả" — TB nhận được
             adapter.updateData(allNotis);
             tvEmpty.setVisibility(allNotis.isEmpty() ? View.VISIBLE : View.GONE);
             tvEmpty.setText("Không có thông báo");
             tvUnreadCount.setVisibility(View.VISIBLE);
         } else {
-            // Tab "Đã gửi" — TB mình đã tạo
-            filterSentNotifications();
-            adapter.updateData(sentNotis);
-            tvEmpty.setVisibility(sentNotis.isEmpty() ? View.VISIBLE : View.GONE);
+            // Tab "Đã gửi" — lọc TB mình tạo
+            String myName = pm.getFullName();
+            List<Notification> sent = allNotis.stream()
+                    .filter(n -> n.createdByName != null && n.createdByName.equals(myName))
+                    .collect(Collectors.toList());
+            adapter.updateData(sent);
+            tvEmpty.setVisibility(sent.isEmpty() ? View.VISIBLE : View.GONE);
             tvEmpty.setText("Bạn chưa gửi thông báo nào");
             tvUnreadCount.setVisibility(View.GONE);
         }
     }
 
-    /**
-     * Lọc TB do mình tạo — dựa vào createdByName match với tên NV hiện tại.
-     * Cách đơn giản nhất mà không cần API mới.
-     */
-    private void filterSentNotifications() {
-        String myName = prefs.getString("fullName", "");
-        sentNotis = allNotis.stream()
-                .filter(n -> n.createdByName != null && n.createdByName.equals(myName))
-                .collect(Collectors.toList());
-    }
+    // ── LOAD ──────────────────────────────────────────────────
 
-    // ── LOAD DATA ─────────────────────────────────────────────────
-
-    private void fetchDeptAndLoadNotifications() {
-        Long savedDeptId = prefs.getLong("departmentId", -1);
-        if (savedDeptId != -1) {
-            loadNotifications(savedDeptId);
+    private void fetchDeptAndLoad() {
+        Long deptId = pm.getDepartmentId();
+        if (deptId != -1) {
+            loadNotifications(deptId);
             return;
         }
 
-        if (employeeId == -1) {
-            Toast.makeText(this, "Vui lòng đăng nhập lại", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        if (employeeId == -1) return;
 
         apiService.getEmployeeById(employeeId).enqueue(new Callback<Employee>() {
-            @Override
-            public void onResponse(Call<Employee> c, Response<Employee> r) {
+            @Override public void onResponse(Call<Employee> c, Response<Employee> r) {
                 if (r.isSuccessful() && r.body() != null) {
-                    Long deptId = r.body().getDepartmentId();
-                    if (deptId != null) {
-                        prefs.edit().putLong("departmentId", deptId).apply();
-                        loadNotifications(deptId);
+                    Long dId = r.body().getDepartmentId();
+                    if (dId != null) {
+                        pm.saveDepartmentId(dId);
+                        loadNotifications(dId);
                     } else {
                         loadNotifications(0L);
                     }
+                } else {
+                    ApiErrorHelper.show(NotificationCenterActivity.this, r, "Lỗi tải thông tin nhân viên");
                 }
             }
-            @Override
-            public void onFailure(Call<Employee> c, Throwable t) {
+            @Override public void onFailure(Call<Employee> c, Throwable t) {
                 Toast.makeText(NotificationCenterActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
             }
         });
@@ -194,41 +165,39 @@ public class NotificationCenterActivity extends AppCompatActivity
 
     private void loadNotifications(Long deptId) {
         progressBar.setVisibility(View.VISIBLE);
-        apiService.getNotifications(deptId, userId)
-                .enqueue(new Callback<List<NotificationModels.NotificationResponse>>() {
-                    @Override
-                    public void onResponse(Call<List<NotificationModels.NotificationResponse>> c,
-                                           Response<List<NotificationModels.NotificationResponse>> r) {
-                        progressBar.setVisibility(View.GONE);
-                        if (r.isSuccessful() && r.body() != null) {
-                            allNotis = r.body();
+        apiService.getNotifications(deptId, userId).enqueue(new Callback<List<Notification>>() {
+            @Override
+            public void onResponse(Call<List<Notification>> c, Response<List<Notification>> r) {
+                progressBar.setVisibility(View.GONE);
+                if (r.isSuccessful() && r.body() != null) {
+                    allNotis = r.body();
+                    showTab(tabLayout.getSelectedTabPosition());
+                    updateUnreadCount();
+                } else {
+                    Toast.makeText(NotificationCenterActivity.this,
+                            ApiErrorHelper.parse(r, "Lỗi tải thông báo"),
+                            Toast.LENGTH_LONG).show();
+                }
+            }
 
-                            // Hiện theo tab đang chọn
-                            int selectedTab = tabLayout.getSelectedTabPosition();
-                            showTab(selectedTab);
-                            updateUnreadCount();
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<List<NotificationModels.NotificationResponse>> c, Throwable t) {
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(NotificationCenterActivity.this, "Lỗi tải thông báo", Toast.LENGTH_SHORT).show();
-                    }
-                });
+            @Override
+            public void onFailure(Call<List<Notification>> c, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(NotificationCenterActivity.this, "Lỗi kết nối", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void updateUnreadCount() {
-        if (tvUnreadCount != null) {
-            long unread = allNotis.stream().filter(n -> !n.isRead).count();
-            tvUnreadCount.setText(unread + " thông báo chưa đọc");
-        }
+        long unread = allNotis.stream().filter(n -> !n.isRead).count();
+        tvUnreadCount.setText(unread + " thông báo chưa đọc");
     }
 
-    // ── ADAPTER CALLBACKS ─────────────────────────────────────────
+    // ── ADAPTER CALLBACKS ─────────────────────────────────────
 
     @Override
-    public void onMarkRead(NotificationModels.NotificationResponse noti) {
-        // MỚI: Click vào TB → mở trang chi tiết (thay vì chỉ mark read)
+    public void onMarkRead(Notification noti) {
+        // Click → mở detail
         Intent intent = new Intent(this, NotificationDetailActivity.class);
         intent.putExtra("notiId", noti.id);
         intent.putExtra("title", noti.title);
@@ -240,59 +209,58 @@ public class NotificationCenterActivity extends AppCompatActivity
         intent.putExtra("userId", userId);
         startActivity(intent);
 
-        // Đánh dấu đã đọc local ngay (không đợi API)
         if (!noti.isRead) {
             noti.isRead = true;
             adapter.notifyDataSetChanged();
             updateUnreadCount();
-
             apiService.markNotiRead(noti.id, userId).enqueue(new Callback<Void>() {
-                @Override public void onResponse(Call<Void> c, Response<Void> r) {}
-                @Override public void onFailure(Call<Void> c, Throwable t) {}
+                @Override public void onResponse(Call<Void> c, Response<Void> r) { /* silent */ }
+                @Override public void onFailure(Call<Void> c, Throwable t) { /* silent */ }
             });
         }
     }
 
     @Override
-    public void onEdit(NotificationModels.NotificationResponse noti) {
+    public void onEdit(Notification noti) {
         showEditDialog(noti);
     }
 
     @Override
-    public void onDelete(NotificationModels.NotificationResponse noti) {
+    public void onDelete(Notification noti) {
         new AlertDialog.Builder(this)
                 .setTitle("Xóa thông báo")
                 .setMessage("Xóa \"" + noti.title + "\"?")
-                .setPositiveButton("Xóa", (d, w) -> {
-                    apiService.deleteNotification(noti.id).enqueue(new Callback<Void>() {
-                        @Override
-                        public void onResponse(Call<Void> c, Response<Void> r) {
-                            if (r.isSuccessful()) {
-                                Toast.makeText(NotificationCenterActivity.this, "Đã xóa", Toast.LENGTH_SHORT).show();
-                                allNotis.remove(noti);
-                                int selectedTab = tabLayout.getSelectedTabPosition();
-                                showTab(selectedTab);
-                                updateUnreadCount();
-                            } else {
-                                ApiErrorHelper.show(NotificationCenterActivity.this, r, "Xóa thông báo thất bại");
-                            }
-                        }
-                        @Override
-                        public void onFailure(Call<Void> c, Throwable t) {
-                            Toast.makeText(NotificationCenterActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                })
+                .setPositiveButton("Xóa", (d, w) -> deleteNotification(noti.id))
                 .setNegativeButton("Huỷ", null).show();
     }
 
-    // ── EDIT DIALOG ───────────────────────────────────────────────
+    private void deleteNotification(Long notiId) {
+        apiService.deleteNotification(notiId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> c, Response<Void> r) {
+                if (r.isSuccessful()) {
+                    Toast.makeText(NotificationCenterActivity.this, "Đã xóa thông báo", Toast.LENGTH_SHORT).show();
+                    fetchDeptAndLoad(); // Reload
+                } else {
+                    Toast.makeText(NotificationCenterActivity.this,
+                            ApiErrorHelper.parse(r, "Xóa thông báo thất bại"),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
 
-    private void showEditDialog(NotificationModels.NotificationResponse noti) {
+            @Override
+            public void onFailure(Call<Void> c, Throwable t) {
+                Toast.makeText(NotificationCenterActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // ── EDIT DIALOG (giữ ApiService + ApiErrorHelper) ─────────
+
+    private void showEditDialog(Notification noti) {
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_edit_notification, null);
         TextInputEditText etTitle = view.findViewById(R.id.etEditTitle);
         TextInputEditText etContent = view.findViewById(R.id.etEditContent);
-
         etTitle.setText(noti.title);
         etContent.setText(noti.content);
 
@@ -307,11 +275,12 @@ public class NotificationCenterActivity extends AppCompatActivity
                         return;
                     }
 
-                    apiService.updateNotification(noti.id, new NotificationModels.UpdateNotificationRequest(title, content))
-                            .enqueue(new Callback<NotificationModels.NotificationResponse>() {
+                    apiService.updateNotification(noti.id,
+                                    new NotificationDto.UpdateNotificationRequest(title, content))
+                            .enqueue(new Callback<Notification>() {
                                 @Override
-                                public void onResponse(Call<NotificationModels.NotificationResponse> c,
-                                                       Response<NotificationModels.NotificationResponse> r) {
+                                public void onResponse(Call<Notification> c,
+                                                       Response<Notification> r) {
                                     if (r.isSuccessful()) {
                                         Toast.makeText(NotificationCenterActivity.this, "Đã cập nhật", Toast.LENGTH_SHORT).show();
                                         noti.title = title;
@@ -322,7 +291,7 @@ public class NotificationCenterActivity extends AppCompatActivity
                                     }
                                 }
                                 @Override
-                                public void onFailure(Call<NotificationModels.NotificationResponse> c, Throwable t) {
+                                public void onFailure(Call<Notification> c, Throwable t) {
                                     Toast.makeText(NotificationCenterActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
                                 }
                             });
@@ -330,16 +299,16 @@ public class NotificationCenterActivity extends AppCompatActivity
                 .setNegativeButton("Huỷ", null).show();
     }
 
-    // ── MARK ALL READ ─────────────────────────────────────────────
+    // ── MARK ALL READ ─────────────────────────────────────────
 
     private void markAllRead() {
-        for (NotificationModels.NotificationResponse noti : allNotis) {
+        for (Notification noti : allNotis) {
             if (!noti.isRead) {
-                apiService.markNotiRead(noti.id, userId).enqueue(new Callback<Void>() {
-                    @Override public void onResponse(Call<Void> c, Response<Void> r) {}
-                    @Override public void onFailure(Call<Void> c, Throwable t) {}
-                });
                 noti.isRead = true;
+                apiService.markNotiRead(noti.id, userId).enqueue(new Callback<Void>() {
+                    @Override public void onResponse(Call<Void> c, Response<Void> r) { /* silent */ }
+                    @Override public void onFailure(Call<Void> c, Throwable t) { /* silent */ }
+                });
             }
         }
         adapter.notifyDataSetChanged();
@@ -350,6 +319,6 @@ public class NotificationCenterActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        fetchDeptAndLoadNotifications();
+        fetchDeptAndLoad();
     }
 }

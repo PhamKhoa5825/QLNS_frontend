@@ -23,8 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.AccountModels;
-import com.example.myapplication.model.Employee;
+import com.example.myapplication.model.dto.AccountDto;
+import com.example.myapplication.model.entity.Employee;
 import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
@@ -368,7 +368,7 @@ public class AccountManagementActivity extends AppCompatActivity {
                 .setPositiveButton("Xác nhận", (d, w) -> {
                     int selected = ((AlertDialog) d).getListView().getCheckedItemPosition();
                     String newRole = roles[selected];
-                    apiService.updateEmployeeRole(emp.getId(), new AccountModels.UpdateRoleRequest(newRole))
+                    apiService.updateEmployeeRole(emp.getId(), new AccountDto.UpdateRoleRequest(newRole))
                             .enqueue(new Callback<Employee>() {
                                 @Override public void onResponse(Call<Employee> c, Response<Employee> r) {
                                     if (r.isSuccessful()) {

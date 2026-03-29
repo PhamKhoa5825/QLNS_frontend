@@ -18,7 +18,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.RequestModels;
+import com.example.myapplication.model.dto.RequestDto;
+import com.example.myapplication.model.entity.Request;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.google.android.material.button.MaterialButton;
@@ -31,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LeaveApplicationActivity extends AppCompatActivity {
+public class CreateRequestActivity extends AppCompatActivity {
 
     private ImageButton btnBack;
     private AutoCompleteTextView spinnerLeaveType;
@@ -148,27 +149,27 @@ public class LeaveApplicationActivity extends AppCompatActivity {
         btnSubmit.setEnabled(false);
         if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
 
-        apiService.createRequest(employeeId, new RequestModels.CreateRequestBody(title, description))
-                .enqueue(new Callback<RequestModels.RequestResponse>() {
+        apiService.createRequest(employeeId, new RequestDto.CreateRequestBody(title, description))
+                .enqueue(new Callback<Request>() {
                     @Override
-                    public void onResponse(Call<RequestModels.RequestResponse> call,
-                                           Response<RequestModels.RequestResponse> response) {
+                    public void onResponse(Call<Request> call,
+                                           Response<Request> response) {
                         btnSubmit.setEnabled(true);
                         if (progressBar != null) progressBar.setVisibility(View.GONE);
 
                         if (response.isSuccessful()) {
-                            Toast.makeText(LeaveApplicationActivity.this,
+                            Toast.makeText(CreateRequestActivity.this,
                                     "Đã gửi đơn thành công!", Toast.LENGTH_SHORT).show();
                             finish();
                         } else {
-                            Toast.makeText(LeaveApplicationActivity.this,
+                            Toast.makeText(CreateRequestActivity.this,
                                     "Gửi đơn thất bại: " + response.code(), Toast.LENGTH_SHORT).show();
                         }
                     }
-                    @Override public void onFailure(Call<RequestModels.RequestResponse> c, Throwable t) {
+                    @Override public void onFailure(Call<Request> c, Throwable t) {
                         btnSubmit.setEnabled(true);
                         if (progressBar != null) progressBar.setVisibility(View.GONE);
-                        Toast.makeText(LeaveApplicationActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreateRequestActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

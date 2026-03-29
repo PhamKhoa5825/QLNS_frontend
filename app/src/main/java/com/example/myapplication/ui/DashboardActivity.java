@@ -1,7 +1,6 @@
 package com.example.myapplication.ui;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
@@ -28,14 +27,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.AdminModels;
-import com.example.myapplication.model.Department;
-import com.example.myapplication.model.Employee;
-import com.example.myapplication.model.RequestModels;
-import com.example.myapplication.model.TaskModels;
+import com.example.myapplication.model.entity.CompanySettings;
+import com.example.myapplication.model.entity.Department;
+import com.example.myapplication.model.entity.Employee;
+import com.example.myapplication.model.entity.Request;
+import com.example.myapplication.model.entity.Task;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.network.TokenUtils;
+import com.example.myapplication.utils.SharedPrefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
@@ -51,7 +51,7 @@ import retrofit2.Response;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    private SharedPreferences prefs;
+    private SharedPrefsManager pm;
     private ApiService apiService;
     private String role;
     private Long employeeId;
@@ -94,11 +94,11 @@ public class DashboardActivity extends AppCompatActivity {
             return insets;
         });
 
-        prefs      = getSharedPreferences("qlns_pref", MODE_PRIVATE);
+        pm         = SharedPrefsManager.getInstance(this);
         apiService = RetrofitClient.getClient().create(ApiService.class);
-        role       = prefs.getString("role", "EMPLOYEE");
-        employeeId = prefs.getLong("employeeId", -1);
-        userId     = prefs.getLong("userId", -1);
+        role       = pm.getRole();
+        employeeId = pm.getEmployeeId();
+        userId     = pm.getUserId();
 
         setupHeader();
         setupDateTime();
@@ -112,7 +112,8 @@ public class DashboardActivity extends AppCompatActivity {
     // ── HEADER ────────────────────────────────────────────────────
 
     private void setupHeader() {
-        String fullName = prefs.getString("fullName", "Người dùng");
+        String fullName = pm.getFullName();
+        if (fullName == null || fullName.isEmpty()) fullName = "Người dùng";
         TextView tvUserName = findViewById(R.id.tvUserName);
         TextView tvAvatar   = findViewById(R.id.tvAvatar);
         tvUserName.setText(fullName);
@@ -418,29 +419,29 @@ public class DashboardActivity extends AppCompatActivity {
         });
 
         // 2: Đơn chờ duyệt
-        Call<List<RequestModels.RequestResponse>> reqCall =
+        Call<List<Request>> reqCall =
                 "ADMIN".equals(role) ? apiService.getAllRequests() : apiService.getMyRequests(employeeId);
-        reqCall.enqueue(new Callback<List<RequestModels.RequestResponse>>() {
-            @Override public void onResponse(Call<List<RequestModels.RequestResponse>> c,
-                                             Response<List<RequestModels.RequestResponse>> r) {
+        reqCall.enqueue(new Callback<List<Request>>() {
+            @Override public void onResponse(Call<List<Request>> c,
+                                             Response<List<Request>> r) {
                 if (r.isSuccessful() && r.body() != null) {
                     long pending = r.body().stream().filter(req -> "PENDING".equals(req.status)).count();
                     updateStatValue(2, String.valueOf(pending));
                 }
             }
-            @Override public void onFailure(Call<List<RequestModels.RequestResponse>> c, Throwable t) { updateStatValue(2, "!"); }
+            @Override public void onFailure(Call<List<Request>> c, Throwable t) { updateStatValue(2, "!"); }
         });
 
         // 3: Nhiệm vụ
-        apiService.getMyTasks(employeeId).enqueue(new Callback<List<TaskModels.TaskResponse>>() {
-            @Override public void onResponse(Call<List<TaskModels.TaskResponse>> c,
-                                             Response<List<TaskModels.TaskResponse>> r) {
+        apiService.getMyTasks(employeeId).enqueue(new Callback<List<Task>>() {
+            @Override public void onResponse(Call<List<Task>> c,
+                                             Response<List<Task>> r) {
                 if (r.isSuccessful() && r.body() != null) {
                     long notDone = r.body().stream().filter(t -> !"DONE".equals(t.status)).count();
                     updateStatValue(3, String.valueOf(notDone));
                 }
             }
-            @Override public void onFailure(Call<List<TaskModels.TaskResponse>> c, Throwable t) { updateStatValue(3, "!"); }
+            @Override public void onFailure(Call<List<Task>> c, Throwable t) { updateStatValue(3, "!"); }
         });
 
         // 4: TB chưa đọc
@@ -452,11 +453,11 @@ public class DashboardActivity extends AppCompatActivity {
         });
 
         // Company settings → trang 2 full card
-        apiService.getCompanySettings().enqueue(new Callback<AdminModels.CompanySettings>() {
-            @Override public void onResponse(Call<AdminModels.CompanySettings> c,
-                                             Response<AdminModels.CompanySettings> r) {
+        apiService.getCompanySettings().enqueue(new Callback<CompanySettings>() {
+            @Override public void onResponse(Call<CompanySettings> c,
+                                             Response<CompanySettings> r) {
                 if (r.isSuccessful() && r.body() != null) {
-                    AdminModels.CompanySettings s = r.body();
+                    CompanySettings s = r.body();
                     companyName = s.companyName != null ? s.companyName : "Chưa đặt tên";
                     if (s.workStartTime != null && s.workEndTime != null) {
                         companyWorkHours = s.workStartTime + " → " + s.workEndTime;
@@ -473,7 +474,7 @@ public class DashboardActivity extends AppCompatActivity {
                 }
                 updateCompanyCard();
             }
-            @Override public void onFailure(Call<AdminModels.CompanySettings> c, Throwable t) {
+            @Override public void onFailure(Call<CompanySettings> c, Throwable t) {
                 companyName = "Lỗi kết nối";
                 updateCompanyCard();
             }
@@ -484,11 +485,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void handleSessionExpired() {
         Toast.makeText(this, "Phiên đăng nhập hết hạn", Toast.LENGTH_LONG).show();
-        String saved = prefs.getString("saved_username", null);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.clear();
-        if (saved != null) editor.putString("saved_username", saved);
-        editor.apply();
+        pm.logout();
         startActivity(new Intent(this, LoginActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
     }
@@ -508,11 +505,7 @@ public class DashboardActivity extends AppCompatActivity {
         if (btnCancel != null) btnCancel.setOnClickListener(v -> dialog.dismiss());
         if (btnConfirm != null) btnConfirm.setOnClickListener(v -> {
             dialog.dismiss();
-            String savedEmail = prefs.getString("saved_username", null);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.clear();
-            if (savedEmail != null) editor.putString("saved_username", savedEmail);
-            editor.apply();
+            pm.logout();
             startActivity(new Intent(this, LoginActivity.class)
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         });
@@ -539,7 +532,7 @@ public class DashboardActivity extends AppCompatActivity {
         super.onResume();
 
         // Kiểm tra token còn hạn không trước khi load dữ liệu
-        String token = prefs.getString("token", null);
+        String token = pm.getToken();
         if (token == null || TokenUtils.isTokenExpired(token)) {
             handleSessionExpired();
             return;

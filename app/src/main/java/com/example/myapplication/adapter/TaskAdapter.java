@@ -8,25 +8,25 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
-import com.example.myapplication.model.TaskModels;
+import com.example.myapplication.model.entity.Task;
 
 import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.VH> {
 
     public interface ActionListener {
-        void onAction(TaskModels.TaskResponse task, String action);
+        void onAction(Task task, String action);
     }
 
-    private List<TaskModels.TaskResponse> list;
+    private List<Task> list;
     private final ActionListener listener;
 
-    public TaskAdapter(List<TaskModels.TaskResponse> list, ActionListener listener) {
+    public TaskAdapter(List<Task> list, ActionListener listener) {
         this.list     = list;
         this.listener = listener;
     }
 
-    public void updateData(List<TaskModels.TaskResponse> newList) {
+    public void updateData(List<Task> newList) {
         this.list = newList;
         notifyDataSetChanged();
     }
@@ -40,7 +40,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.VH> {
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
-        TaskModels.TaskResponse task = list.get(position);
+        Task task = list.get(position);
 
         h.tvTitle.setText(task.title);
         h.tvDesc.setText(task.description != null ? task.description : "");

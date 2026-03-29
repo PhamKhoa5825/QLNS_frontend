@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.Department;
+import com.example.myapplication.model.entity.Department;
 
 import java.util.*;
 

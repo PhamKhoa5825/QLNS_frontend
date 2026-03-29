@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F3F4F6">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:background="@drawable/bg_header_inner"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@android:drawable/ic_menu_revert"
+            app:navigationIconTint="@color/white"
+            app:title="Chi tiết phòng ban"
+            app:titleTextColor="@color/white" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Card: Thông tin phòng ban -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Header: Avatar + Tên -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <!-- Avatar circle -->
+                        <TextView
+                            android:id="@+id/tvDeptAvatar"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:background="@drawable/bg_avatar_circle"
+                            android:gravity="center"
+                            android:text="?"
+                            android:textColor="@color/white"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvDeptName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="—"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/textColorPrimary" />
+
+                            <TextView
+                                android:id="@+id/tvDeptEmpCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0 nhân viên"
+                                android:textSize="13sp"
+                                android:textColor="@color/textColorSecondary"
+                                android:layout_marginTop="4dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F3F4F6"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Mô tả -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mô tả"
+                        android:textSize="12sp"
+                        android:textColor="@color/textColorSecondary" />
+                    <TextView
+                        android:id="@+id/tvDeptDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Không có mô tả"
+                        android:textSize="15sp"
+                        android:textColor="@color/textColorPrimary"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Trưởng phòng -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Trưởng phòng"
+                        android:textSize="12sp"
+                        android:textColor="@color/textColorSecondary" />
+                    <TextView
+                        android:id="@+id/tvDeptManager"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Chưa có trưởng phòng"
+                        android:textSize="15sp"
+                        android:textColor="@color/textColorPrimary" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card: Danh sách nhân viên -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Danh sách nhân viên"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textColorPrimary"
+                        android:layout_marginBottom="12dp" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tvEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Không có nhân viên trong phòng ban"
+                        android:textSize="14sp"
+                        android:textColor="@color/textColorSecondary"
+                        android:gravity="center"
+                        android:paddingVertical="24dp"
+                        android:visibility="gone" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvEmployees"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

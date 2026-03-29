@@ -1,6 +1,8 @@
 package com.example.myapplication.network;
 
-import com.example.myapplication.model.*;
+import com.example.myapplication.model.dto.*;
+import com.example.myapplication.model.entity.*;
+
 import retrofit2.Call;
 import retrofit2.http.*;
 import java.util.List;
@@ -10,7 +12,7 @@ public interface ApiService {
 
     // ── AUTH ──────────────────────────────────────────────────────
     @POST("api/auth/login")
-    Call<AuthModels.AuthResponse> login(@Body AuthModels.LoginRequest request);
+    Call<AuthDto.AuthResponse> login(@Body AuthDto.LoginRequest request);
 
     // ── EMPLOYEE ──────────────────────────────────────────────────
     @GET("api/employees")
@@ -41,7 +43,7 @@ public interface ApiService {
     // ĐÃ THÊM: Endpoint đổi role nhân viên (EMPLOYEE / MANAGER / ADMIN)
     @PUT("api/employees/{id}/role")
     Call<Employee> updateEmployeeRole(@Path("id") Long employeeId,
-                                      @Body AccountModels.UpdateRoleRequest request);
+                                      @Body AccountDto.UpdateRoleRequest request);
 
     // ── DEPARTMENT ────────────────────────────────────────────────
     @GET("api/departments")
@@ -73,68 +75,68 @@ public interface ApiService {
 
     // ── TASK ──────────────────────────────────────────────────────
     @GET("api/tasks/my/{empId}")
-    Call<List<TaskModels.TaskResponse>> getMyTasks(@Path("empId") Long empId);
+    Call<List<Task>> getMyTasks(@Path("empId") Long empId);
 
     @GET("api/tasks/department/{deptId}")
-    Call<List<TaskModels.TaskResponse>> getTasksByDept(@Path("deptId") Long deptId);
+    Call<List<Task>> getTasksByDept(@Path("deptId") Long deptId);
 
     @POST("api/tasks")
-    Call<TaskModels.TaskResponse> createTask(@Body TaskModels.CreateTaskRequest req);
+    Call<Task> createTask(@Body TaskDto.CreateTaskRequest req);
 
     @PUT("api/tasks/{id}/accept")
-    Call<TaskModels.TaskResponse> acceptTask(
+    Call<Task> acceptTask(
             @Path("id") Long taskId,
-            @Body TaskModels.AcceptTaskRequest req);
+            @Body TaskDto.AcceptTaskRequest req);
 
     @PUT("api/tasks/{id}/status")
-    Call<TaskModels.TaskResponse> updateTaskStatus(
+    Call<Task> updateTaskStatus(
             @Path("id") Long taskId,
             @Query("updatedById") Long updatedById,
-            @Body TaskModels.UpdateTaskStatusRequest req);
+            @Body TaskDto.UpdateTaskStatusRequest req);
 
     @DELETE("api/tasks/{id}")
     Call<Void> deleteTask(@Path("id") Long taskId);
 
     // ── REQUEST (đơn từ) ──────────────────────────────────────────
     @GET("api/requests/employee/{empId}")
-    Call<List<RequestModels.RequestResponse>> getMyRequests(@Path("empId") Long empId);
+    Call<List<Request>> getMyRequests(@Path("empId") Long empId);
 
     @POST("api/requests/employee/{empId}")
-    Call<RequestModels.RequestResponse> createRequest(
+    Call<Request> createRequest(
             @Path("empId") Long empId,
-            @Body RequestModels.CreateRequestBody req);
+            @Body RequestDto.CreateRequestBody req);
 
     @PUT("api/requests/{id}/employee/{empId}")
-    Call<RequestModels.RequestResponse> updateRequest(
+    Call<Request> updateRequest(
             @Path("id") Long id,
             @Path("empId") Long empId,
-            @Body RequestModels.CreateRequestBody req);
+            @Body RequestDto.CreateRequestBody req);
 
     @DELETE("api/requests/{id}/employee/{empId}")
     Call<Void> cancelRequest(@Path("id") Long id, @Path("empId") Long empId);
 
     @GET("api/requests/department/{deptId}/pending")
-    Call<List<RequestModels.RequestResponse>> getPendingRequests(
+    Call<List<Request>> getPendingRequests(
             @Path("deptId") Long deptId);
 
     @PUT("api/requests/{id}/review/employee/{reviewerId}")
-    Call<RequestModels.RequestResponse> reviewRequest(
+    Call<Request> reviewRequest(
             @Path("id") Long id,
             @Path("reviewerId") Long reviewerId,
-            @Body RequestModels.ReviewRequestBody req);
+            @Body RequestDto.ReviewRequestBody req);
 
     @GET("api/requests")
-    Call<List<RequestModels.RequestResponse>> getAllRequests();
+    Call<List<Request>> getAllRequests();
 
     // ── NOTIFICATION ──────────────────────────────────────────────
     @GET("api/notifications/department/{deptId}")
-    Call<List<NotificationModels.NotificationResponse>> getNotifications(
+    Call<List<Notification>> getNotifications(
             @Path("deptId") Long deptId,
             @Query("userId") Long userId);
 
     @POST("api/notifications")
-    Call<NotificationModels.NotificationResponse> createNotification(
-            @Body NotificationModels.CreateNotificationRequest req);
+    Call<Notification> createNotification(
+            @Body NotificationDto.CreateNotificationRequest req);
 
     @PUT("api/notifications/{id}/read")
     Call<Void> markNotiRead(@Path("id") Long notiId, @Query("userId") Long userId);
@@ -143,27 +145,27 @@ public interface ApiService {
     Call<Void> deleteNotification(@Path("id") Long id);
 
     @PUT("api/notifications/{id}")
-    Call<NotificationModels.NotificationResponse> updateNotification(
+    Call<Notification> updateNotification(
             @Path("id") Long id,
-            @Body NotificationModels.UpdateNotificationRequest req);
+            @Body NotificationDto.UpdateNotificationRequest req);
 
     @GET("api/notifications/unread-count")
     Call<Long> getUnreadCount(@Query("userId") Long userId);
 
     // ── COMPANY SETTINGS (Admin) ──────────────────────────────────
     @GET("api/settings")
-    Call<AdminModels.CompanySettings> getCompanySettings();
+    Call<CompanySettings> getCompanySettings();
 
     @PUT("api/settings")
-    Call<AdminModels.CompanySettings> updateCompanySettings(
-            @Body AdminModels.UpdateSettingsRequest req);
+    Call<CompanySettings> updateCompanySettings(
+            @Body AdminDto.UpdateSettingsRequest req);
 
     // ── SYSTEM LOG (Admin) ────────────────────────────────────────
     @GET("api/admin/logs")
-    Call<List<AdminModels.SystemLogResponse>> getSystemLogs();
+    Call<List<SystemLog>> getSystemLogs();
 
     @GET("api/admin/logs/filter")
-    Call<List<AdminModels.SystemLogResponse>> filterLogsByAction(
+    Call<List<SystemLog>> filterLogsByAction(
             @Query("action") String action);
 
     // ── ADMIN DASHBOARD STATS (MỚI) ──────────────────────────────

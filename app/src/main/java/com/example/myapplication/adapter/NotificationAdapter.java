@@ -9,28 +9,28 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
-import com.example.myapplication.model.NotificationModels;
+import com.example.myapplication.model.entity.Notification;
 import com.google.android.material.chip.Chip;
 import java.util.List;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.VH> {
 
     public interface OnActionListener {
-        void onMarkRead(NotificationModels.NotificationResponse noti);
-        void onEdit(NotificationModels.NotificationResponse noti);
-        void onDelete(NotificationModels.NotificationResponse noti);
+        void onMarkRead(Notification noti);
+        void onEdit(Notification noti);
+        void onDelete(Notification noti);
     }
 
-    private List<NotificationModels.NotificationResponse> list;
+    private List<Notification> list;
     private final OnActionListener listener;
     private final boolean isAdmin;
 
-    public NotificationAdapter(List<NotificationModels.NotificationResponse> list,
+    public NotificationAdapter(List<Notification> list,
                                OnActionListener listener, boolean isAdmin) {
         this.list = list; this.listener = listener; this.isAdmin = isAdmin;
     }
 
-    public void updateData(List<NotificationModels.NotificationResponse> newList) {
+    public void updateData(List<Notification> newList) {
         this.list = newList; notifyDataSetChanged();
     }
 
@@ -42,7 +42,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
-        NotificationModels.NotificationResponse noti = list.get(position);
+        Notification noti = list.get(position);
         h.tvTitle.setText(noti.title);
         h.tvContent.setText(noti.content);
         h.tvTime.setText(formatTime(noti.createdAt));

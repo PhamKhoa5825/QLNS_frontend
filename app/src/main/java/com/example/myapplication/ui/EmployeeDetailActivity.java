@@ -15,14 +15,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.Employee;
-import com.example.myapplication.model.RequestModels;
+import com.example.myapplication.model.entity.Employee;
+import com.example.myapplication.model.entity.Request;
+import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
 
-import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -32,19 +33,6 @@ import retrofit2.Response;
 
 /**
  * EmployeeDetailActivity — Chi tiết NV với cross-reference
- *
- * 3 tabs:
- * - Thông tin cá nhân (tên, email, phone, PB, chức vụ, ngày vào...)
- * - Chấm công tháng (gọi API attendance/employee/{empId}/month)
- * - Đơn từ (gọi API requests/employee/{empId})
- *
- * Mục đích: Tạo liên kết giữa module NV ↔ Chấm công ↔ Đơn từ
- * thay vì chỉ hiện thông tin cá nhân rời rạc.
- *
- * Cách dùng: Từ EmployeeActivity, truyền extra "employeeId"
- *   Intent intent = new Intent(this, EmployeeDetailActivity.class);
- *   intent.putExtra("employeeId", emp.getId());
- *   startActivity(intent);
  */
 public class EmployeeDetailActivity extends AppCompatActivity {
 
@@ -77,9 +65,10 @@ public class EmployeeDetailActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_employee_detail);
 
-        apiService = RetrofitClient.getClient().create(ApiService.class);
         employeeId = getIntent().getLongExtra("employeeId", -1);
         if (employeeId == -1) { finish(); return; }
+
+        apiService = RetrofitClient.getClient().create(ApiService.class);
 
         bindViews();
         setupTabs();
@@ -141,9 +130,7 @@ public class EmployeeDetailActivity extends AppCompatActivity {
         layoutRequests.setVisibility(index == 2 ? View.VISIBLE : View.GONE);
     }
 
-    // ══════════════════════════════════════════════════════════
-    //  TAB 1: Thông tin cá nhân
-    // ══════════════════════════════════════════════════════════
+    // ── LOAD EMPLOYEE INFO ───────────────────────────────────────
 
     private void loadEmployeeInfo() {
         progressBar.setVisibility(View.VISIBLE);
@@ -163,105 +150,102 @@ public class EmployeeDetailActivity extends AppCompatActivity {
 
                     MaterialToolbar toolbar = findViewById(R.id.toolbar);
                     toolbar.setTitle(emp.getFullName());
+                } else {
+                    Toast.makeText(EmployeeDetailActivity.this,
+                            ApiErrorHelper.parse(r, "Lỗi tải thông tin nhân viên"),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void onFailure(Call<Employee> c, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(EmployeeDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EmployeeDetailActivity.this,
+                        "Lỗi kết nối", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // ══════════════════════════════════════════════════════════
-    //  TAB 2: Chấm công tháng hiện tại
-    // ══════════════════════════════════════════════════════════
+    // ── LOAD ATTENDANCE ──────────────────────────────────────────
 
     private boolean attendanceLoaded = false;
 
     private void loadAttendance() {
         if (attendanceLoaded) return;
-        progressBar.setVisibility(View.VISIBLE);
+        attendanceLoaded = true;
 
-        LocalDate now = LocalDate.now();
-        apiService.getAttendanceByMonth(employeeId, now.getMonthValue(), now.getYear())
+        Calendar cal = Calendar.getInstance();
+        int month = cal.get(Calendar.MONTH) + 1;
+        int year = cal.get(Calendar.YEAR);
+
+        apiService.getAttendanceByMonth(employeeId, month, year)
                 .enqueue(new Callback<List<Map<String, Object>>>() {
                     @Override
                     public void onResponse(Call<List<Map<String, Object>>> c,
                                            Response<List<Map<String, Object>>> r) {
-                        progressBar.setVisibility(View.GONE);
                         if (r.isSuccessful() && r.body() != null) {
                             List<Map<String, Object>> records = r.body();
-                            attendanceLoaded = true;
-
                             if (records.isEmpty()) {
                                 tvAttEmpty.setVisibility(View.VISIBLE);
-                                tvAttSummary.setText("Tháng " + now.getMonthValue() + ": chưa có dữ liệu");
                                 return;
                             }
-
-                            // Tính tóm tắt
-                            long onTime = records.stream()
-                                    .filter(a -> "ON_TIME".equals(a.get("status"))).count();
-                            long late = records.stream()
-                                    .filter(a -> "LATE".equals(a.get("status"))).count();
-                            tvAttSummary.setText("Tháng " + now.getMonthValue() + ": "
+                            tvAttEmpty.setVisibility(View.GONE);
+                            int onTimeCount = 0;
+                            int lateCount = 0;
+                            for (Map<String, Object> a : records) {
+                                if ("ON_TIME".equals(a.get("status"))) onTimeCount++;
+                                else if ("LATE".equals(a.get("status"))) lateCount++;
+                            }
+                            tvAttSummary.setText("Tháng " + month + ": "
                                     + records.size() + " ngày ("
-                                    + onTime + " đúng giờ, "
-                                    + late + " đi muộn)");
-
+                                    + onTimeCount + " đúng giờ, "
+                                    + lateCount + " đi muộn)");
                             rvAttendance.setAdapter(new AttendanceAdapter(records));
+                        } else {
+                            tvAttEmpty.setVisibility(View.VISIBLE);
                         }
                     }
+
                     @Override
                     public void onFailure(Call<List<Map<String, Object>>> c, Throwable t) {
-                        progressBar.setVisibility(View.GONE);
-                        tvAttEmpty.setText("Lỗi tải chấm công");
                         tvAttEmpty.setVisibility(View.VISIBLE);
                     }
                 });
     }
 
-    // ══════════════════════════════════════════════════════════
-    //  TAB 3: Đơn từ
-    // ══════════════════════════════════════════════════════════
+    // ── LOAD REQUESTS ────────────────────────────────────────────
 
     private boolean requestsLoaded = false;
 
     private void loadRequests() {
         if (requestsLoaded) return;
-        progressBar.setVisibility(View.VISIBLE);
+        requestsLoaded = true;
 
-        apiService.getMyRequests(employeeId)
-                .enqueue(new Callback<List<RequestModels.RequestResponse>>() {
-                    @Override
-                    public void onResponse(Call<List<RequestModels.RequestResponse>> c,
-                                           Response<List<RequestModels.RequestResponse>> r) {
-                        progressBar.setVisibility(View.GONE);
-                        if (r.isSuccessful() && r.body() != null) {
-                            requestsLoaded = true;
-                            List<RequestModels.RequestResponse> reqs = r.body();
-                            if (reqs.isEmpty()) {
-                                tvReqEmpty.setVisibility(View.VISIBLE);
-                                return;
-                            }
-                            rvRequests.setAdapter(new SimpleRequestAdapter(reqs));
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<List<RequestModels.RequestResponse>> c, Throwable t) {
-                        progressBar.setVisibility(View.GONE);
-                        tvReqEmpty.setText("Lỗi tải đơn từ");
+        apiService.getMyRequests(employeeId).enqueue(new Callback<List<Request>>() {
+            @Override
+            public void onResponse(Call<List<Request>> c, Response<List<Request>> r) {
+                if (r.isSuccessful() && r.body() != null) {
+                    List<Request> reqs = r.body();
+                    if (reqs.isEmpty()) {
                         tvReqEmpty.setVisibility(View.VISIBLE);
+                        return;
                     }
-                });
+                    tvReqEmpty.setVisibility(View.GONE);
+                    rvRequests.setAdapter(new SimpleRequestAdapter(reqs));
+                } else {
+                    tvReqEmpty.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Request>> c, Throwable t) {
+                tvReqEmpty.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
-    // ══════════════════════════════════════════════════════════
-    //  INNER ADAPTERS (simple inline adapters)
-    // ══════════════════════════════════════════════════════════
+    // ── INNER ADAPTERS ───────────────────────────────────────────
 
-    /** Adapter chấm công — hiện ngày, giờ in/out, trạng thái */
     class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.VH> {
         private final List<Map<String, Object>> items;
         AttendanceAdapter(List<Map<String, Object>> items) { this.items = items; }
@@ -280,7 +264,6 @@ public class EmployeeDetailActivity extends AppCompatActivity {
 
             String checkIn = att.get("checkIn") != null ? att.get("checkIn").toString() : "—";
             String checkOut = att.get("checkOut") != null ? att.get("checkOut").toString() : "Chưa";
-            // Lấy giờ từ datetime string (substring nếu có T)
             if (checkIn.contains("T")) checkIn = checkIn.substring(11, 16);
             if (checkOut.contains("T")) checkOut = checkOut.substring(11, 16);
             h.tvTime.setText(checkIn + " → " + checkOut);
@@ -303,10 +286,9 @@ public class EmployeeDetailActivity extends AppCompatActivity {
         }
     }
 
-    /** Adapter đơn từ — hiện tiêu đề, ngày, trạng thái */
     class SimpleRequestAdapter extends RecyclerView.Adapter<SimpleRequestAdapter.VH> {
-        private final List<RequestModels.RequestResponse> items;
-        SimpleRequestAdapter(List<RequestModels.RequestResponse> items) { this.items = items; }
+        private final List<Request> items;
+        SimpleRequestAdapter(List<Request> items) { this.items = items; }
 
         @NonNull @Override
         public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -317,7 +299,7 @@ public class EmployeeDetailActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull VH h, int pos) {
-            RequestModels.RequestResponse req = items.get(pos);
+            Request req = items.get(pos);
             h.tvTitle.setText(req.title != null ? req.title : "—");
             h.tvDate.setText(req.createdAt != null ? req.createdAt.substring(0, 10) : "—");
             String st = req.status != null ? req.status : "";

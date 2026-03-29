@@ -13,8 +13,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.CreateEmployeeRequest;
-import com.example.myapplication.model.Employee;
+import com.example.myapplication.model.dto.CreateEmployeeRequest;
+import com.example.myapplication.model.entity.Employee;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.google.android.material.button.MaterialButton;

@@ -19,7 +19,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.AdminModels;
+import com.example.myapplication.model.dto.AdminDto;
+import com.example.myapplication.model.entity.CompanySettings;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -237,13 +238,13 @@ public class CompanySettingsActivity extends AppCompatActivity implements OnMapR
 
     private void loadSettings() {
         progressBar.setVisibility(View.VISIBLE);
-        apiService.getCompanySettings().enqueue(new Callback<AdminModels.CompanySettings>() {
+        apiService.getCompanySettings().enqueue(new Callback<CompanySettings>() {
             @Override
-            public void onResponse(Call<AdminModels.CompanySettings> c,
-                                   Response<AdminModels.CompanySettings> r) {
+            public void onResponse(Call<CompanySettings> c,
+                                   Response<CompanySettings> r) {
                 progressBar.setVisibility(View.GONE);
                 if (r.isSuccessful() && r.body() != null) {
-                    AdminModels.CompanySettings s = r.body();
+                    CompanySettings s = r.body();
                     etCompanyName.setText(s.companyName);
                     etAllowedRadius.setText(s.allowedRadius != null ? String.valueOf(s.allowedRadius) : "1000");
                     etWorkStart.setText(s.workStartTime != null ? s.workStartTime : "08:00");
@@ -260,7 +261,7 @@ public class CompanySettingsActivity extends AppCompatActivity implements OnMapR
                     }
                 }
             }
-            @Override public void onFailure(Call<AdminModels.CompanySettings> c, Throwable t) {
+            @Override public void onFailure(Call<CompanySettings> c, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(CompanySettingsActivity.this, "Lỗi tải cài đặt", Toast.LENGTH_SHORT).show();
             }
@@ -268,7 +269,7 @@ public class CompanySettingsActivity extends AppCompatActivity implements OnMapR
     }
 
     private void doSave() {
-        AdminModels.UpdateSettingsRequest req = new AdminModels.UpdateSettingsRequest();
+        AdminDto.UpdateSettingsRequest req = new AdminDto.UpdateSettingsRequest();
         req.companyName = getText(etCompanyName);
         req.workStartTime = getText(etWorkStart);
         req.workEndTime = getText(etWorkEnd);
@@ -280,10 +281,10 @@ public class CompanySettingsActivity extends AppCompatActivity implements OnMapR
         progressBar.setVisibility(View.VISIBLE);
         btnSave.setEnabled(false);
 
-        apiService.updateCompanySettings(req).enqueue(new Callback<AdminModels.CompanySettings>() {
+        apiService.updateCompanySettings(req).enqueue(new Callback<CompanySettings>() {
             @Override
-            public void onResponse(Call<AdminModels.CompanySettings> c,
-                                   Response<AdminModels.CompanySettings> r) {
+            public void onResponse(Call<CompanySettings> c,
+                                   Response<CompanySettings> r) {
                 progressBar.setVisibility(View.GONE);
                 btnSave.setEnabled(true);
                 if (r.isSuccessful()) {
@@ -294,7 +295,7 @@ public class CompanySettingsActivity extends AppCompatActivity implements OnMapR
                             "Lỗi: " + r.code(), Toast.LENGTH_SHORT).show();
                 }
             }
-            @Override public void onFailure(Call<AdminModels.CompanySettings> c, Throwable t) {
+            @Override public void onFailure(Call<CompanySettings> c, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 btnSave.setEnabled(true);
                 Toast.makeText(CompanySettingsActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();

@@ -24,8 +24,8 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDFe8UGOtV8if60BszPuQk8D0lxqN5NHJI" />
-<!--            android:value="AIzaSyBtwsNWDtFgG5-3phTMawhCwutKILE_9rw" />-->
+            android:value="AIzaSyBtwsNWDtFgG5-3phTMawhCwutKILE_9rw" />
+<!--            android:value="AIzaSyDFe8UGOtV8if60BszPuQk8D0lxqN5NHJI" />-->
 
         <!-- Launcher -->
         <activity
@@ -42,10 +42,12 @@
 
         <!-- Nhân viên -->
         <activity android:name=".ui.EmployeeActivity" android:exported="false" />
-        <activity android:name=".ui.EmployeeDetailActivity" />
+        <activity android:name=".ui.EmployeeDetailActivity" android:exported="false" />
+        <activity android:name=".ui.AddEditEmployeeActivity" android:exported="false" />
 
         <!-- Phòng ban -->
         <activity android:name=".ui.DepartmentActivity" android:exported="false" />
+        <activity android:name=".ui.DepartmentDetailActivity" android:exported="false" />
 
         <!-- Tài khoản (Admin) -->
         <activity android:name=".ui.AccountManagementActivity" android:exported="false" />
@@ -58,16 +60,19 @@
         <!-- Thông báo -->
         <activity android:name=".ui.NotificationCenterActivity" android:exported="false" />
         <activity android:name=".ui.CreateNotificationActivity" android:exported="false" />
+        <activity android:name=".ui.NotificationDetailActivity" android:exported="false" />
 
         <!-- Đơn từ -->
-        <activity android:name=".ui.LeaveApplicationActivity" android:exported="false" />
+        <activity android:name=".ui.CreateRequestActivity" android:exported="false" />
         <activity android:name=".ui.RequestListActivity" android:exported="false" />
+        <activity android:name=".ui.RequestDetailActivity" android:exported="false" />
 
         <!-- Cá nhân -->
         <activity android:name=".ui.ProfileActivity" android:exported="false" />
         <activity android:name=".ui.EditProfileActivity" android:exported="false" />
         <activity android:name=".ui.ChangePasswordActivity" android:exported="false" />
 
+        <activity android:name=".ui.BackupActivity" android:exported="false" />
     </application>
 
 </manifest>

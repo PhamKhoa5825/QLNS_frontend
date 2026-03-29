@@ -19,9 +19,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.Department;
-import com.example.myapplication.model.Employee;
-import com.example.myapplication.model.NotificationModels;
+import com.example.myapplication.model.dto.NotificationDto;
+import com.example.myapplication.model.entity.Department;
+import com.example.myapplication.model.entity.Employee;
+import com.example.myapplication.model.entity.Notification;
 import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
@@ -365,12 +366,12 @@ public class CreateNotificationActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         btnSend.setEnabled(false);
 
-        NotificationModels.CreateNotificationRequest req =
-                new NotificationModels.CreateNotificationRequest(title, content, targetType, deptId, targetEmpId, createdById);
+        NotificationDto.CreateNotificationRequest req =
+                new NotificationDto.CreateNotificationRequest(title, content, targetType, deptId, targetEmpId, createdById);
 
-        apiService.createNotification(req).enqueue(new Callback<NotificationModels.NotificationResponse>() {
-            @Override public void onResponse(Call<NotificationModels.NotificationResponse> c,
-                                             Response<NotificationModels.NotificationResponse> r) {
+        apiService.createNotification(req).enqueue(new Callback<Notification>() {
+            @Override public void onResponse(Call<Notification> c,
+                                             Response<Notification> r) {
                 progressBar.setVisibility(View.GONE);
                 btnSend.setEnabled(true);
                 if (r.isSuccessful()) {
@@ -380,7 +381,7 @@ public class CreateNotificationActivity extends AppCompatActivity {
                     ApiErrorHelper.show(CreateNotificationActivity.this, r, "Gửi thông báo thất bại");
                 }
             }
-            @Override public void onFailure(Call<NotificationModels.NotificationResponse> c, Throwable t) {
+            @Override public void onFailure(Call<Notification> c, Throwable t) {
                 progressBar.setVisibility(View.GONE);
                 btnSend.setEnabled(true);
                 Toast.makeText(CreateNotificationActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();

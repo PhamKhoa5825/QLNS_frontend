@@ -1,9 +1,10 @@
 package com.example.myapplication.ui;
 
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,9 +15,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.adapter.TaskAdapter;
-import com.example.myapplication.model.TaskModels;
+import com.example.myapplication.model.dto.TaskDto;
+import com.example.myapplication.model.entity.Task;
+import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.utils.SharedPrefsManager;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
 
@@ -33,13 +37,15 @@ public class TaskActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TabLayout tabLayout;
     private TaskAdapter adapter;
-    private ApiService apiService;
-    private SharedPreferences prefs;
-    private Long employeeId;
-    private String role;
     private MaterialToolbar topAppBar;
+    private ProgressBar progressBar;
+    private TextView tvEmpty;
 
-    private List<TaskModels.TaskResponse> allTasks = new ArrayList<>();
+    private ApiService apiService;
+    private SharedPrefsManager pm;
+    private Long employeeId;
+
+    private List<Task> allTasks = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,24 +57,34 @@ public class TaskActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_task);
 
-        // Đẩy header xuống bằng chiều cao status bar
+        // Status bar padding
         View header = findViewById(R.id.headerTaskLayout);
-        ViewCompat.setOnApplyWindowInsetsListener(header, (v, insets) -> {
-            int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
-            v.setPadding(v.getPaddingLeft(), statusBarHeight,
-                    v.getPaddingRight(), v.getPaddingBottom());
-            return insets;
-        });
+        if (header != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(header, (v, insets) -> {
+                int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+                v.setPadding(v.getPaddingLeft(), statusBarHeight,
+                        v.getPaddingRight(), v.getPaddingBottom());
+                return insets;
+            });
+        }
 
-        prefs      = getSharedPreferences("qlns_pref", MODE_PRIVATE);
-        employeeId = prefs.getLong("employeeId", -1);
-        role       = prefs.getString("role", "EMPLOYEE");
-
+        pm = SharedPrefsManager.getInstance(this);
+        employeeId = pm.getEmployeeId();
         apiService = RetrofitClient.getClient().create(ApiService.class);
 
+        bindViews();
+        setupTabs();
+
+        loadTasks();
+    }
+
+    private void bindViews() {
         recyclerView = findViewById(R.id.recyclerViewTask);
-        tabLayout    = findViewById(R.id.tabLayoutTask);
-        topAppBar    = findViewById(R.id.topAppBarTask);
+        tabLayout = findViewById(R.id.tabLayoutTask);
+        topAppBar = findViewById(R.id.topAppBarTask);
+
+        progressBar = findViewById(R.id.progressBar);
+        tvEmpty = findViewById(R.id.tvEmpty);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new TaskAdapter(new ArrayList<>(), this::onTaskAction);
@@ -77,81 +93,101 @@ public class TaskActivity extends AppCompatActivity {
         if (topAppBar != null) {
             topAppBar.setNavigationOnClickListener(v -> finish());
         }
-
-        setupTabs();
-        loadTasks();
     }
 
     private void setupTabs() {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override public void onTabSelected(TabLayout.Tab tab) { filterTasks(tab.getPosition()); }
+            @Override public void onTabSelected(TabLayout.Tab tab) {
+                filterByStatus(tab.getPosition());
+            }
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
     }
 
-    private void filterTasks(int tabPos) {
-        List<TaskModels.TaskResponse> filtered;
+    // ── DATA ─────────────────────────────────────────────────────
+
+    private void loadTasks() {
+        progressBar.setVisibility(View.VISIBLE);
+        apiService.getMyTasks(employeeId).enqueue(new Callback<List<Task>>() {
+            @Override
+            public void onResponse(Call<List<Task>> c, Response<List<Task>> r) {
+                progressBar.setVisibility(View.GONE);
+                if (r.isSuccessful() && r.body() != null) {
+                    allTasks = r.body();
+                    filterByStatus(tabLayout.getSelectedTabPosition());
+                } else {
+                    Toast.makeText(TaskActivity.this,
+                            ApiErrorHelper.parse(r, "Lỗi tải nhiệm vụ"),
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Task>> c, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(TaskActivity.this, "Lỗi kết nối", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void filterByStatus(int tabPos) {
+        List<Task> filtered;
         switch (tabPos) {
             case 1: filtered = allTasks.stream()
-                    .filter(t -> "PENDING".equals(t.status))
-                    .collect(Collectors.toList()); break;
+                    .filter(Task::isPending).collect(Collectors.toList()); break;
             case 2: filtered = allTasks.stream()
-                    .filter(t -> "ACCEPTED".equals(t.status))
-                    .collect(Collectors.toList()); break;
+                    .filter(Task::isAccepted).collect(Collectors.toList()); break;
             case 3: filtered = allTasks.stream()
-                    .filter(t -> "DONE".equals(t.status))
-                    .collect(Collectors.toList()); break;
+                    .filter(Task::isDone).collect(Collectors.toList()); break;
             default: filtered = new ArrayList<>(allTasks);
         }
         adapter.updateData(filtered);
+        if (tvEmpty != null)
+            tvEmpty.setVisibility(filtered.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
-    private void loadTasks() {
-        apiService.getMyTasks(employeeId)
-                .enqueue(new Callback<List<TaskModels.TaskResponse>>() {
-                    @Override
-                    public void onResponse(Call<List<TaskModels.TaskResponse>> call,
-                                           Response<List<TaskModels.TaskResponse>> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            allTasks = response.body();
-                            filterTasks(tabLayout.getSelectedTabPosition());
-                        }
-                    }
-                    @Override public void onFailure(Call<List<TaskModels.TaskResponse>> call, Throwable t) {
-                        Toast.makeText(TaskActivity.this, "Lỗi tải danh sách công việc", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
+    // ── ACTIONS ──────────────────────────────────────────────────
 
-    private void onTaskAction(TaskModels.TaskResponse task, String action) {
+    private void onTaskAction(Task task, String action) {
         if ("ACCEPT".equals(action)) {
-            apiService.acceptTask(task.id, new TaskModels.AcceptTaskRequest(employeeId))
-                    .enqueue(new Callback<TaskModels.TaskResponse>() {
+            apiService.acceptTask(task.id, new TaskDto.AcceptTaskRequest(employeeId))
+                    .enqueue(new Callback<Task>() {
                         @Override
-                        public void onResponse(Call<TaskModels.TaskResponse> call,
-                                               Response<TaskModels.TaskResponse> response) {
-                            if (response.isSuccessful()) {
+                        public void onResponse(Call<Task> c, Response<Task> r) {
+                            if (r.isSuccessful()) {
                                 Toast.makeText(TaskActivity.this, "Đã nhận việc", Toast.LENGTH_SHORT).show();
                                 loadTasks();
+                            } else {
+                                Toast.makeText(TaskActivity.this,
+                                        ApiErrorHelper.parse(r, "Nhận việc thất bại"),
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }
-                        @Override public void onFailure(Call<TaskModels.TaskResponse> call, Throwable t) {}
+                        @Override
+                        public void onFailure(Call<Task> c, Throwable t) {
+                            Toast.makeText(TaskActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                        }
                     });
-
         } else if ("DONE".equals(action)) {
             apiService.updateTaskStatus(task.id, employeeId,
-                            new TaskModels.UpdateTaskStatusRequest("DONE", "Hoàn thành"))
-                    .enqueue(new Callback<TaskModels.TaskResponse>() {
+                    new TaskDto.UpdateTaskStatusRequest("DONE", "Hoàn thành"))
+                    .enqueue(new Callback<Task>() {
                         @Override
-                        public void onResponse(Call<TaskModels.TaskResponse> call,
-                                               Response<TaskModels.TaskResponse> response) {
-                            if (response.isSuccessful()) {
+                        public void onResponse(Call<Task> c, Response<Task> r) {
+                            if (r.isSuccessful()) {
                                 Toast.makeText(TaskActivity.this, "Đã đánh dấu hoàn thành", Toast.LENGTH_SHORT).show();
                                 loadTasks();
+                            } else {
+                                Toast.makeText(TaskActivity.this,
+                                        ApiErrorHelper.parse(r, "Cập nhật trạng thái thất bại"),
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }
-                        @Override public void onFailure(Call<TaskModels.TaskResponse> call, Throwable t) {}
+                        @Override
+                        public void onFailure(Call<Task> c, Throwable t) {
+                            Toast.makeText(TaskActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                        }
                     });
         }
     }

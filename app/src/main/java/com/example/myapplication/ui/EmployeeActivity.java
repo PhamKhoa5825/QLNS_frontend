@@ -16,18 +16,16 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.adapter.EmployeeAdapter;
-import com.example.myapplication.model.Department;
-import com.example.myapplication.model.Employee;
+import com.example.myapplication.model.entity.Department;
+import com.example.myapplication.model.entity.Employee;
 import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
-import com.example.myapplication.viewmodel.EmployeeViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
@@ -54,7 +52,6 @@ public class EmployeeActivity extends AppCompatActivity {
     private FloatingActionButton fabAdd;
     private TextView tvTotal, tvWorking, tvResigned;
 
-    private EmployeeViewModel viewModel;
     private ApiService apiService;
     private String role;
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
@@ -65,6 +62,7 @@ public class EmployeeActivity extends AppCompatActivity {
     private String filterDeptName = null;
     private String filterPosition = null;
 
+    private List<Employee> fullEmployeeList = new ArrayList<>();
     private List<Department> cachedDepartments = new ArrayList<>();
 
     @Override
@@ -76,17 +74,15 @@ public class EmployeeActivity extends AppCompatActivity {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         setContentView(R.layout.activity_employee);
 
-        viewModel  = new ViewModelProvider(this).get(EmployeeViewModel.class);
         apiService = RetrofitClient.getClient().create(ApiService.class);
         role       = getSharedPreferences("qlns_pref", MODE_PRIVATE).getString("role", "EMPLOYEE");
 
         initViews();
         setupSearch();
-        observeViewModel();
         handleIntentFilter();
 
-        viewModel.loadEmployees();
-        viewModel.loadDepartments();
+        loadEmployees();
+        loadDepartments();
     }
 
     private void initViews() {
@@ -127,24 +123,51 @@ public class EmployeeActivity extends AppCompatActivity {
         }
     }
 
-    private void observeViewModel() {
-        viewModel.employees.observe(this, list -> {
-            if (hasActiveFilter()) {
-                applyLocalFilter(list);
-            } else {
-                adapter.setData(list);
-                updateStats(list);
+    // ── DATA LOADING ─────────────────────────────────────────────
+
+    private void loadEmployees() {
+        progressBar.setVisibility(View.VISIBLE);
+        apiService.getEmployees().enqueue(new Callback<List<Employee>>() {
+            @Override
+            public void onResponse(Call<List<Employee>> c, Response<List<Employee>> r) {
+                progressBar.setVisibility(View.GONE);
+                if (r.isSuccessful() && r.body() != null) {
+                    fullEmployeeList = r.body();
+                    if (hasActiveFilter()) {
+                        applyLocalFilter(fullEmployeeList);
+                    } else {
+                        adapter.setData(fullEmployeeList);
+                        updateStats(fullEmployeeList);
+                    }
+                } else {
+                    Toast.makeText(EmployeeActivity.this,
+                            ApiErrorHelper.parse(r, "Lỗi tải danh sách nhân viên"),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Employee>> c, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(EmployeeActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
             }
         });
-        viewModel.isLoading.observe(this, loading ->
-                progressBar.setVisibility(loading ? View.VISIBLE : View.GONE));
-        viewModel.errorMessage.observe(this, msg -> {
-            if (msg != null) Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-        });
-        viewModel.departments.observe(this, depts -> {
-            if (depts != null) cachedDepartments = depts;
+    }
+
+    private void loadDepartments() {
+        apiService.getDepartments().enqueue(new Callback<List<Department>>() {
+            @Override
+            public void onResponse(Call<List<Department>> c, Response<List<Department>> r) {
+                if (r.isSuccessful() && r.body() != null) {
+                    cachedDepartments = r.body();
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Department>> c, Throwable t) { /* silent */ }
         });
     }
+
+    // ── SEARCH ───────────────────────────────────────────────────
 
     private void setupSearch() {
         edtSearch.addTextChangedListener(new TextWatcher() {
@@ -155,14 +178,36 @@ public class EmployeeActivity extends AppCompatActivity {
                 searchRunnable = () -> {
                     String keyword = s.toString().trim();
                     if (keyword.isEmpty() && hasActiveFilter()) {
-                        viewModel.filterEmployees(filterStatus, filterDeptId, filterPosition);
+                        applyLocalFilter(fullEmployeeList);
                     } else {
-                        viewModel.searchEmployees(keyword);
+                        searchEmployees(keyword);
                     }
                 };
                 searchHandler.postDelayed(searchRunnable, 500);
             }
         });
+    }
+
+    private void searchEmployees(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            adapter.setData(fullEmployeeList);
+            updateStats(fullEmployeeList);
+            return;
+        }
+
+        String searchLower = keyword.trim().toLowerCase();
+        List<Employee> filtered = new ArrayList<>();
+        for (Employee emp : fullEmployeeList) {
+            boolean nameMatch = emp.getFullName() != null && emp.getFullName().toLowerCase().contains(searchLower);
+            boolean emailMatch = emp.getEmail() != null && emp.getEmail().toLowerCase().contains(searchLower);
+            boolean phoneMatch = emp.getPhone() != null && emp.getPhone().contains(searchLower);
+
+            if (nameMatch || emailMatch || phoneMatch) {
+                filtered.add(emp);
+            }
+        }
+        adapter.setData(filtered);
+        updateStats(filtered);
     }
 
     // ── SORT / FILTER DIALOG ──────────────────────────────────────
@@ -188,7 +233,7 @@ public class EmployeeActivity extends AppCompatActivity {
         }
 
         Set<String> positions = new HashSet<>();
-        for (Employee emp : viewModel.getFullEmployeeList()) {
+        for (Employee emp : fullEmployeeList) {
             if (emp.getPosition() != null && !emp.getPosition().isEmpty()) {
                 positions.add(emp.getPosition());
             }
@@ -203,7 +248,8 @@ public class EmployeeActivity extends AppCompatActivity {
             filterDeptName = null;
             filterPosition = null;
             updateFilterInfoText();
-            viewModel.loadEmployees();
+            adapter.setData(fullEmployeeList);
+            updateStats(fullEmployeeList);
             dialog.dismiss();
         });
 
@@ -226,7 +272,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
             filterPosition = getSelectedChipTag(cgRole);
             updateFilterInfoText();
-            viewModel.filterEmployees(filterStatus, filterDeptId, filterPosition);
+            applyLocalFilter(fullEmployeeList);
             dialog.dismiss();
         });
 
@@ -387,7 +433,7 @@ public class EmployeeActivity extends AppCompatActivity {
                                     if (r.isSuccessful()) {
                                         Toast.makeText(EmployeeActivity.this,
                                                 "Đã cho nghỉ việc", Toast.LENGTH_SHORT).show();
-                                        viewModel.loadEmployees();
+                                        loadEmployees();
                                     } else {
                                         ApiErrorHelper.show(EmployeeActivity.this, r, "Cho nghỉ việc thất bại");
                                     }
@@ -404,22 +450,19 @@ public class EmployeeActivity extends AppCompatActivity {
 
     /**
      * Khôi phục nhân viên: RESIGNED → ACTIVE
-     * Dùng endpoint có sẵn: PUT api/admin/accounts/{userId}/status?status=ACTIVE
-     * Đây là endpoint backend đã hoạt động (AccountManagement dùng để khóa/mở tài khoản)
      */
     private void confirmReactivate(Employee emp) {
         new AlertDialog.Builder(this)
                 .setTitle("Xác nhận khôi phục")
                 .setMessage("Khôi phục nhân viên " + emp.getFullName() + " về trạng thái đang làm việc?")
                 .setPositiveButton("Khôi phục", (d, w) -> {
-                    // Gọi PUT /api/employees/{id}/reactivate
                     apiService.reactivateEmployee(emp.getId())
                             .enqueue(new Callback<Void>() {
                                 @Override public void onResponse(Call<Void> c, Response<Void> r) {
                                     if (r.isSuccessful()) {
                                         Toast.makeText(EmployeeActivity.this,
                                                 "Đã khôi phục nhân viên", Toast.LENGTH_SHORT).show();
-                                        viewModel.loadEmployees();
+                                        loadEmployees();
                                     } else {
                                         ApiErrorHelper.show(EmployeeActivity.this, r, "Khôi phục nhân viên thất bại");
                                     }
@@ -437,7 +480,7 @@ public class EmployeeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        viewModel.loadEmployees();
+        loadEmployees();
     }
 
     @Override

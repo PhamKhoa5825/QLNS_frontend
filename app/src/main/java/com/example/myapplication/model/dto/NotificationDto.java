@@ -1,25 +1,17 @@
-package com.example.myapplication.model;
+package com.example.myapplication.model.dto;
 
-public class NotificationModels {
-
-    public static class NotificationResponse {
-        public Long id;
-        public String title;
-        public String content;
-        public String targetType;   // COMPANY / DEPARTMENT / EMPLOYEE
-        public Long departmentId;
-        public String departmentName;
-        public String createdByName;
-        public String createdAt;
-        public boolean isRead;
-    }
+/**
+ * NotificationDto — DTO request cho thông báo.
+ * Response đã tách thành entity Notification.
+ */
+public class NotificationDto {
 
     public static class CreateNotificationRequest {
         public String title;
         public String content;
         public String targetType;       // COMPANY / DEPARTMENT / EMPLOYEE
-        public Long departmentId;       // dùng khi DEPARTMENT
-        public Long targetEmployeeId;   // THÊM: dùng khi EMPLOYEE
+        public Long departmentId;
+        public Long targetEmployeeId;
         public Long createdById;
 
         public CreateNotificationRequest(String title, String content,

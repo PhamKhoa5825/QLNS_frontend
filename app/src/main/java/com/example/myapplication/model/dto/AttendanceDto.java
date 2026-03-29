@@ -1,16 +1,10 @@
-package com.example.myapplication.model;
+package com.example.myapplication.model.dto;
 
-public class AttendanceModels {
-
-    public static class AttendanceResponse {
-        public Long id;
-        public String date;
-        public String checkIn;
-        public String checkOut;
-        public Double workHours;
-        public String status;       // ON_TIME / LATE / ABSENT
-        public Integer lateMinutes;
-    }
+/**
+ * AttendanceDto — DTO request cho chấm công.
+ * Response đã tách thành entity Attendance.
+ */
+public class AttendanceDto {
 
     public static class CheckInRequest {
         public Long employeeId;

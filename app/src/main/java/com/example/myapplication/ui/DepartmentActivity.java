@@ -9,19 +9,25 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.adapter.DepartmentAdapter;
-import com.example.myapplication.model.Department;
-import com.example.myapplication.viewmodel.DepartmentViewModel;
+import com.example.myapplication.model.entity.Department;
+import com.example.myapplication.network.ApiErrorHelper;
+import com.example.myapplication.network.ApiService;
+import com.example.myapplication.network.RetrofitClient;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DepartmentActivity extends AppCompatActivity {
 
@@ -29,7 +35,7 @@ public class DepartmentActivity extends AppCompatActivity {
     private DepartmentAdapter adapter;
     private ProgressBar progressBar;
     private FloatingActionButton fabAdd;
-    private DepartmentViewModel viewModel;
+    private ApiService apiService;
     private String role;
 
     @Override
@@ -41,12 +47,11 @@ public class DepartmentActivity extends AppCompatActivity {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         setContentView(R.layout.activity_department);
 
-        viewModel = new ViewModelProvider(this).get(DepartmentViewModel.class);
-        role      = getSharedPreferences("qlns_pref", MODE_PRIVATE).getString("role", "EMPLOYEE");
+        apiService = RetrofitClient.getClient().create(ApiService.class);
+        role       = getSharedPreferences("qlns_pref", MODE_PRIVATE).getString("role", "EMPLOYEE");
 
         initViews();
-        observeViewModel();
-        viewModel.loadDepartments();
+        loadDepartments();
     }
 
     private void initViews() {
@@ -67,45 +72,71 @@ public class DepartmentActivity extends AppCompatActivity {
         }
     }
 
-    private void observeViewModel() {
-        viewModel.departments.observe(this, list -> {
-            if (list != null) adapter.setData(list);
-        });
-        viewModel.isLoading.observe(this, loading ->
-                progressBar.setVisibility(loading ? View.VISIBLE : View.GONE));
-        viewModel.errorMessage.observe(this, msg -> {
-            if (msg != null) Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-        });
-        viewModel.successMessage.observe(this, msg -> {
-            if (msg != null) {
-                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-                viewModel.loadDepartments();
+    // ── LOAD ─────────────────────────────────────────────────────
+
+    private void loadDepartments() {
+        progressBar.setVisibility(View.VISIBLE);
+        apiService.getDepartments().enqueue(new Callback<List<Department>>() {
+            @Override
+            public void onResponse(Call<List<Department>> c, Response<List<Department>> r) {
+                progressBar.setVisibility(View.GONE);
+                if (r.isSuccessful() && r.body() != null) {
+                    adapter.setData(r.body());
+                } else {
+                    Toast.makeText(DepartmentActivity.this,
+                            ApiErrorHelper.parse(r, "Lỗi tải phòng ban"),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Department>> c, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(DepartmentActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    // ── OPTIONS ──────────────────────────────────────────────────
+
+    /**
+     * SỬA: Hiện dialog với các tuỳ chọn, thêm "Xem chi tiết" để mở DepartmentDetailActivity
+     */
     private void showDeptOptions(Department dept) {
         if ("ADMIN".equals(role)) {
-            String[] options = {"Xem nhân viên", "Sửa phòng ban", "Xóa phòng ban"};
+            String[] options = {"Xem chi tiết", "Xem nhân viên", "Sửa phòng ban", "Xóa phòng ban"};
             new AlertDialog.Builder(this)
                     .setTitle(dept.getName())
                     .setItems(options, (d, which) -> {
                         switch (which) {
-                            case 0: navigateToEmployeeWithFilter(dept); break;
-                            case 1: showEditDeptDialog(dept); break;
-                            case 2: confirmDelete(dept); break;
+                            case 0: navigateToDeptDetail(dept); break;
+                            case 1: navigateToEmployeeWithFilter(dept); break;
+                            case 2: showEditDeptDialog(dept); break;
+                            case 3: confirmDelete(dept); break;
                         }
                     })
                     .show();
         } else {
-            navigateToEmployeeWithFilter(dept);
+            // Non-admin: trực tiếp mở trang chi tiết phòng ban
+            navigateToDeptDetail(dept);
         }
     }
 
     /**
+     * MỚI: Mở trang chi tiết phòng ban — hiển thị thông tin + danh sách nhân viên riêng
+     */
+    private void navigateToDeptDetail(Department dept) {
+        Intent intent = new Intent(this, DepartmentDetailActivity.class);
+        intent.putExtra("deptId", dept.getId());
+        intent.putExtra("deptName", dept.getName());
+        intent.putExtra("deptDescription", dept.getDescription());
+        intent.putExtra("deptManagerName", dept.getManagerName());
+        intent.putExtra("deptEmployeeCount", dept.getEmployeeCount());
+        startActivity(intent);
+    }
+
+    /**
      * Chuyển sang EmployeeActivity với filter theo phòng ban.
-     * EmployeeActivity nhận filterDeptId/filterDeptName qua Intent
-     * và tự động lọc + hiển thị thông tin bộ lọc.
      */
     private void navigateToEmployeeWithFilter(Department dept) {
         Intent intent = new Intent(this, EmployeeActivity.class);
@@ -117,10 +148,36 @@ public class DepartmentActivity extends AppCompatActivity {
     private void confirmDelete(Department dept) {
         new AlertDialog.Builder(this)
                 .setMessage("Xóa phòng ban \"" + dept.getName() + "\"?\nNhân viên trong phòng ban sẽ không còn thuộc phòng ban này.")
-                .setPositiveButton("Xóa", (d, w) -> viewModel.deleteDepartment(dept.getId()))
+                .setPositiveButton("Xóa", (d, w) -> deleteDepartment(dept.getId()))
                 .setNegativeButton("Huỷ", null)
                 .show();
     }
+
+    private void deleteDepartment(Long id) {
+        progressBar.setVisibility(View.VISIBLE);
+        apiService.deleteDepartment(id).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> c, Response<Void> r) {
+                progressBar.setVisibility(View.GONE);
+                if (r.isSuccessful()) {
+                    Toast.makeText(DepartmentActivity.this, "Đã xóa phòng ban", Toast.LENGTH_SHORT).show();
+                    loadDepartments();
+                } else {
+                    Toast.makeText(DepartmentActivity.this,
+                            ApiErrorHelper.parse(r, "Không thể xóa phòng ban"),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> c, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(DepartmentActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // ── FORM DIALOGS ─────────────────────────────────────────────
 
     private void showAddDeptDialog() {
         showDeptFormDialog(null, null, null);
@@ -150,8 +207,48 @@ public class DepartmentActivity extends AppCompatActivity {
             String name = etName.getText() != null ? etName.getText().toString().trim() : "";
             String desc = etDesc.getText() != null ? etDesc.getText().toString().trim() : "";
             if (name.isEmpty()) { etName.setError("Không được để trống"); return; }
-            if (isEdit) viewModel.updateDepartment(id, name, desc);
-            else viewModel.createDepartment(name, desc);
+
+            Department dept = new Department();
+            dept.setName(name);
+            dept.setDescription(desc);
+
+            if (isEdit) {
+                apiService.updateDepartment(id, dept).enqueue(new Callback<Department>() {
+                    @Override
+                    public void onResponse(Call<Department> c, Response<Department> r) {
+                        if (r.isSuccessful()) {
+                            Toast.makeText(DepartmentActivity.this, "Đã cập nhật thông tin", Toast.LENGTH_SHORT).show();
+                            loadDepartments();
+                        } else {
+                            Toast.makeText(DepartmentActivity.this,
+                                    ApiErrorHelper.parse(r, "Không thể cập nhật phòng ban"),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<Department> c, Throwable t) {
+                        Toast.makeText(DepartmentActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                apiService.createDepartment(dept).enqueue(new Callback<Department>() {
+                    @Override
+                    public void onResponse(Call<Department> c, Response<Department> r) {
+                        if (r.isSuccessful()) {
+                            Toast.makeText(DepartmentActivity.this, "Đã tạo phòng ban", Toast.LENGTH_SHORT).show();
+                            loadDepartments();
+                        } else {
+                            Toast.makeText(DepartmentActivity.this,
+                                    ApiErrorHelper.parse(r, "Không thể tạo phòng ban"),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<Department> c, Throwable t) {
+                        Toast.makeText(DepartmentActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
             dialog.dismiss();
         });
 
