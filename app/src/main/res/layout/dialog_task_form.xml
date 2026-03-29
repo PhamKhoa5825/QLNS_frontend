@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_bottom_sheet">
+    android:background="@android:color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,17 +16,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Thêm công việc mới"
-            android:textColor="@color/textColorPrimary"
+            android:text="Nhiệm vụ"
+            android:textColor="#333333"
             android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tvLabelTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="Tiêu đề *"
-            android:textColor="@color/textColorSecondary"
+            android:textColor="#666666"
             android:textSize="14sp" />
 
         <EditText
@@ -36,15 +38,15 @@
             android:background="@drawable/bg_input"
             android:hint="Nhập tiêu đề công việc"
             android:paddingHorizontal="12dp"
-            android:textColor="@color/textColorPrimary"
+            android:textColor="#333333"
             android:textSize="14sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Mô tả"
-            android:textColor="@color/textColorSecondary"
+            android:text="Mô tả / Ghi chú"
+            android:textColor="#666666"
             android:textSize="14sp" />
 
         <EditText
@@ -57,15 +59,16 @@
             android:hint="Nhập mô tả chi tiết..."
             android:lines="4"
             android:padding="12dp"
-            android:textColor="@color/textColorPrimary"
+            android:textColor="#333333"
             android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/tvLabelPriority"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Mức độ ưu tiên *"
-            android:textColor="@color/textColorSecondary"
+            android:textColor="#666666"
             android:textSize="14sp" />
 
         <Spinner
@@ -77,11 +80,12 @@
             android:paddingHorizontal="12dp" />
 
         <TextView
+            android:id="@+id/tvLabelDeadline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Hạn chót *"
-            android:textColor="@color/textColorSecondary"
+            android:textColor="#666666"
             android:textSize="14sp" />
 
         <TextView
@@ -90,19 +94,19 @@
             android:layout_height="45dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_input"
-            android:drawableEnd="@android:drawable/ic_menu_my_calendar"
             android:gravity="center_vertical"
             android:hint="Chọn ngày giờ"
             android:paddingHorizontal="12dp"
-            android:textColor="@color/textColorPrimary"
+            android:textColor="#333333"
             android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/tvLabelAssignee"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Người thực hiện *"
-            android:textColor="@color/textColorSecondary"
+            android:textColor="#666666"
             android:textSize="14sp" />
 
         <Spinner
@@ -113,24 +117,17 @@
             android:background="@drawable/bg_input"
             android:paddingHorizontal="12dp" />
 
-        <LinearLayout
+        <Button
+            android:id="@+id/btnSaveTask"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginTop="24dp"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:backgroundTint="#1A73E8"
+            android:text="Lưu"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:cornerRadius="12dp" />
 
-            <Button
-                android:id="@+id/btnSaveTask"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_btn_green_solid"
-                android:backgroundTint="#EA580C"
-                android:text="Lưu công việc"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-        </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

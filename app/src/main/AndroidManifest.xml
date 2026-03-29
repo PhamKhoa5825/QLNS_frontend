@@ -2,6 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
+
     <application
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
@@ -10,6 +19,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBvvkf30-4wzenU5SJuxbO0DosDNx81Lv4" />
 
         <activity
             android:name=".ui.DashboardActivity"
@@ -31,6 +43,41 @@
         <activity android:name=".ui.MessageActivity" android:exported="false" />
         <activity android:name=".ui.SelectEmployeeActivity" android:exported="false" />
         <activity android:name=".ui.NotificationActivity" android:exported="false" />
+        <activity android:name=".ui.ProfileActivity" android:exported="false" />
+        <activity android:name=".ui.PayrollActivity" android:exported="false" />
+        <activity android:name=".ui.AdminPayrollActivity" android:exported="false" />
+        <activity android:name=".ui.GPSCheckInActivity" android:exported="false" />
+        <activity android:name=".ui.AdminSettingsActivity" android:exported="false" />
+        <activity android:name=".ui.AttendanceSummaryActivity" android:exported="false" />
+        <activity android:name=".ui.AdminMainActivity" android:exported="false" />
+        <activity android:name=".ui.AddEditEmployeeActivity" android:exported="false" />
+        <activity android:name=".ui.AccountManagementActivity" android:exported="false" />
+        <activity android:name=".ui.SystemLogActivity" android:exported="false" />
+        <activity android:name=".ui.BackupActivity" android:exported="false" />
+
+        <!-- Chat Specific Components -->
+        <activity android:name=".ui.ContactsActivity" android:exported="false" />
+        <activity android:name=".ui.RoomInfoActivity" android:exported="false" />
+        <activity android:name=".ui.SearchMessageActivity" android:exported="false" />
+        <activity
+            android:name=".ui.ImageViewerActivity"
+            android:exported="false" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+
+        <service
+            android:name=".service.ChatForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="remoteMessaging" />
     </application>
 
 </manifest>

@@ -1,41 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp"
     android:clickable="true"
     android:focusable="true"
-    android:paddingHorizontal="16dp"
-    android:paddingTop="16dp">
+    android:background="?attr/selectableItemBackground">
 
-    <FrameLayout
-        android:id="@+id/frameAvatar"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardAvatar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <ImageView
+            android:id="@+id/ivChatAvatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bg_avatar_pink_light" />
+            
         <TextView
-            android:id="@+id/tvChatAvatar"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/bg_avatar_pink_light"
+            android:id="@+id/tvChatAvatarPlaceholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:text="N"
-            android:textColor="#E91E63"
+            android:text="SC"
+            android:textColor="@color/primary"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:background="#E8F1FF"
+            android:visibility="gone" />
+    </com.google.android.material.card.MaterialCardView>
 
-        <View
-            android:id="@+id/viewOnlineDot"
-            android:layout_width="14dp"
-            android:layout_height="14dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="4dp"
-            android:background="@drawable/bg_online_dot" />
-    </FrameLayout>
+    <View
+        android:id="@+id/viewOnlineDot"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:background="@drawable/bg_status_dot_online"
+        android:elevation="2dp"
+        app:layout_constraintBottom_toBottomOf="@id/cardAvatar"
+        app:layout_constraintEnd_toEndOf="@id/cardAvatar"
+        android:layout_margin="2dp" />
 
     <TextView
         android:id="@+id/tvChatName"
@@ -43,71 +56,82 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
-        android:text="Nguyễn Văn A"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="16sp"
+        android:text="Sarah Chen"
+        android:textColor="#1A1C1E"
+        android:textSize="17sp"
         android:textStyle="bold"
+        android:maxLines="1"
+        android:ellipsize="end"
         app:layout_constraintEnd_toStartOf="@id/tvChatTime"
-        app:layout_constraintStart_toEndOf="@id/frameAvatar"
-        app:layout_constraintTop_toTopOf="@id/frameAvatar" />
+        app:layout_constraintStart_toEndOf="@id/cardAvatar"
+        app:layout_constraintTop_toTopOf="@id/cardAvatar"
+        app:layout_constraintBottom_toTopOf="@id/tvChatMessage"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/tvChatTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="10:30"
-        android:textColor="@color/textColorSecondary"
+        android:text="10:42 AM"
+        android:textColor="#0052CC"
         android:textSize="12sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvChatName" />
+        app:layout_constraintTop_toTopOf="@id/tvChatName"
+        app:layout_constraintBottom_toBottomOf="@id/tvChatName" />
 
     <TextView
         android:id="@+id/tvChatMessage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="12dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="Báo cáo đã gửi cho anh rồi nhé"
-        android:textColor="@color/textColorSecondary"
+        android:text="Hey, regarding the Q4 perfor..."
+        android:textColor="#606B78"
         android:textSize="14sp"
-        app:layout_constraintEnd_toStartOf="@id/tvUnreadCount"
+        app:layout_constraintEnd_toStartOf="@id/layoutStatus"
         app:layout_constraintStart_toStartOf="@id/tvChatName"
-        app:layout_constraintTop_toBottomOf="@id/tvChatName" />
+        app:layout_constraintTop_toBottomOf="@id/tvChatName"
+        app:layout_constraintBottom_toBottomOf="@id/cardAvatar" />
 
+    <FrameLayout
+        android:id="@+id/layoutStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvChatMessage"
+        app:layout_constraintBottom_toBottomOf="@id/tvChatMessage">
+
+        <TextView
+            android:id="@+id/tvUnreadCount"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/bg_badge_primary"
+            android:gravity="center"
+            android:text="2"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/ivReadReceipt"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_read_receipt"
+            app:tint="#0052CC"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <!-- Hidden field for department ID compatibility -->
     <TextView
         android:id="@+id/tvChatDepartment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="IT"
-        android:textColor="#9CA3AF"
-        android:textSize="12sp"
-        app:layout_constraintStart_toStartOf="@id/tvChatName"
-        app:layout_constraintTop_toBottomOf="@id/tvChatMessage" />
-
-    <TextView
-        android:id="@+id/tvUnreadCount"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:background="@drawable/bg_badge_pink"
-        android:gravity="center"
-        android:text="2"
-        android:textColor="@color/white"
-        android:textSize="10sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/tvChatMessage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvChatMessage" />
-
-    <View
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:background="#E5E7EB"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/tvChatName"
-        app:layout_constraintTop_toBottomOf="@id/tvChatDepartment" />
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

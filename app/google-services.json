@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "13173034679",
+    "project_id": "qlns-project-f3d10",
+    "storage_bucket": "qlns-project-f3d10.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:13173034679:android:6484e370fa91d5bb33c732",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6AjmoGJyDGPm49O_jvqW4mdVqQDGyQP8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

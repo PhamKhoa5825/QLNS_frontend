@@ -46,4 +46,25 @@ dependencies {
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    // ViewModel + LiveData for MVVM architecture
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.7.0")
+
+    // WebSocket STOMP for real-time messaging
+    implementation("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
+    implementation("io.reactivex.rxjava2:rxjava:2.2.21")
+    implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
+
+    // MPAndroidChart for Stats (if needed)
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    // Glide for Image Loading
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+    
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+    implementation(libs.circleimageview)
 }

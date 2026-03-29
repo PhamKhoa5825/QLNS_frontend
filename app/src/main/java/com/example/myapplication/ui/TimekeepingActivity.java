@@ -169,6 +169,14 @@ public class TimekeepingActivity extends AppCompatActivity {
     private void setupActionButtons() {
         btnCheckIn.setOnClickListener(v -> performCheckIn());
         btnCheckOut.setOnClickListener(v -> performCheckOut());
+        
+        View cardMonthlyStats = findViewById(R.id.cardMonthlyStats);
+        if (cardMonthlyStats != null) {
+            cardMonthlyStats.setOnClickListener(v -> {
+                android.content.Intent intent = new android.content.Intent(this, AttendanceSummaryActivity.class);
+                startActivity(intent);
+            });
+        }
     }
 
     private void performCheckIn() {

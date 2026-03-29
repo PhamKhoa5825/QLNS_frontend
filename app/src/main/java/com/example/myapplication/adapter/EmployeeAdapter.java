@@ -63,7 +63,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
     }
 
     @Override
-    public int getItemCount() { return employeeList.size(); }
+    public int getItemCount() { return employeeList == null ? 0 : employeeList.size(); }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvRole, tvDepartment, tvAvatar, tvStatus;

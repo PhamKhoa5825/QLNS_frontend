@@ -1,47 +1,35 @@
 package com.example.myapplication.model;
 
-import com.google.gson.annotations.SerializedName;
-
 public class Attendance {
-    @SerializedName("id")
     private Long id;
-
-    @SerializedName("date")
-    private String date;
-
-    @SerializedName("checkInTime")
-    private String checkInTime;
-
-    @SerializedName("checkOutTime")
-    private String checkOutTime;
-
-    @SerializedName("status")
-    private String status; // PRESENT, LATE, ABSENT, LEAVE
-
-    @SerializedName("employeeId")
     private Long employeeId;
-
-    @SerializedName("employeeName")
-    private String employeeName;
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getDate() { return date; }
-    public void setDate(String date) { this.date = date; }
-
-    public String getCheckInTime() { return checkInTime; }
-    public void setCheckInTime(String checkInTime) { this.checkInTime = checkInTime; }
-
-    public String getCheckOutTime() { return checkOutTime; }
-    public void setCheckOutTime(String checkOutTime) { this.checkOutTime = checkOutTime; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    private String checkIn;
+    private String checkOut;
+    private String date;
+    private String status;
+    private Integer lateMinutes;
+    private Double workHours;
 
     public Long getEmployeeId() { return employeeId; }
-    public void setEmployeeId(Long employeeId) { this.employeeId = employeeId; }
+    public Long getId() { return id; }
+    public String getCheckIn() { return checkIn; }
+    public String getCheckOut() { return checkOut; }
+    public String getStatus() { return status; }
+    public String getDate() { return date; }
+    public Integer getLateMinutes() { return lateMinutes; }
+    public Double getWorkHours() { return workHours; }
 
-    public String getEmployeeName() { return employeeName; }
-    public void setEmployeeName(String employeeName) { this.employeeName = employeeName; }
+    public String getCheckInTime() {
+        if (checkIn == null || checkIn.length() < 16) return null;
+        return checkIn.substring(11, 16); // Extract HH:mm from "yyyy-MM-ddTHH:mm:ss"
+    }
+
+    public String getCheckOutTime() {
+        if (checkOut == null || checkOut.length() < 16) return null;
+        return checkOut.substring(11, 16); // Extract HH:mm
+    }
+
+    // Setters được dùng khi tạo mock object trong RequestActivity
+    public void setDate(String date) { this.date = date; }
+    public void setStatus(String status) { this.status = status; }
 }

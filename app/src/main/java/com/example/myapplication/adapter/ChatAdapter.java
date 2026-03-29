@@ -41,7 +41,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.layout_item_chat_room, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_chat, parent, false);
         return new ChatViewHolder(view);
     }
 
@@ -56,23 +56,50 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             name = "Phòng chat " + room.getId();
         }
         
-        holder.tvRoomName.setText(name);
+        holder.tvChatName.setText(name);
         
-        holder.tvRoomType.setText(room.getType().equals("DEPARTMENT") ? "Phòng ban" : "Cá nhân");
+        // Last message & Time
+        if (room.getLastMessage() != null) {
+            holder.tvChatMessage.setText(room.getLastMessage());
+        } else {
+            holder.tvChatMessage.setText("Chưa có tin nhắn");
+        }
+
+        if (room.getLastMessageTime() != null) {
+            String timeStr = room.getLastMessageTime();
+            if (timeStr.contains("T")) {
+                int tIndex = timeStr.indexOf("T");
+                int colonIndex = timeStr.lastIndexOf(":");
+                if (colonIndex > tIndex) {
+                    timeStr = timeStr.substring(tIndex + 1, colonIndex);
+                } else {
+                    timeStr = timeStr.substring(tIndex + 1);
+                }
+            }
+            holder.tvChatTime.setText(timeStr);
+        } else {
+            holder.tvChatTime.setText("");
+        }
         
+        // Unread Count
+        if (room.getUnreadCount() > 0) {
+            holder.tvUnreadCount.setVisibility(View.VISIBLE);
+            holder.tvUnreadCount.setText(String.valueOf(room.getUnreadCount()));
+            holder.ivReadReceipt.setVisibility(View.GONE);
+        } else {
+            holder.tvUnreadCount.setVisibility(View.GONE);
+            // Show read receipt if no unread messages (mock logic)
+            holder.ivReadReceipt.setVisibility(View.VISIBLE);
+        }
+
+        // Online Dot Logic (Mocked for UI)
+        holder.viewOnlineDot.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
+
         // Avatar logic
         String firstChar = name.isEmpty() ? "?" : String.valueOf(name.charAt(0)).toUpperCase();
-        holder.tvAvatar.setText(firstChar);
-        
-        if ("DEPARTMENT".equals(room.getType())) {
-            holder.viewAvatarBg.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#DBEAFE")));
-            holder.tvAvatar.setTextColor(Color.parseColor("#2563EB"));
-            holder.typeIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#10B981")));
-        } else {
-            holder.viewAvatarBg.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#FCE7F3")));
-            holder.tvAvatar.setTextColor(Color.parseColor("#DB2777"));
-            holder.typeIndicator.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#F59E0B")));
-        }
+        holder.tvAvatarPlaceholder.setText(firstChar);
+        holder.tvAvatarPlaceholder.setVisibility(View.VISIBLE); // Always show placeholder for now
+        holder.ivAvatar.setVisibility(View.GONE); // Image loading not implemented
 
         holder.itemView.setOnClickListener(v -> listener.onRoomSelected(room));
     }
@@ -83,16 +110,20 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     }
 
     public static class ChatViewHolder extends RecyclerView.ViewHolder {
-        TextView tvRoomName, tvRoomType, tvAvatar;
-        View viewAvatarBg, typeIndicator;
+        android.widget.ImageView ivAvatar, ivReadReceipt;
+        TextView tvChatName, tvChatMessage, tvChatTime, tvUnreadCount, tvAvatarPlaceholder;
+        View viewOnlineDot;
 
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvRoomName = itemView.findViewById(R.id.tvRoomNameItem);
-            tvRoomType = itemView.findViewById(R.id.tvRoomTypeItem);
-            tvAvatar = itemView.findViewById(R.id.tvAvatarText);
-            viewAvatarBg = itemView.findViewById(R.id.viewAvatarBg);
-            typeIndicator = itemView.findViewById(R.id.typeIndicator);
+            ivAvatar = itemView.findViewById(R.id.ivChatAvatar);
+            ivReadReceipt = itemView.findViewById(R.id.ivReadReceipt);
+            tvChatName = itemView.findViewById(R.id.tvChatName);
+            tvChatMessage = itemView.findViewById(R.id.tvChatMessage);
+            tvChatTime = itemView.findViewById(R.id.tvChatTime);
+            tvUnreadCount = itemView.findViewById(R.id.tvUnreadCount);
+            tvAvatarPlaceholder = itemView.findViewById(R.id.tvChatAvatarPlaceholder);
+            viewOnlineDot = itemView.findViewById(R.id.viewOnlineDot);
         }
     }
 }

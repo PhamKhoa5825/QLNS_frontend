@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.R;
 import com.example.myapplication.adapter.EmployeeAdapter;
 import com.example.myapplication.model.*;
+import com.example.myapplication.utils.BottomNavHelper;
 import com.example.myapplication.utils.SharedPrefsManager;
 import com.example.myapplication.viewmodel.EmployeeViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -35,6 +36,9 @@ public class EmployeeActivity extends AppCompatActivity {
     private EditText edtSearch;
     private FloatingActionButton fabAdd;
     private TextView tvTotal, tvWorking, tvResigned;
+    private TextView tvHeaderName, tvHeaderDept, tvHeaderAvatarText;
+    private View btnHeaderNotifications, btnHeaderExtra, containerProfileLink;
+    private ImageView ivHeaderAvatar;
 
     private EmployeeViewModel viewModel;
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
@@ -45,7 +49,7 @@ public class EmployeeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_employee_demo);
+        setContentView(R.layout.activity_employee);
 
         viewModel = new ViewModelProvider(this).get(EmployeeViewModel.class);
 
@@ -54,29 +58,40 @@ public class EmployeeActivity extends AppCompatActivity {
         observeViewModel();
 
         loadDataByRole();
+        
+        BottomNavHelper.setupBottomNav(this, R.id.nav_people);
     }
 
     private void loadDataByRole() {
-        SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
-        String role = prefs.getRole();
-        Long deptId = prefs.getDepartmentId();
-
-        if ("MANAGER".equals(role) && deptId != -1L) {
-            viewModel.loadEmployeesByDepartment(deptId);
-        } else {
-            viewModel.loadEmployees();
-        }
+        // Backend handles filtering automatically based on JWT role (Admin sees all, Manager sees their dept)
+        viewModel.loadEmployees();
     }
 
     private void initViews() {
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-
         progressBar = findViewById(R.id.progressBar);
         edtSearch   = findViewById(R.id.edtSearch);
         fabAdd      = findViewById(R.id.fabAddEmployee);
         tvTotal     = findViewById(R.id.tvTotal);
         tvWorking   = findViewById(R.id.tvWorking);
         tvResigned  = findViewById(R.id.tvResigned);
+
+        // Top Bar
+        tvHeaderName = findViewById(R.id.tvHeaderName);
+        tvHeaderDept = findViewById(R.id.tvHeaderDept);
+        tvHeaderAvatarText = findViewById(R.id.tvHeaderAvatarText);
+        ivHeaderAvatar = findViewById(R.id.ivHeaderAvatar);
+        btnHeaderNotifications = findViewById(R.id.btnHeaderNotifications);
+        btnHeaderExtra = findViewById(R.id.btnHeaderExtra);
+        containerProfileLink = findViewById(R.id.containerProfileLink);
+
+        setupTopBar();
+        
+        if (btnHeaderNotifications != null) {
+            btnHeaderNotifications.setOnClickListener(v -> startActivity(new android.content.Intent(this, NotificationActivity.class)));
+        }
+        if (containerProfileLink != null) {
+            containerProfileLink.setOnClickListener(v -> startActivity(new android.content.Intent(this, ProfileActivity.class)));
+        }
 
         recyclerView = findViewById(R.id.recyclerViewEmployee);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -91,6 +106,18 @@ public class EmployeeActivity extends AppCompatActivity {
             fabAdd.setOnClickListener(v -> showAddEmployeeDialog());
         } else {
             fabAdd.setVisibility(View.GONE);
+        }
+    }
+
+    private void setupTopBar() {
+        SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
+        String name = prefs.getFullName();
+        String dept = prefs.getDepartmentName();
+        
+        if (tvHeaderName != null) tvHeaderName.setText(name.isEmpty() ? prefs.getUsername() : name);
+        if (tvHeaderDept != null) tvHeaderDept.setText(dept);
+        if (tvHeaderAvatarText != null && !name.isEmpty()) {
+            tvHeaderAvatarText.setText(String.valueOf(name.charAt(0)).toUpperCase());
         }
     }
 
@@ -147,9 +174,9 @@ public class EmployeeActivity extends AppCompatActivity {
             if ("ACTIVE".equalsIgnoreCase(e.getStatusRaw())) working++;
         }
 
-        tvTotal.setText(String.valueOf(total));
-        tvWorking.setText(String.valueOf(working));
-        tvResigned.setText(String.valueOf(total - working));
+        tvTotal.setText("All " + total);
+        tvWorking.setText("Online " + working);
+        tvResigned.setText("Engineering " + (total - working));
     }
 
     private void showFilterDialog() {
@@ -249,9 +276,90 @@ public class EmployeeActivity extends AppCompatActivity {
         trySetText(view, R.id.tvDialogStatus, employee.getStatus());
         trySetText(view, R.id.tvDialogJoinDate, employee.getJoinDate());
 
+        // Salary row: only visible to Admin
+        View layoutSalaryRow = view.findViewById(R.id.layoutSalaryRow);
+        TextView tvDialogSalary = view.findViewById(R.id.tvDialogSalary);
+        View btnSetSalary = view.findViewById(R.id.btnSetSalary);
+        String role = SharedPrefsManager.getInstance(this).getRole();
+
+        if ("ADMIN".equals(role)) {
+            layoutSalaryRow.setVisibility(View.VISIBLE);
+
+            // Display current salary
+            Double salary = employee.getBaseSalary();
+            if (salary != null && salary > 0) {
+                java.text.NumberFormat fmt = java.text.NumberFormat.getInstance(new java.util.Locale("vi", "VN"));
+                tvDialogSalary.setText(fmt.format(salary.longValue()) + " ₫");
+            } else {
+                tvDialogSalary.setText("Chưa thiết lập");
+            }
+
+            // Set salary button opens an AlertDialog
+            btnSetSalary.setOnClickListener(v -> {
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+                builder.setTitle("Thiết lập lương cơ bản");
+
+                EditText etSalary = new EditText(this);
+                etSalary.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+                etSalary.setHint("Nhập lương (VD: 15000000)");
+                if (salary != null && salary > 0) {
+                    etSalary.setText(String.valueOf(salary.longValue()));
+                }
+
+                int padPx = (int) (16 * getResources().getDisplayMetrics().density);
+                android.widget.FrameLayout container = new android.widget.FrameLayout(this);
+                android.widget.FrameLayout.LayoutParams params = new android.widget.FrameLayout.LayoutParams(
+                        android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                        android.widget.FrameLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(padPx, 0, padPx, 0);
+                etSalary.setLayoutParams(params);
+                container.addView(etSalary);
+                builder.setView(container);
+
+                builder.setPositiveButton("Lưu", (d, which) -> {
+                    String input = etSalary.getText().toString().trim();
+                    if (input.isEmpty()) {
+                        Toast.makeText(this, "Vui lòng nhập mức lương", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    double newSalary = Double.parseDouble(input);
+                    updateEmployeeSalary(employee.getId(), newSalary, tvDialogSalary);
+                });
+                builder.setNegativeButton("Hủy", null);
+                builder.show();
+            });
+        } else {
+            layoutSalaryRow.setVisibility(View.GONE);
+        }
+
         view.findViewById(R.id.btnCloseDialog).setOnClickListener(v -> dialog.dismiss());
         dialog.setContentView(view);
         dialog.show();
+    }
+
+    private void updateEmployeeSalary(Long empId, double salary, TextView tvToUpdate) {
+        com.example.myapplication.network.ApiService apiService =
+                com.example.myapplication.network.RetrofitClient.getApiService(this);
+
+        java.util.Map<String, Double> body = new java.util.HashMap<>();
+        body.put("baseSalary", salary);
+
+        apiService.updateEmployeeBaseSalary(empId, body).enqueue(new retrofit2.Callback<Void>() {
+            @Override
+            public void onResponse(retrofit2.Call<Void> call, retrofit2.Response<Void> response) {
+                if (response.isSuccessful()) {
+                    java.text.NumberFormat fmt = java.text.NumberFormat.getInstance(new java.util.Locale("vi", "VN"));
+                    tvToUpdate.setText(fmt.format((long) salary) + " ₫");
+                    Toast.makeText(EmployeeActivity.this, "✅ Đã lưu lương thành công!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(EmployeeActivity.this, "Lỗi khi lưu lương", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(retrofit2.Call<Void> call, Throwable t) {
+                Toast.makeText(EmployeeActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void trySetText(View parent, int viewId, String text) {

@@ -15,45 +15,178 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Tiêu đề đơn *"
-        android:textColor="@color/textColorSecondary"
-        android:textSize="14sp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp">
 
-    <EditText
-        android:id="@+id/edtRequestTitle"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_input"
-        android:hint="Ví dụ: Nghỉ phép, Đi muộn..."
-        android:paddingHorizontal="12dp"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="14sp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Nội dung"
-        android:textColor="@color/textColorSecondary"
-        android:textSize="14sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Loại đơn *"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="14sp" />
 
-    <EditText
-        android:id="@+id/edtRequestDesc"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_input"
-        android:gravity="top|start"
-        android:hint="Nhập chi tiết lý do..."
-        android:lines="4"
-        android:padding="12dp"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="14sp" />
+            <Spinner
+                android:id="@+id/spinnerRequestType"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_input" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Tiêu đề đơn *"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/edtRequestTitle"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_input"
+                android:hint="Ví dụ: Nghỉ phép tháng 3..."
+                android:paddingHorizontal="12dp"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="14sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Chọn ngày cụ thể *"
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/btnSuggestDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@+id/btnAddDate"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_btn_mini"
+                    android:backgroundTint="#10B981"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="4dp"
+                    android:text="Gợi ý chọn ngày"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/btnAddDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/bg_btn_mini"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="4dp"
+                    android:text="+ Thêm ngày"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/containerDateDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical" />
+
+            <!-- Evidence Section (Hidden by default, shown for SICK_LEAVE) -->
+            <LinearLayout
+                android:id="@+id/layoutEvidence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Bằng chứng (Ảnh chụp giấy khám/ra viện) *"
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <Button
+                        android:id="@+id/btnPickEvidence"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chọn ảnh"
+                        android:textSize="12sp"
+                        android:background="@drawable/bg_btn_outline"
+                        android:minHeight="40dp" />
+
+                    <TextView
+                        android:id="@+id/tvEvidencePath"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:text="Chưa chọn file"
+                        android:textColor="@color/textColorSecondary"
+                        android:textSize="12sp"
+                        android:maxLines="1"
+                        android:ellipsize="end" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/ivEvidencePreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="8dp"
+                    android:scaleType="centerInside"
+                    android:background="@drawable/bg_input"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Nội dung"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="14sp" />
+
+            <EditText
+                android:id="@+id/edtRequestDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_input"
+                android:gravity="top|start"
+                android:hint="Nhập chi tiết lý do..."
+                android:lines="3"
+                android:padding="12dp"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"

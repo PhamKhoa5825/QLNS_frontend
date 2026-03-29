@@ -25,6 +25,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
     public interface OnRequestActionClickListener {
         void onApprove(Request request);
         void onReject(Request request);
+        void onCancel(Request request);
     }
 
     public RequestAdapter(Context context, List<Request> requestList, OnRequestActionClickListener listener) {
@@ -49,48 +50,150 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
     public void onBindViewHolder(@NonNull RequestViewHolder holder, int position) {
         Request request = requestList.get(position);
 
-        holder.tvEmployeeName.setText(request.getEmployeeName() != null ? request.getEmployeeName() : "Unknown");
-        holder.tvRequestTitle.setText("Đơn xin " + (request.getType() != null ? request.getType() : "khác"));
-        holder.tvRequestReason.setText("Lý do: " + request.getReason());
-        holder.tvRequestDate.setText(request.getCreatedAt());
-        
-        // Avatar text
+        // ── Avatar chữ cái đầu ──
         if (request.getEmployeeName() != null && !request.getEmployeeName().isEmpty()) {
-            String[] parts = request.getEmployeeName().trim().split(" ");
-            holder.tvEmployeeAvatar.setText(String.valueOf(parts[parts.length - 1].charAt(0)).toUpperCase());
+            String trimmed = request.getEmployeeName().trim();
+            if (!trimmed.isEmpty()) {
+                String[] parts = trimmed.split(" ");
+                String lastWord = parts[parts.length - 1];
+                holder.tvRequestAvatar.setText(!lastWord.isEmpty()
+                        ? String.valueOf(lastWord.charAt(0)).toUpperCase() : "?");
+            } else {
+                holder.tvRequestAvatar.setText("?");
+            }
+        } else {
+            holder.tvRequestAvatar.setText("?");
         }
 
-        // Status
+        // ── Thông tin cơ bản ──
+        holder.tvRequestEmployeeName.setText(request.getEmployeeName() != null ? request.getEmployeeName() : "Unknown");
+        holder.tvRequestDept.setText(request.getDepartmentName() != null ? request.getDepartmentName() : "Phòng ban: N/A");
+        
+        String typeStr = "KHÁC";
+        if (request.getType() != null) {
+            switch (request.getType()) {
+                case LEAVE_ANNUAL:
+                case LEAVE_UNPAID:
+                    typeStr = "NGHỈ PHÉP"; break;
+                case SICK_LEAVE: typeStr = "NGHỈ ỐM"; break;
+                case OVERTIME: typeStr = "LÀM THÊM GIỜ"; break;
+                case BUSINESS_TRIP: typeStr = "CÔNG TÁC"; break;
+            }
+        }
+        if (request.getType() == com.example.myapplication.model.RequestType.SICK_LEAVE) {
+            holder.tvRequestTitle.setText(typeStr + " (BHXH chi trả)");
+        } else {
+            holder.tvRequestTitle.setText(typeStr);
+        }
+
+        // Build a summary of dates
+        StringBuilder summary = new StringBuilder();
+        if (request.getTitle() != null && !request.getTitle().isEmpty()) {
+            summary.append(request.getTitle()).append("\n");
+        }
+        if (request.getDetails() != null && !request.getDetails().isEmpty()) {
+            double totalDays = 0;
+            if (request.getType() == com.example.myapplication.model.RequestType.LEAVE_ANNUAL
+                    || request.getType() == com.example.myapplication.model.RequestType.LEAVE_UNPAID
+                    || request.getType() == com.example.myapplication.model.RequestType.SICK_LEAVE) {
+                for (com.example.myapplication.model.RequestDetail d : request.getDetails()) {
+                    if (d.getLeaveSession() == com.example.myapplication.model.LeaveSession.ALL_DAY) totalDays += 1.0;
+                    else totalDays += 0.5;
+                }
+            } else {
+                totalDays = request.getDetails().size();
+            }
+            summary.append("Chi tiết: ").append(totalDays).append(" ngày (");
+            for (int i = 0; i < Math.min(request.getDetails().size(), 3); i++) {
+                com.example.myapplication.model.RequestDetail d = request.getDetails().get(i);
+                summary.append(d.getSpecificDate());
+                if ((request.getType() == com.example.myapplication.model.RequestType.LEAVE_ANNUAL
+                        || request.getType() == com.example.myapplication.model.RequestType.LEAVE_UNPAID
+                        || request.getType() == com.example.myapplication.model.RequestType.SICK_LEAVE) && d.getLeaveSession() != null) {
+                    summary.append(" ").append(formatSession(d.getLeaveSession()));
+                } else if (request.getType() == com.example.myapplication.model.RequestType.OVERTIME && d.getOvertimeHours() != null) {
+                    summary.append(" ").append(d.getOvertimeHours()).append("h");
+                }
+                if (i < Math.min(request.getDetails().size(), 3) - 1) summary.append(", ");
+            }
+            if (request.getDetails().size() > 3) {
+                summary.append("...");
+            }
+            summary.append(")");
+        } else if (request.getDescription() != null) {
+            summary.append(request.getDescription());
+        }
+
+        holder.tvRequestDesc.setText(summary.toString().trim());
+
+        // Date Display: Created At
+        if (request.getCreatedAt() != null) {
+            String iso = request.getCreatedAt();
+            try {
+                String datePart = iso.length() >= 10
+                        ? iso.substring(8, 10) + "/" + iso.substring(5, 7) + "/" + iso.substring(0, 4) : iso;
+                String timePart = iso.length() >= 16
+                        ? " " + iso.substring(11, 16) : "";
+                holder.tvRequestDate.setText(datePart + timePart);
+            } catch (Exception e) {
+                holder.tvRequestDate.setText(iso);
+            }
+        }
+
+        // Status Styling using setBadge
         String status = request.getStatus();
         String currentRole = com.example.myapplication.utils.SharedPrefsManager.getInstance(context).getRole();
-        
+        long currentEmployeeId = com.example.myapplication.utils.SharedPrefsManager.getInstance(context).getEmployeeId();
+        boolean isOwnRequest = (request.getEmployeeId() != null && request.getEmployeeId() == currentEmployeeId);
+
         if ("PENDING".equalsIgnoreCase(status)) {
-            holder.tvRequestStatus.setText("Chờ duyệt");
-            holder.tvRequestStatus.setTextColor(android.graphics.Color.parseColor("#D97706")); // Orange
-            
-            // Only show action buttons for Manager/Admin
-            if ("EMPLOYEE".equals(currentRole)) {
-                holder.layoutActionButtons.setVisibility(View.GONE);
+            setBadge(holder.tvRequestStatus, "CHỜ DUYỆT", "#F59E0B");
+            if ("EMPLOYEE".equalsIgnoreCase(currentRole) || isOwnRequest) {
+                holder.layoutActions.setVisibility(View.GONE);
+                holder.btnCancelRequest.setVisibility(isOwnRequest ? View.VISIBLE : View.GONE);
             } else {
-                holder.layoutActionButtons.setVisibility(View.VISIBLE);
+                holder.layoutActions.setVisibility(View.VISIBLE);
+                holder.btnCancelRequest.setVisibility(View.GONE);
             }
         } else if ("APPROVED".equalsIgnoreCase(status)) {
-            holder.tvRequestStatus.setText("Đã duyệt");
-            holder.tvRequestStatus.setTextColor(android.graphics.Color.parseColor("#10B981")); // Green
-            holder.layoutActionButtons.setVisibility(View.GONE);
+            setBadge(holder.tvRequestStatus, "ĐÃ DUYỆT", "#10B981");
+            holder.layoutActions.setVisibility(View.GONE);
+            holder.btnCancelRequest.setVisibility(View.GONE);
+        } else if ("REJECTED".equalsIgnoreCase(status)) {
+            setBadge(holder.tvRequestStatus, "TỪ CHỐI", "#EF4444");
+            holder.layoutActions.setVisibility(View.GONE);
+            holder.btnCancelRequest.setVisibility(View.GONE);
+            if (request.getRejectionReason() != null && !request.getRejectionReason().isEmpty()) {
+                holder.tvRejectionReason.setVisibility(View.VISIBLE);
+                holder.tvRejectionReason.setText("Lý do: " + request.getRejectionReason());
+            } else {
+                holder.tvRejectionReason.setVisibility(View.GONE);
+            }
         } else {
-            holder.tvRequestStatus.setText("Từ chối");
-            holder.tvRequestStatus.setTextColor(android.graphics.Color.parseColor("#EF4444")); // Red
-            holder.layoutActionButtons.setVisibility(View.GONE);
+            setBadge(holder.tvRequestStatus, status != null ? status.toUpperCase() : "UNK", "#6B7280");
+            holder.layoutActions.setVisibility(View.GONE);
+            holder.btnCancelRequest.setVisibility(View.GONE);
+        }
+
+        // Reviewer info
+        if (request.getReviewedByName() != null && !request.getReviewedByName().isEmpty()) {
+            holder.tvRequestReviewer.setVisibility(View.VISIBLE);
+            holder.tvRequestReviewer.setText("• " + request.getReviewedByName());
+        } else {
+            holder.tvRequestReviewer.setVisibility(View.GONE);
         }
 
         // Action Buttons
         holder.btnApprove.setOnClickListener(v -> {
             if (listener != null) listener.onApprove(request);
         });
-        
+
         holder.btnReject.setOnClickListener(v -> {
             if (listener != null) listener.onReject(request);
+        });
+
+        holder.btnCancelRequest.setOnClickListener(v -> {
+            if (listener != null) listener.onCancel(request);
         });
     }
 
@@ -99,22 +202,45 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
         return requestList == null ? 0 : requestList.size();
     }
 
+    private String formatSession(com.example.myapplication.model.LeaveSession session) {
+        if (session == null) return "";
+        switch (session) {
+            case MORNING: return "Sáng";
+            case AFTERNOON: return "Chiều";
+            case ALL_DAY: return "Cả ngày";
+            default: return "";
+        }
+    }
+
+    private void setBadge(TextView tv, String text, String color) {
+        tv.setText(text);
+        tv.setTextColor(android.graphics.Color.WHITE);
+        android.graphics.drawable.GradientDrawable gd = new android.graphics.drawable.GradientDrawable();
+        gd.setColor(android.graphics.Color.parseColor(color));
+        gd.setCornerRadius(40f);
+        tv.setBackground(gd);
+    }
+
     public static class RequestViewHolder extends RecyclerView.ViewHolder {
-        TextView tvEmployeeAvatar, tvEmployeeName, tvRequestDate, tvRequestStatus, tvRequestTitle, tvRequestReason;
-        LinearLayout layoutActionButtons;
-        Button btnApprove, btnReject;
+        TextView tvRequestAvatar, tvRequestEmployeeName, tvRequestDept, tvRequestTitle, tvRequestDesc, tvRequestDate, tvRequestStatus, tvRequestReviewer, tvRejectionReason;
+        LinearLayout layoutActions;
+        Button btnApprove, btnReject, btnCancelRequest;
 
         public RequestViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvEmployeeAvatar = itemView.findViewById(R.id.tvEmployeeAvatar);
-            tvEmployeeName = itemView.findViewById(R.id.tvEmployeeName);
+            tvRequestAvatar = itemView.findViewById(R.id.tvRequestAvatar);
+            tvRequestEmployeeName = itemView.findViewById(R.id.tvRequestEmployeeName);
+            tvRequestDept = itemView.findViewById(R.id.tvRequestDept);
+            tvRequestTitle = itemView.findViewById(R.id.tvRequestTitle);
+            tvRequestDesc = itemView.findViewById(R.id.tvRequestDesc);
             tvRequestDate = itemView.findViewById(R.id.tvRequestDate);
             tvRequestStatus = itemView.findViewById(R.id.tvRequestStatus);
-            tvRequestTitle = itemView.findViewById(R.id.tvRequestTitle);
-            tvRequestReason = itemView.findViewById(R.id.tvRequestReason);
-            layoutActionButtons = itemView.findViewById(R.id.layoutActionButtons);
+            tvRequestReviewer = itemView.findViewById(R.id.tvRequestReviewer);
+            tvRejectionReason = itemView.findViewById(R.id.tvRejectionReason);
+            layoutActions = itemView.findViewById(R.id.layoutActions);
             btnApprove = itemView.findViewById(R.id.btnApprove);
             btnReject = itemView.findViewById(R.id.btnReject);
+            btnCancelRequest = itemView.findViewById(R.id.btnCancelRequest);
         }
     }
 }

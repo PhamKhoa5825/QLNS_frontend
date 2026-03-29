@@ -89,6 +89,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 holder.tvStatus.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_info, 0, 0, 0);
                 holder.tvStatus.setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#3B82F6")));
                 break;
+            case "UNDER_REVIEW":
+                holder.tvStatus.setText("Chờ duyệt");
+                holder.tvStatus.setTextColor(Color.parseColor("#8B5CF6")); // Purple for Review
+                holder.tvStatus.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_info, 0, 0, 0);
+                holder.tvStatus.setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#8B5CF6")));
+                break;
+            case "REJECTED":
+                holder.tvStatus.setText("Cần làm lại");
+                holder.tvStatus.setTextColor(Color.parseColor("#F43F5E")); // Rose/Red for Rejected
+                holder.tvStatus.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_alert, 0, 0, 0);
+                holder.tvStatus.setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#F43F5E")));
+                break;
             default:
                 holder.tvStatus.setText("Chưa bắt đầu");
                 holder.tvStatus.setTextColor(Color.parseColor("#EA580C"));

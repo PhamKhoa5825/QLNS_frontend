@@ -12,6 +12,8 @@ public class SharedPrefsManager {
     private static final String KEY_ROLE = "role";
     private static final String KEY_DEPT_ID = "dept_id";
     private static final String KEY_EMPLOYEE_ID = "employee_id";
+    private static final String KEY_FULL_NAME = "full_name";
+    private static final String KEY_DEPT_NAME = "dept_name";
 
     private static SharedPrefsManager mInstance;
     private static Context mCtx;
@@ -53,6 +55,20 @@ public class SharedPrefsManager {
         editor.apply();
     }
 
+    public void setFullName(String fullName) {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_FULL_NAME, fullName);
+        editor.apply();
+    }
+
+    public void setDepartmentName(String deptName) {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_DEPT_NAME, deptName);
+        editor.apply();
+    }
+
     public boolean isLoggedIn() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_TOKEN, null) != null;
@@ -86,6 +102,16 @@ public class SharedPrefsManager {
     public Long getEmployeeId() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getLong(KEY_EMPLOYEE_ID, -1L);
+    }
+
+    public String getFullName() {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(KEY_FULL_NAME, "");
+    }
+
+    public String getDepartmentName() {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(KEY_DEPT_NAME, "");
     }
 
     public void logout() {

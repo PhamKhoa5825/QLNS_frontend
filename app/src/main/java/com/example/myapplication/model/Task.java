@@ -19,7 +19,7 @@ public class Task {
     private String priority; // LOW, MEDIUM, HIGH
 
     @SerializedName("status")
-    private String status; // PENDING, ACCEPTED, DONE, OVERDUE
+    private String status; // PENDING, ACCEPTED, UNDER_REVIEW, DONE, REJECTED, OVERDUE
 
     @SerializedName("assignedToId")
     private Long assignedToId;

@@ -47,6 +47,18 @@ public class Employee {
     @SerializedName("role")
     private String role;            // EMPLOYEE / MANAGER / ADMIN
 
+    @SerializedName("remainingLeave")
+    private Double remainingLeave;
+
+    @SerializedName("userId")
+    private Long userId;
+
+    @SerializedName("accountStatus")    // ACTIVE / INACTIVE
+    private String accountStatus;
+
+    @SerializedName("baseSalary")
+    private Double baseSalary;
+
     // ===== Hàm tiện ích giữ nguyên để Adapter không phải sửa =====
 
     public String getFullName() { return fullName; }
@@ -90,4 +102,18 @@ public class Employee {
     public Long getDepartmentId() { return departmentId; }
     public String getDepartmentName() { return departmentName; }
     public String getRoleRaw() { return role; }         // EMPLOYEE / MANAGER / ADMIN
+
+    // Được gọi từ EmployeeActivity
+    public Double getBaseSalary() { return baseSalary; }
+
+    public void setBaseSalary(Double baseSalary) { this.baseSalary = baseSalary; }
+
+    // Được gọi từ RequestActivity, ngày phép còn lại
+    public double getRemainingLeave() { 
+        return remainingLeave != null ? remainingLeave : 0.0; 
+    }
+
+    public Long getUserId() { return userId; }
+    public String getAccountStatus() { return accountStatus; }
+    public boolean isAccountActive() { return !"INACTIVE".equals(accountStatus); }
 }

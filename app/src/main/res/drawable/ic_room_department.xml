@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Roof -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,4L4.5,7.1a0.7,0.7 0,0 0,0.27 1.35h14.46a0.7,0.7 0,0 0,0.27 -1.35z" />
+
+    <!-- Pillars -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillAlpha="0.92"
+        android:pathData="M6.6,9.6h2v6.3h-2zM11,9.6h2v6.3h-2zM15.4,9.6h2v6.3h-2z" />
+
+    <!-- Base -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M4.3,16.9h15.4a0.9,0.9 0,0 1,0.9 0.9v1a0.9,0.9 0,0 1,-0.9 0.9H4.3a0.9,0.9 0,0 1,-0.9 -0.9v-1a0.9,0.9 0,0 1,0.9 -0.9z" />
+
+    <!-- Door detail -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillAlpha="0.78"
+        android:pathData="M11.2,13.9h1.6v2h-1.6z" />
+</vector>

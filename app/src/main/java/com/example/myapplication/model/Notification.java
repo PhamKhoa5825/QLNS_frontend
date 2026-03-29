@@ -13,7 +13,7 @@ public class Notification {
     private String content;
 
     @SerializedName("targetType")
-    private String targetType; // COMPANY, DEPARTMENT
+    private String targetType; // COMPANY, DEPARTMENT, USER
 
     @SerializedName("createdAt")
     private String createdAt;

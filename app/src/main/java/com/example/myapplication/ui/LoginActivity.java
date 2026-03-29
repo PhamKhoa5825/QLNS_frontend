@@ -9,8 +9,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
-import com.example.myapplication.model.AuthRequest;
-import com.example.myapplication.model.AuthResponse;
+import com.example.myapplication.model.AuthenticationRequest;
+import com.example.myapplication.model.AuthenticationResponse;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.utils.SharedPrefsManager;
@@ -22,7 +22,7 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText edtEmail, edtPassword;
+    private EditText etUsername, etPassword;
     private MaterialButton btnLogin;
 
     @Override
@@ -68,30 +68,30 @@ public class LoginActivity extends AppCompatActivity {
     private void showLoginScreen() {
         setContentView(R.layout.activity_login);
 
-        edtEmail = findViewById(R.id.edtEmail);
-        edtPassword = findViewById(R.id.edtPassword);
+        etUsername = findViewById(R.id.etUsername);
+        etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
 
         btnLogin.setOnClickListener(v -> handleLogin());
     }
 
     private void handleLogin() {
-        String username = edtEmail.getText().toString().trim();
-        String password = edtPassword.getText().toString().trim();
+        String username = etUsername.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
 
         if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập tài khoản và mật khẩu", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        AuthRequest request = new AuthRequest(username, password);
+        AuthenticationRequest request = new AuthenticationRequest(username, password);
         ApiService apiService = RetrofitClient.getApiService(this);
         
-        apiService.login(request).enqueue(new Callback<AuthResponse>() {
+        apiService.login(request).enqueue(new Callback<AuthenticationResponse>() {
             @Override
-            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+            public void onResponse(Call<AuthenticationResponse> call, Response<AuthenticationResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    AuthResponse authResponse = response.body();
+                    AuthenticationResponse authResponse = response.body();
                     
                     // Save session
                     SharedPrefsManager.getInstance(LoginActivity.this).saveUserLogin(
@@ -109,20 +109,45 @@ public class LoginActivity extends AppCompatActivity {
                     // Save employee ID from login response
                     if (authResponse.getEmployeeId() != null) {
                         SharedPrefsManager.getInstance(LoginActivity.this).setEmployeeId(authResponse.getEmployeeId());
+                        // Fetch descriptive details
+                        fetchEmployeeDetails(authResponse.getEmployeeId());
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                        finish();
                     }
-                    
-                    Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
-                    
-                    startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
-                    finish();
                 } else {
                     Toast.makeText(LoginActivity.this, "Tài khoản hoặc mật khẩu không đúng", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<AuthResponse> call, Throwable t) {
+            public void onFailure(Call<AuthenticationResponse> call, Throwable t) {
                 Toast.makeText(LoginActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void fetchEmployeeDetails(Long employeeId) {
+        ApiService apiService = RetrofitClient.getApiService(this);
+        apiService.getEmployeeById(employeeId).enqueue(new Callback<com.example.myapplication.model.Employee>() {
+            @Override
+            public void onResponse(Call<com.example.myapplication.model.Employee> call, Response<com.example.myapplication.model.Employee> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    com.example.myapplication.model.Employee emp = response.body();
+                    SharedPrefsManager prefs = SharedPrefsManager.getInstance(LoginActivity.this);
+                    prefs.setFullName(emp.getFullName());
+                    prefs.setDepartmentName(emp.getDepartment());
+                }
+                // Proceed to Dashboard regardless of success (fallback to username happens there)
+                startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call<com.example.myapplication.model.Employee> call, Throwable t) {
+                startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                finish();
             }
         });
     }

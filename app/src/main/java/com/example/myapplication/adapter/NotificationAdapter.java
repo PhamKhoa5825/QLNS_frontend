@@ -12,91 +12,99 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.model.Notification;
+import com.google.android.material.chip.Chip;
 
 import java.util.List;
 
-public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotiViewHolder> {
+public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
 
     private Context context;
-    private List<Notification> notiList;
+    private List<Notification> notificationList;
     private OnNotificationClickListener listener;
 
     public interface OnNotificationClickListener {
-        void onNotificationClick(Notification noti);
+        void onNotificationClick(Notification notification);
     }
 
-    public NotificationAdapter(Context context, List<Notification> notiList, OnNotificationClickListener listener) {
+    public NotificationAdapter(Context context, List<Notification> notificationList, OnNotificationClickListener listener) {
         this.context = context;
-        this.notiList = notiList;
+        this.notificationList = notificationList;
         this.listener = listener;
     }
 
-    public void setNotiList(List<Notification> notiList) {
-        this.notiList = notiList;
+    public void setNotificationList(List<Notification> notificationList) {
+        this.notificationList = notificationList;
         notifyDataSetChanged();
+    }
+
+    // Alias được dùng bởi NotificationActivity
+    public void setNotiList(List<Notification> notificationList) {
+        setNotificationList(notificationList);
     }
 
     @NonNull
     @Override
-    public NotiViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_notification, parent, false);
-        return new NotiViewHolder(view);
+        return new NotificationViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NotiViewHolder holder, int position) {
-        Notification noti = notiList.get(position);
-        holder.tvTitle.setText(noti.getTitle());
-        holder.tvContent.setText(noti.getContent());
+    public void onBindViewHolder(@NonNull NotificationViewHolder holder, int position) {
+        Notification notification = notificationList.get(position);
         
-        // Target Type Tag
-        if ("COMPANY".equals(noti.getTargetType())) {
-            holder.tvTag.setText("Công ty");
-            holder.tvTag.setBackgroundResource(R.drawable.bg_tag_rose); // Actually use a blue one if we had it, but keeping rose for consistent theme
-            holder.tvTag.setTextColor(Color.parseColor("#E11D48"));
-        } else {
-            holder.tvTag.setText("Phòng ban");
-            holder.tvTag.setBackgroundResource(R.drawable.bg_tag_rose);
-            holder.tvTag.setTextColor(Color.parseColor("#E11D48"));
-        }
+        holder.tvTitle.setText(notification.getTitle());
+        holder.tvMessage.setText(notification.getContent());
+        holder.tvTime.setText(notification.getCreatedAt());
 
-        // Read Status
-        if (!noti.isRead()) {
-            holder.viewReadStatus.setVisibility(View.VISIBLE);
-            holder.tvTitle.setTypeface(null, android.graphics.Typeface.BOLD);
+        // Unread indicator
+        holder.unreadIndicator.setVisibility(notification.isRead() ? View.GONE : View.VISIBLE);
+
+        // Category Badge
+        String targetType = notification.getTargetType();
+        if (targetType != null) {
+            holder.chipCategory.setText(targetType);
+            if ("COMPANY".equals(targetType)) {
+                holder.chipCategory.setChipBackgroundColorResource(android.R.color.holo_blue_light);
+                holder.chipCategory.setTextColor(Color.WHITE);
+            } else if ("DEPARTMENT".equals(targetType)) {
+                holder.chipCategory.setChipBackgroundColorResource(android.R.color.holo_green_light);
+                holder.chipCategory.setTextColor(Color.WHITE);
+            } else {
+                holder.chipCategory.setChipBackgroundColorResource(android.R.color.darker_gray);
+                holder.chipCategory.setTextColor(Color.WHITE);
+            }
         } else {
-            holder.viewReadStatus.setVisibility(View.GONE);
-            holder.tvTitle.setTypeface(null, android.graphics.Typeface.NORMAL);
-        }
-        
-        // Date (simple display for now)
-        if (noti.getCreatedAt() != null) {
-            String time = noti.getCreatedAt();
-            if (time.contains("T")) time = time.split("T")[0];
-            holder.tvTime.setText(time);
+            holder.chipCategory.setVisibility(View.GONE);
         }
 
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) listener.onNotificationClick(noti);
+            if (listener != null) {
+                listener.onNotificationClick(notification);
+            }
         });
     }
 
     @Override
     public int getItemCount() {
-        return notiList == null ? 0 : notiList.size();
+        return notificationList != null ? notificationList.size() : 0;
     }
 
-    public static class NotiViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvContent, tvTag, tvTime;
-        View viewReadStatus;
+    public static class NotificationViewHolder extends RecyclerView.ViewHolder {
+        View unreadIndicator, iconBackground;
+        TextView tvTitle, tvMessage, tvTime;
+        Chip chipCategory;
+        android.widget.ImageView ivIcon;
 
-        public NotiViewHolder(@NonNull View itemView) {
+        public NotificationViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(R.id.tvNotiTitle);
-            tvContent = itemView.findViewById(R.id.tvNotiContent);
-            tvTag = itemView.findViewById(R.id.tvNotiTag);
-            tvTime = itemView.findViewById(R.id.tvNotiTime);
-            viewReadStatus = itemView.findViewById(R.id.viewReadStatus);
+            unreadIndicator = itemView.findViewById(R.id.unreadIndicator);
+            iconBackground = itemView.findViewById(R.id.iconBackground);
+            tvTitle = itemView.findViewById(R.id.tvTitle);
+            tvMessage = itemView.findViewById(R.id.tvMessage);
+            tvTime = itemView.findViewById(R.id.tvTime);
+            chipCategory = itemView.findViewById(R.id.chipCategory);
+            ivIcon = itemView.findViewById(R.id.ivIcon);
         }
     }
 }

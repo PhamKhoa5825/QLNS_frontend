@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="12dp"
+    app:cardElevation="8dp">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/llEmojis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEmoji1"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="😀"
+                android:textSize="22sp"
+                app:backgroundTint="@android:color/transparent"
+                app:rippleColor="?attr/colorControlHighlight" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEmoji2"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="😂"
+                android:textSize="22sp"
+                app:backgroundTint="@android:color/transparent"
+                app:rippleColor="?attr/colorControlHighlight" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEmoji3"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="❤️"
+                android:textSize="22sp"
+                app:backgroundTint="@android:color/transparent"
+                app:rippleColor="?attr/colorControlHighlight" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEmoji4"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="👍"
+                android:textSize="22sp"
+                app:backgroundTint="@android:color/transparent"
+                app:rippleColor="?attr/colorControlHighlight" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEmoji5"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="😮"
+                android:textSize="22sp"
+                app:backgroundTint="@android:color/transparent"
+                app:rippleColor="?attr/colorControlHighlight" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEmoji6"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="😢"
+                android:textSize="22sp"
+                app:backgroundTint="@android:color/transparent"
+                app:rippleColor="?attr/colorControlHighlight" />
+        </LinearLayout>
+    </HorizontalScrollView>
+</com.google.android.material.card.MaterialCardView>

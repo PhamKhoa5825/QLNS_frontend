@@ -14,11 +14,6 @@ import java.util.List;
 public class DepartmentViewModel extends AndroidViewModel {
     private final EmployeeRepository repository;
 
-    public DepartmentViewModel(@NonNull Application application) {
-        super(application);
-        this.repository = new EmployeeRepository(application.getApplicationContext());
-    }
-
     private final MutableLiveData<List<Department>> _departments = new MutableLiveData<>();
     public final LiveData<List<Department>> departments = _departments;
 
@@ -27,6 +22,11 @@ public class DepartmentViewModel extends AndroidViewModel {
 
     private final MutableLiveData<String> _errorMessage = new MutableLiveData<>();
     public final LiveData<String> errorMessage = _errorMessage;
+
+    public DepartmentViewModel(@NonNull Application application) {
+        super(application);
+        this.repository = new EmployeeRepository(application);
+    }
 
     public void loadDepartments() {
         _isLoading.setValue(true);

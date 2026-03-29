@@ -1,43 +1,60 @@
 package com.example.myapplication.network;
 
 import android.content.Context;
-import com.example.myapplication.utils.SharedPrefsManager;
-import okhttp3.Interceptor;
+import android.content.SharedPreferences;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import java.io.IOException;
+
+import java.util.concurrent.TimeUnit;
 
 public class RetrofitClient {
 
-    private static final String BASE_URL = "http://10.0.2.2:8080/";
+    public static final String BASE_URL = "http://10.0.2.2:8080/";
+
+    public static String getBaseUrl() {
+        return BASE_URL;
+    }
+
+    public static String getBaseUrl(Context context) {
+        return BASE_URL;
+    }
     private static Retrofit retrofit;
+    private static Context appContext;
 
-    public static Retrofit getInstance(Context context) {
+    public static void init(Context context) {
+        appContext = context.getApplicationContext();
+    }
+
+    public static Retrofit getInstance() {
         if (retrofit == null) {
-            OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
-                @Override
-                public Response intercept(Chain chain) throws IOException {
-                    Request original = chain.request();
-                    
-                    // Skip auth header for login and register endpoints
-                    if (original.url().encodedPath().contains("/api/auth/login") || 
-                        original.url().encodedPath().contains("/api/auth/register")) {
-                        return chain.proceed(original);
-                    }
+            // Thêm Logging để xem chi tiết Request/Response trong Logcat
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-                    String token = SharedPrefsManager.getInstance(context).getToken();
-                    if (token != null && !token.isEmpty()) {
-                        Request.Builder requestBuilder = original.newBuilder()
-                                .addHeader("Authorization", "Bearer " + token);
-                        Request request = requestBuilder.build();
-                        return chain.proceed(request);
-                    }
-                    return chain.proceed(original);
-                }
-            }).build();
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .addInterceptor(logging)
+                    .addInterceptor(chain -> {
+                        Request original = chain.request();
+                        Request.Builder requestBuilder = original.newBuilder();
+
+                        if (appContext != null) {
+                            String token = com.example.myapplication.utils.SharedPrefsManager.getInstance(appContext).getToken();
+                            
+                            if (token != null) {
+                                requestBuilder.header("Authorization", "Bearer " + token);
+                            }
+                        }
+
+                        return chain.proceed(requestBuilder.build());
+                    })
+                    .build();
 
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
@@ -48,7 +65,14 @@ public class RetrofitClient {
         return retrofit;
     }
 
+    public static ApiService getApiService() {
+        return getInstance().create(ApiService.class);
+    }
+
     public static ApiService getApiService(Context context) {
-        return getInstance(context).create(ApiService.class);
+        if (appContext == null && context != null) {
+            init(context);
+        }
+        return getApiService();
     }
 }

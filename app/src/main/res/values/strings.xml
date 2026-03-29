@@ -1,3 +1,182 @@
 <resources>
     <string name="app_name">HRMApp</string>
+
+    <!-- Screen Titles -->
+    <string name="update_profile">Cập nhật thông tin</string>
+    <string name="edit_personal_info">Chỉnh sửa thông tin cá nhân</string>
+
+    <!-- Navigation -->
+    <string name="back">Quay lại</string>
+
+    <!-- Avatar Section -->
+    <string name="avatar_hint">Nhấn vào biểu tượng camera để thay đổi ảnh đại diện</string>
+
+    <!-- Form Labels -->
+    <string name="full_name">Họ và tên</string>
+    <string name="phone_number">Số điện thoại mới</string>
+    <string name="email">Email cá nhân</string>
+    <string name="address">Địa chỉ hiện tại</string>
+
+    <!-- Placeholders -->
+    <string name="phone_placeholder">Nhập số điện thoại…</string>
+    <string name="email_placeholder">Nhập email cá nhân…</string>
+    <string name="address_placeholder">Nhập địa chỉ hiện tại…</string>
+
+    <!-- Hints -->
+    <string name="full_name_hint">Họ tên không thể thay đổi. Vui lòng liên hệ phòng Nhân sự.</string>
+    <string name="phone_hint">Số điện thoại dùng để liên hệ và xác thực</string>
+    <string name="email_hint">Email để nhận thông báo và liên lạc công việc</string>
+    <string name="address_hint">Địa chỉ nơi ở hiện tại (số nhà, đường, quận/huyện, thành phố)</string>
+
+    <!-- Information Note -->
+    <string name="info_note"><b>Lưu ý:</b> Thông tin bạn cung cấp sẽ được bảo mật và chỉ sử dụng cho mục đích quản lý nội bộ công ty.</string>
+
+    <!-- Buttons -->
+    <string name="save_changes">Lưu thay đổi</string>
+
+    <!-- Toast Messages -->
+
+    <!-- Change Password Screen -->
+    <string name="change_password">Đổi mật khẩu</string>
+    <string name="change_password_title">Đổi mật khẩu</string>
+    <string name="change_password_desc">Nhập mật khẩu cũ và mật khẩu mới để thay đổi</string>
+
+    <!-- Form Labels Password -->
+    <string name="old_password">Mật khẩu cũ</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="confirm_password">Xác nhận mật khẩu mới</string>
+
+    <!-- Placeholders Password -->
+    <string name="old_password_hint">Nhập mật khẩu cũ...</string>
+    <string name="new_password_hint">Nhập mật khẩu mới...</string>
+    <string name="confirm_password_hint">Nhập lại mật khẩu mới...</string>
+
+    <!-- Descriptions Password -->
+    <string name="old_password_desc">Mật khẩu hiện tại đang sử dụng</string>
+    <string name="new_password_desc">Mật khẩu mới phải có ít nhất 8 ký tự</string>
+    <string name="confirm_password_desc">Nhập lại mật khẩu mới để xác nhận</string>
+
+    <!-- Security Warning Password -->
+    <string name="security_title">Bảo mật tài khoản</string>
+    <string name="security_desc">Mật khẩu mới nên chứa chữ hoa, chữ thường, số và ký tự đặc biệt để đảm bảo an toàn.</string>
+
+    <!-- Buttons Password -->
+    <string name="cancel">Hủy</string>
+    <string name="confirm">Xác nhận</string>
+
+    <!-- Toast Messages Password -->
+
+    <!-- Logout Confirmation -->
+    <string name="logout_confirm_title">Xác nhận đăng xuất</string>
+    <string name="logout_confirm_desc">Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?</string>
+    <string name="logout_btn_text">Đăng xuất</string>
+
+    <!-- Notification Center -->
+    <string name="time_just_now">Vừa xong</string>
+
+    <!-- Attendance History -->
+    <string name="check_in">Vào:</string>
+    <string name="check_out">Ra:</string>
+    <string name="total">Tổng:</string>
+    <string name="status_on_time">Đúng giờ</string>
+
+    <!-- Chat UI Strings -->
+    <string name="chat_add_room">Tạo phòng</string>
+    <string name="chat_send">Gửi</string>
+    <string name="chat_attach">Đính kèm</string>
+    <string name="chat_search_contacts_hint">Tìm đồng nghiệp...</string>
+    <string name="chat_colleagues_label">Danh sách đồng nghiệp</string>
+    <string name="chat_empty_contacts">Không tìm thấy đồng nghiệp</string>
+    <string name="chat_selected_count_zero">Đã chọn: 0</string>
+    <string name="chat_add_members_title">Thêm thành viên</string>
+    <string name="chat_add_members">Thêm</string>
+    <string name="chat_pick_at_least_one">Chọn ít nhất 1 người</string>
+
+    <!-- Chat Screens -->
+    <string name="chat_internal_messages">Tin nhắn nội bộ</string>
+    <string name="chat_empty_rooms">Chưa có phòng chat</string>
+    <string name="chat_room_fallback">Phòng chat %1$d</string>
+    <string name="chat_load_rooms_failed">Không tải được danh sách phòng chat</string>
+    <string name="chat_user_id_missing">Không tìm thấy user_id</string>
+    <string name="chat_message_room_fallback">Phòng chat</string>
+    <string name="chat_choose_image">Chọn ảnh</string>
+    <string name="chat_choose_file">Chọn file</string>
+    <string name="chat_search_in_conversation">Tìm trong cuộc trò chuyện</string>
+
+    <!-- Contacts 1-1 -->
+    <string name="chat_one_to_one_title">Chat 1-1</string>
+    <string name="chat_one_to_one_subtitle">Tìm đồng nghiệp để bắt đầu cuộc trò chuyện</string>
+    <string name="chat_contacts_search_hint">Tìm đồng nghiệp</string>
+    <string name="chat_contact_action">Nhắn</string>
+    <string name="chat_user_fallback">Người dùng</string>
+
+    <!-- Create Group -->
+    <string name="chat_create_group_title">Tạo nhóm mới</string>
+    <string name="chat_create_group_subtitle">Chọn thành viên và đặt tên nhóm</string>
+    <string name="chat_group_name_hint">Tên nhóm</string>
+    <string name="chat_select_members">Chọn thành viên</string>
+    <string name="chat_create_group_action">Tạo nhóm</string>
+    <string name="chat_group_name_required">Tên nhóm không được để trống</string>
+    <string name="chat_select_member_required">Chọn ít nhất 1 thành viên</string>
+
+    <!-- Add Members -->
+    <string name="chat_selected_count_label">Đã chọn: %1$d</string>
+    <string name="chat_empty_message_placeholder">Chưa có tin nhắn</string>
+    <string name="chat_type_department">PHÒNG BAN</string>
+    <string name="chat_type_group">NHÓM</string>
+    <string name="chat_type_private">RIÊNG TƯ</string>
+    <string name="chat_create_room_failed">Tạo phòng chat thất bại</string>
+    <string name="chat_search_no_result">Không tìm thấy kết quả</string>
+
+    <!-- Chat Title and Input -->
+    <string name="chat_title">Chat</string>
+    <string name="chat_input_hint">Nhập tin nhắn...</string>
+
+    <!-- Chat Adapter Labels -->
+    <string name="chat_message_recalled">Tin nhắn đã bị thu hồi</string>
+    <string name="chat_attachment_default">Tệp đính kèm</string>
+    <string name="chat_downloading_file">Đang tải tệp...</string>
+    <string name="chat_reply_no_content">(Không có nội dung)</string>
+    <string name="chat_sender_anonymous">Ẩn danh</string>
+    <string name="chat_system_default">Thông báo hệ thống</string>
+    <string name="chat_action_reply">Reply</string>
+    <string name="chat_action_recall">Thu hồi tin nhắn</string>
+    <string name="chat_action_download_file">Tải tệp</string>
+    <string name="chat_action_open_file">Mở tệp</string>
+
+    <!-- Room Info -->
+    <string name="chat_load_members_failed">Không tải được thành viên</string>
+    <string name="chat_action_failed">Thao tác thất bại</string>
+    <string name="chat_remove_member_title">Xóa thành viên</string>
+    <string name="chat_remove_member_message">Bạn có chắc muốn xóa %1$s?</string>
+    <string name="chat_remove_member_action">Xóa</string>
+    <string name="chat_rename_group_title">Đổi tên nhóm</string>
+    <string name="chat_save_action">Lưu</string>
+    <string name="chat_group_name_empty">Tên không được trống</string>
+    <string name="chat_leave_group_title">Rời nhóm</string>
+    <string name="chat_leave_group_message">Bạn chắc chắn muốn rời nhóm?</string>
+    <string name="chat_leave_group_action">Rời</string>
+
+    <!-- Unknown Marker -->
+    <string name="chat_unknown_short">\?</string>
+    <string name="chat_attachment_preview">Xem trước tệp đính kèm</string>
+    <string name="chat_permission_required">Cần cấp quyền truy cập ảnh để tiếp tục</string>
+    <string name="chat_upload_failed">Tải tệp thất bại</string>
+    <string name="chat_error_400">Thiếu dữ liệu hoặc sai loại tệp</string>
+    <string name="chat_error_401">Phiên đăng nhập hết hạn, vui lòng đăng nhập lại</string>
+    <string name="chat_error_413">Tệp vượt quá giới hạn kích thước</string>
+
+    <!-- File Download/Open Flow -->
+    <string name="chat_file_download_failed">Tải tệp thất bại, vui lòng thử lại</string>
+    <string name="chat_file_open_failed">Không thể mở tệp</string>
+    <string name="chat_file_url_missing">Không tìm thấy đường dẫn tệp</string>
+    <string name="chat_no_app_to_open_file">Thiết bị không có ứng dụng phù hợp để mở tệp này</string>
+    <string name="chat_open_file_chooser">Mở file</string>
+    <string name="chat_upload_success">Đã tải tệp lên thành công</string>
+    <string name="chat_image_download_success">Đã lưu ảnh %1$s vào Tải xuống</string>
+    <string name="chat_image_download_failed">Tải ảnh thất bại, vui lòng thử lại</string>
+
+    <!-- Search and Info -->
+    <string name="search">Tìm kiếm</string>
+    <string name="info">Thông tin</string>
 </resources>

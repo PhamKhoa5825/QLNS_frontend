@@ -13,7 +13,9 @@ import com.example.myapplication.R;
 import com.example.myapplication.adapter.EmployeeAdapter;
 import com.example.myapplication.model.ChatRoom;
 import com.example.myapplication.model.Employee;
+import com.example.myapplication.network.ApiClient;
 import com.example.myapplication.network.ApiService;
+import com.example.myapplication.network.ChatApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.utils.SharedPrefsManager;
 
@@ -32,6 +34,7 @@ public class SelectEmployeeActivity extends AppCompatActivity {
     private Long currentUserId;
     private Long currentDeptId;
     private ApiService apiService;
+    private ChatApiService chatApiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +43,9 @@ public class SelectEmployeeActivity extends AppCompatActivity {
 
         currentUserId = SharedPrefsManager.getInstance(this).getEmployeeId();
         currentDeptId = SharedPrefsManager.getInstance(this).getDepartmentId();
-        apiService = RetrofitClient.getApiService(this);
+        apiService = RetrofitClient.getApiService();
+        // [Chat] Tách riêng service chat mới để không phụ thuộc endpoint chat của ApiService cũ.
+        chatApiService = ApiClient.getService(this, ChatApiService.class);
 
         ImageView btnBack = findViewById(R.id.btnBackSelectEmp);
         btnBack.setOnClickListener(v -> finish());
@@ -79,7 +84,8 @@ public class SelectEmployeeActivity extends AppCompatActivity {
     }
 
     private void onEmployeeSelected(Employee employee) {
-        apiService.getOrCreatePrivateRoom(currentUserId, employee.getId()).enqueue(new Callback<ChatRoom>() {
+        // [Chat] Dùng API mới createPrivateRoom để tạo phòng chat riêng.
+        chatApiService.createPrivateRoom(employee.getId()).enqueue(new Callback<ChatRoom>() {
             @Override
             public void onResponse(Call<ChatRoom> call, Response<ChatRoom> response) {
                 if (response.isSuccessful() && response.body() != null) {

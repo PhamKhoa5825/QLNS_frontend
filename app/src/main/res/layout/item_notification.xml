@@ -1,89 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardNotification"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="8dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="2dp">
+    app:cardElevation="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#E5E7EB"
+    app:cardBackgroundColor="#FFFFFF">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+        android:padding="16dp">
 
+        <!-- Unread Indicator -->
         <View
-            android:id="@+id/viewReadStatus"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:background="@drawable/bg_circle_rose"
-            android:layout_marginEnd="12dp" />
+            android:id="@+id/unreadIndicator"
+            android:layout_width="4dp"
+            android:layout_height="0dp"
+            android:background="#1976D2"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
+        <!-- Icon Container -->
+        <FrameLayout
+            android:id="@+id/iconContainer"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/unreadIndicator">
+
+            <!-- Background Circle -->
+            <View
+                android:id="@+id/iconBackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_notification_icon" />
+
+            <!-- Icon -->
+            <ImageView
+                android:id="@+id/ivIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_notification_bell"
+                app:tint="#1976D2"
+                tools:ignore="ContentDescription" />
+
+        </FrameLayout>
+
+        <!-- Content Container -->
         <LinearLayout
+            android:id="@+id/contentContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toTopOf="@id/iconContainer"
+            app:layout_constraintStart_toEndOf="@id/iconContainer"
+            app:layout_constraintEnd_toStartOf="@id/btnMore"
+            app:layout_constraintBottom_toBottomOf="@id/iconContainer">
 
+            <!-- Title -->
             <TextView
-                android:id="@+id/tvNotiTitle"
+                android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tiêu đề thông báo"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:text="Phê duyệt đơn nghỉ phép"
+                android:textSize="15sp"
+                android:textColor="#111827"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
 
+            <!-- Message -->
             <TextView
-                android:id="@+id/tvNotiContent"
+                android:id="@+id/tvMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="Nguyễn Văn A đã gửi đơn nghỉ phép từ 15/03 - 17/03"
+                android:textSize="13sp"
+                android:textColor="#6B7280"
                 android:layout_marginTop="4dp"
-                android:ellipsize="end"
                 android:maxLines="2"
-                android:text="Nội dung chi tiết của thông báo sẽ hiển thị ở đây để người dùng có thể đọc lướt nhanh."
-                android:textColor="@color/textColorSecondary"
-                android:textSize="14sp" />
+                android:ellipsize="end" />
 
+            <!-- Time & Badge Container -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/tvNotiTag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_tag_rose"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="2dp"
-                    android:text="Phòng ban"
-                    android:textColor="#E11D48"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
+                <!-- Time Icon -->
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_clock"
+                    app:tint="#9CA3AF" />
 
+                <!-- Time Text -->
                 <TextView
-                    android:id="@+id/tvNotiTime"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvTime"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="10 phút trước"
-                    android:textColor="@color/textColorSecondary"
-                    android:textSize="12sp" />
+                    android:layout_weight="1"
+                    android:text="2 giờ trước"
+                    android:textSize="12sp"
+                    android:textColor="#9CA3AF"
+                    android:layout_marginStart="4dp" />
+
+                <!-- Category Badge -->
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCategory"
+                    style="@style/Widget.MaterialComponents.Chip.Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:text="Phê duyệt"
+                    android:textSize="11sp"
+                    android:textColor="#1976D2"
+                    app:chipBackgroundColor="#E3F2FD"
+                    app:chipMinHeight="24dp"
+                    app:chipStartPadding="8dp"
+                    app:chipEndPadding="8dp"
+                    app:chipStrokeWidth="0dp" />
+
             </LinearLayout>
+
         </LinearLayout>
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="8dp"
-            android:src="@android:drawable/ic_media_play"
-            android:rotation="0"
-            app:tint="@color/textColorSecondary" />
-    </LinearLayout>
-</androidx.cardview.widget.CardView>
+        <!-- More Button -->
+        <ImageButton
+            android:id="@+id/btnMore"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_more_vert"
+            android:contentDescription="Thêm"
+            app:tint="#9CA3AF"
+            app:layout_constraintTop_toTopOf="@id/iconContainer"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

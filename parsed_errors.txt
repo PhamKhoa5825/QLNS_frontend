@@ -1,0 +1,116 @@
+
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\AdminSettingsActivity.java:83: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\AdminSettingsActivity.java:124: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\AttendanceSummaryActivity.java:108: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\ChatActivity.java:98: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\CreateGroupDialog.java:78: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\DashboardActivity.java:65: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\DashboardActivity.java:75: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\DashboardActivity.java:75: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\DashboardActivity.java:79: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\DashboardActivity.java:168: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\viewmodel\AttendanceViewModel.java:96: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\EmployeeActivity.java:289: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\EmployeeActivity.java:347: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\GPSCheckInActivity.java:87: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\GPSCheckInActivity.java:118: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\GPSCheckInActivity.java:178: error: incompatible types: TimekeepingRequest cannot be converted to Map<String,Object>
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\GPSCheckInActivity.java:180: error: incompatible types: TimekeepingRequest cannot be converted to Map<String,Object>
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\LoginActivity.java:43: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\LoginActivity.java:71: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\LoginActivity.java:72: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\LoginActivity.java:90: error: incompatible types: AuthRequest cannot be converted to AuthenticationRequest
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\MessageActivity.java:330: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\MessageActivity.java:336: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\NotificationActivity.java:102: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\NotificationActivity.java:169: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\NotificationActivity.java:243: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\PayrollActivity.java:150: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\PayrollActivity.java:208: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\PayrollActivity.java:240: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\ProfileActivity.java:28: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\ProfileActivity.java:30: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\ProfileActivity.java:63: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:365: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:391: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:386: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:410: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:405: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:463: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:498: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:705: error: constructor CreateRequestRequest in class CreateRequestRequest cannot be applied to given types;
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:740: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:741: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:734: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:760: error: incompatible types: <anonymous Callback<Request>> cannot be converted to Callback<Void>
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:892: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:893: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:856: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:1041: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RoomInfoActivity.java:327: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TaskActivity.java:242: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TaskActivity.java:249: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TaskActivity.java:424: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TimekeepingActivity.java:184: error: incompatible types: TimekeepingRequest cannot be converted to Map<String,Object>
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TimekeepingActivity.java:207: error: incompatible types: TimekeepingRequest cannot be converted to Map<String,Object>
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TimekeepingActivity.java:228: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TimekeepingActivity.java:245: error: cannot find symbol
+C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TimekeepingActivity.java:260: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:705: error: constructor CreateRequestRequest in class CreateRequestRequest cannot be applied to given types;
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\GPSCheckInActivity.java:178: error: incompatible types: TimekeepingRequest cannot be converted to Map<String,Object>
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\GPSCheckInActivity.java:180: error: incompatible types: TimekeepingRequest cannot be converted to Map<String,Object>
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\LoginActivity.java:90: error: incompatible types: AuthRequest cannot be converted to AuthenticationRequest
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:760: error: incompatible types: <anonymous Callback<Request>> cannot be converted to Callback<Void>
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TimekeepingActivity.java:184: error: incompatible types: TimekeepingRequest cannot be converted to Map<String,Object>
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TimekeepingActivity.java:207: error: incompatible types: TimekeepingRequest cannot be converted to Map<String,Object>
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\ChatActivity.java:98: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\CreateGroupDialog.java:78: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\GPSCheckInActivity.java:118: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\LoginActivity.java:71: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\LoginActivity.java:72: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\MessageActivity.java:330: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\MessageActivity.java:336: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\ProfileActivity.java:28: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\ProfileActivity.java:30: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\ProfileActivity.java:63: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RoomInfoActivity.java:327: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\AdminSettingsActivity.java:83: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\AdminSettingsActivity.java:124: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\AttendanceSummaryActivity.java:108: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\DashboardActivity.java:65: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\DashboardActivity.java:75: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\DashboardActivity.java:75: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\DashboardActivity.java:79: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\DashboardActivity.java:168: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\viewmodel\AttendanceViewModel.java:96: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\EmployeeActivity.java:289: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\EmployeeActivity.java:347: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\GPSCheckInActivity.java:87: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\LoginActivity.java:43: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\NotificationActivity.java:102: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\NotificationActivity.java:169: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\NotificationActivity.java:243: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\PayrollActivity.java:150: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\PayrollActivity.java:208: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\PayrollActivity.java:240: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:365: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:391: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:386: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:410: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:405: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:463: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:498: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:740: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:741: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:734: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:892: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:893: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:856: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\RequestActivity.java:1041: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TaskActivity.java:242: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TaskActivity.java:249: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TaskActivity.java:424: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TimekeepingActivity.java:228: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TimekeepingActivity.java:245: error: cannot find symbol
+  C:\Users\keduy\Desktop\QLNS_ALL_FI\QLNS_frontend_ma\app\src\main\java\com\example\myapplication\ui\TimekeepingActivity.java:260: error: cannot find symbol
+

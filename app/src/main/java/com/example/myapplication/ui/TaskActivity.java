@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +24,7 @@ import com.example.myapplication.model.CreateTaskRequest;
 import com.example.myapplication.model.UpdateTaskStatusRequest;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.utils.BottomNavHelper;
 import com.example.myapplication.utils.SharedPrefsManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -39,8 +41,10 @@ public class TaskActivity extends AppCompatActivity {
     private TaskAdapter adapter;
     private List<Task> taskList = new ArrayList<>();
     private List<Task> fullTaskList = new ArrayList<>();
-    private ImageView btnBackTask;
     private FloatingActionButton fabAddTask;
+    private TextView tvHeaderName, tvHeaderDept, tvHeaderAvatarText;
+    private View btnHeaderNotifications, btnHeaderExtra, containerProfileLink;
+    private ImageView ivHeaderAvatar;
 
     private TextView tvFilterAll, tvFilterPending, tvFilterInProgress, tvFilterDone;
     private TextView tvCountPending, tvCountInProgress, tvCountDone;
@@ -69,18 +73,36 @@ public class TaskActivity extends AppCompatActivity {
         } else {
             fabAddTask.setOnClickListener(v -> showCreateTaskDialog());
         }
-        btnBackTask.setOnClickListener(v -> finish());
+        
+        if (btnHeaderNotifications != null) {
+            btnHeaderNotifications.setOnClickListener(v -> {
+                // Navigate to notifications
+                android.widget.Toast.makeText(this, "Notifications", android.widget.Toast.LENGTH_SHORT).show();
+            });
+        }
         
         fetchTasks();
         if (!"EMPLOYEE".equals(role)) {
             fetchDepartmentEmployees();
         }
+        
+        BottomNavHelper.setupBottomNav(this, R.id.nav_tasks);
     }
 
     private void initViews() {
         recyclerViewTask = findViewById(R.id.recyclerViewTask);
-        btnBackTask = findViewById(R.id.btnBackTask);
         fabAddTask = findViewById(R.id.fabAddTask);
+
+        // Top Bar
+        tvHeaderName = findViewById(R.id.tvHeaderName);
+        tvHeaderDept = findViewById(R.id.tvHeaderDept);
+        tvHeaderAvatarText = findViewById(R.id.tvHeaderAvatarText);
+        ivHeaderAvatar = findViewById(R.id.ivHeaderAvatar);
+        btnHeaderNotifications = findViewById(R.id.btnHeaderNotifications);
+        btnHeaderExtra = findViewById(R.id.btnHeaderExtra);
+        containerProfileLink = findViewById(R.id.containerProfileLink);
+
+        setupTopBar();
 
         tvFilterAll = findViewById(R.id.tvFilterAll);
         tvFilterPending = findViewById(R.id.tvFilterPending);
@@ -92,31 +114,60 @@ public class TaskActivity extends AppCompatActivity {
         tvCountDone = findViewById(R.id.tvCountDone);
     }
 
+    private void setupTopBar() {
+        SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
+        String name = prefs.getFullName();
+        String dept = prefs.getDepartmentName();
+        
+        if (tvHeaderName != null) tvHeaderName.setText(name.isEmpty() ? prefs.getUsername() : name);
+        if (tvHeaderDept != null) tvHeaderDept.setText(dept);
+        if (tvHeaderAvatarText != null && !name.isEmpty()) {
+            tvHeaderAvatarText.setText(String.valueOf(name.charAt(0)).toUpperCase());
+        }
+    }
+
     private void setupRecyclerView() {
         recyclerViewTask.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new TaskAdapter(this, taskList, task -> {
-            String role = SharedPrefsManager.getInstance(this).getRole();
-            if ("EMPLOYEE".equals(role)) {
-                handleTaskInteraction(task);
-            }
-        });
+        adapter = new TaskAdapter(this, taskList, this::handleTaskInteraction);
         recyclerViewTask.setAdapter(adapter);
     }
 
     private void handleTaskInteraction(Task task) {
+        String role = SharedPrefsManager.getInstance(this).getRole();
         String status = task.getStatus() != null ? task.getStatus() : "PENDING";
-        if ("PENDING".equals(status)) {
-            // Hiển thị dialog xác nhận nhận việc
-            new androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("Nhận nhiệm vụ")
-                    .setMessage("Bạn có muốn nhận nhiệm vụ này không?")
-                    .setPositiveButton("Nhận", (dialog, which) -> acceptTaskAPI(task))
-                    .setNegativeButton("Hủy", null)
-                    .show();
-        } else if ("ACCEPTED".equals(status) || "IN_PROGRESS".equals(status) || "OVERDUE".equals(status)) {
-            // Hiển thị dialog cập nhật hoàn thành
-            showUpdateStatusDialog(task);
+        
+        boolean isEmp = role != null && role.toUpperCase().contains("EMPLOYEE");
+        boolean isMan = role != null && (role.toUpperCase().contains("MANAGER") || role.toUpperCase().contains("ADMIN"));
+
+        if (isEmp) {
+            if ("PENDING".equals(status)) {
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Nhận nhiệm vụ").setMessage("Bạn muốn nhận nhiệm vụ này?")
+                        .setPositiveButton("Nhận", (d, w) -> acceptTaskAPI(task))
+                        .setNegativeButton("Hủy", null).show();
+            } else if (!"DONE".equals(status) && !"UNDER_REVIEW".equals(status)) {
+                showUpdateStatusDialog(task, false);
+            } else if ("UNDER_REVIEW".equals(status)) {
+                Toast.makeText(this, "Công việc đang chờ duyệt", Toast.LENGTH_SHORT).show();
+            }
+        } else if (isMan) {
+            if ("UNDER_REVIEW".equals(status)) {
+                showReviewDialog(task);
+            } else {
+                Toast.makeText(this, "Trạng thái: " + status, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Quyền hạn: " + role, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void showReviewDialog(Task task) {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Phê duyệt nhiệm vụ")
+                .setMessage("Nhiệm vụ: " + task.getTitle() + "\n\nBạn xác nhận công việc đạt yêu cầu?")
+                .setPositiveButton("Duyệt (DONE)", (d, w) -> updateTaskStatusAPI(task, "DONE", "Đã phê duyệt", null))
+                .setNeutralButton("Yêu cầu làm lại", (d, w) -> updateTaskStatusAPI(task, "REJECTED", "Yêu cầu sửa lại", null))
+                .setNegativeButton("Hủy", null).show();
     }
 
     private void acceptTaskAPI(Task task) {
@@ -142,18 +193,18 @@ public class TaskActivity extends AppCompatActivity {
         });
     }
 
-    private void showUpdateStatusDialog(Task task) {
+    private void showUpdateStatusDialog(Task task, boolean isManagerApproval) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_task_form); // Reusing or creating a simple one
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         TextView tvTitle = dialog.findViewById(R.id.tvTaskFormTitle);
-        if (tvTitle != null) tvTitle.setText("Hoàn thành nhiệm vụ");
+        if (tvTitle != null) tvTitle.setText(isManagerApproval ? "Phê duyệt nhiệm vụ" : "Hoàn thành nhiệm vụ");
         
         EditText edtNote = dialog.findViewById(R.id.edtTaskDescription);
         if (edtNote != null) {
-            edtNote.setHint("Nhập ghi chú hoàn thành...");
+            edtNote.setHint(isManagerApproval ? "Nhập nhận xét..." : "Nhập báo cáo hoàn thành...");
             edtNote.setText("");
         }
 
@@ -165,10 +216,11 @@ public class TaskActivity extends AppCompatActivity {
 
         Button btnSave = dialog.findViewById(R.id.btnSaveTask);
         if (btnSave != null) {
-            btnSave.setText("Hoàn thành");
+            btnSave.setText(isManagerApproval ? "Duyệt" : "Gửi duyệt");
             btnSave.setOnClickListener(v -> {
                 String note = edtNote.getText().toString().trim();
-                updateTaskStatusAPI(task, "DONE", note, dialog);
+                String targetStatus = isManagerApproval ? "DONE" : "DONE"; // Backend maps to UNDER_REVIEW for employee
+                updateTaskStatusAPI(task, targetStatus, note, dialog);
             });
         }
         dialog.show();
@@ -183,8 +235,8 @@ public class TaskActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Task> call, Response<Task> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(TaskActivity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
+                    Toast.makeText(TaskActivity.this, "Gửi thành công", Toast.LENGTH_SHORT).show();
+                    if (dialog != null) dialog.dismiss();
                     fetchTasks();
                 } else {
                     Toast.makeText(TaskActivity.this, "Lỗi: " + response.code(), Toast.LENGTH_SHORT).show();
@@ -223,7 +275,21 @@ public class TaskActivity extends AppCompatActivity {
                     updateStats();
                     filterTasks("ALL"); // Default show all
                 } else {
-                    Toast.makeText(TaskActivity.this, "Không thể tải danh sách công việc: " + response.code(), Toast.LENGTH_SHORT).show();
+                    String errorMsg = "Lỗi " + response.code();
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorBodyStr = response.errorBody().string();
+                            org.json.JSONObject jsonObj = new org.json.JSONObject(errorBodyStr);
+                            if (jsonObj.has("message")) {
+                                errorMsg += ": " + jsonObj.getString("message");
+                            } else {
+                                errorMsg += ": " + errorBodyStr;
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(TaskActivity.this, "Không thể tải danh sách công việc: " + errorMsg, Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -241,7 +307,7 @@ public class TaskActivity extends AppCompatActivity {
             if (s == null) s = "PENDING";
             
             if (s.equals("PENDING")) pending++;
-            else if (s.equals("IN_PROGRESS") || s.equals("ACCEPTED")) inProgress++;
+            else if (s.equals("IN_PROGRESS") || s.equals("ACCEPTED") || s.equals("UNDER_REVIEW") || s.equals("REJECTED")) inProgress++;
             else if (s.equals("DONE") || s.equals("COMPLETED")) done++;
         }
         tvCountPending.setText(String.valueOf(pending));
@@ -278,7 +344,7 @@ public class TaskActivity extends AppCompatActivity {
                 if (s == null) s = "PENDING";
 
                 if (category.equals("PENDING") && s.equals("PENDING")) filtered.add(t);
-                else if (category.equals("IN_PROGRESS") && (s.equals("IN_PROGRESS") || s.equals("ACCEPTED"))) filtered.add(t);
+                else if (category.equals("IN_PROGRESS") && (s.equals("IN_PROGRESS") || s.equals("ACCEPTED") || s.equals("UNDER_REVIEW") || s.equals("REJECTED"))) filtered.add(t);
                 else if (category.equals("DONE") && (s.equals("DONE") || s.equals("COMPLETED"))) filtered.add(t);
             }
         }

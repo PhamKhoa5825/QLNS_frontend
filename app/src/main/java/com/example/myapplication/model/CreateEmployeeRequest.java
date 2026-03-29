@@ -34,17 +34,22 @@ public class CreateEmployeeRequest {
     @SerializedName("departmentId")
     private Long departmentId;
 
+    @SerializedName("role")              // EMPLOYEE / MANAGER / ADMIN
+    private String role;
+
     // Constructor tối thiểu
     public CreateEmployeeRequest(String fullName, String email, String password,
-                                 String position, Long departmentId) {
+                                 String position, Long departmentId, String role) {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
         this.position = position;
         this.departmentId = departmentId;
+        this.role = role;
     }
 
     // Setters tuỳ chọn
+    public void setRole(String role) { this.role = role; }
     public void setPhone(String phone) { this.phone = phone; }
     public void setAddress(String address) { this.address = address; }
     public void setDateOfBirth(String dateOfBirth) { this.dateOfBirth = dateOfBirth; }
@@ -56,5 +61,6 @@ public class CreateEmployeeRequest {
     public String getPassword() { return password; }
     public String getPhone() { return phone; }
     public String getPosition() { return position; }
+    public String getRole() { return role; }
     public Long getDepartmentId() { return departmentId; }
 }

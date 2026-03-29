@@ -1,71 +1,56 @@
 package com.example.myapplication.model;
 
-import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
+import java.util.List;
 
-public class Request {
-    @SerializedName("id")
+public class Request implements Serializable {
     private Long id;
-
-    @SerializedName("title")
-    private String type; // LEAVE, OVERTIME, REMOTE
-
-    @SerializedName("description")
-    private String reason;
-
-    @SerializedName("startDate")
-    private String startDate;
-
-    @SerializedName("endDate")
-    private String endDate;
-
-    @SerializedName("status")
-    private String status; // PENDING, APPROVED, REJECTED
-
-    @SerializedName("rejectionReason")
-    private String rejectionReason;
-
-    @SerializedName("employeeId")
     private Long employeeId;
-
-    @SerializedName("employeeName")
     private String employeeName;
-
-    @SerializedName("departmentId")
-    private Long departmentId;
-
-    @SerializedName("createdAt")
+    private String departmentName;
+    private String title;
+    private RequestType type;
+    private List<RequestDetail> details;
+    private String description;
+    private String fileUrl;
+    private String fileName;
+    private String status;
+    private Long reviewedById;
+    private String reviewedByName;
+    private String rejectionReason;
     private String createdAt;
+    private String updatedAt;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
-
-    public String getReason() { return reason; }
-    public void setReason(String reason) { this.reason = reason; }
-
-    public String getStartDate() { return startDate; }
-    public void setStartDate(String startDate) { this.startDate = startDate; }
-
-    public String getEndDate() { return endDate; }
-    public void setEndDate(String endDate) { this.endDate = endDate; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public String getRejectionReason() { return rejectionReason; }
-    public void setRejectionReason(String rejectionReason) { this.rejectionReason = rejectionReason; }
-
     public Long getEmployeeId() { return employeeId; }
     public void setEmployeeId(Long employeeId) { this.employeeId = employeeId; }
-
     public String getEmployeeName() { return employeeName; }
     public void setEmployeeName(String employeeName) { this.employeeName = employeeName; }
-
-    public Long getDepartmentId() { return departmentId; }
-    public void setDepartmentId(Long departmentId) { this.departmentId = departmentId; }
-
+    public String getDepartmentName() { return departmentName; }
+    public void setDepartmentName(String departmentName) { this.departmentName = departmentName; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+    public RequestType getType() { return type; }
+    public void setType(RequestType type) { this.type = type; }
+    public List<RequestDetail> getDetails() { return details; }
+    public void setDetails(List<RequestDetail> details) { this.details = details; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public String getFileUrl() { return fileUrl; }
+    public void setFileUrl(String fileUrl) { this.fileUrl = fileUrl; }
+    public String getFileName() { return fileName; }
+    public void setFileName(String fileName) { this.fileName = fileName; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public Long getReviewedById() { return reviewedById; }
+    public void setReviewedById(Long reviewedById) { this.reviewedById = reviewedById; }
+    public String getReviewedByName() { return reviewedByName; }
+    public void setReviewedByName(String reviewedByName) { this.reviewedByName = reviewedByName; }
+    public String getRejectionReason() { return rejectionReason; }
+    public void setRejectionReason(String rejectionReason) { this.rejectionReason = rejectionReason; }
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+    public String getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
 }

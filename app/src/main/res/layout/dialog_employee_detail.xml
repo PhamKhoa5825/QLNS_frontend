@@ -237,6 +237,62 @@
         android:layout_marginTop="16dp"
         android:background="#E5E7EB" />
 
+    <!-- Lương cơ bản (chỉ Admin thấy) -->
+    <LinearLayout
+        android:id="@+id/layoutSalaryRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@android:drawable/ic_menu_agenda"
+            android:layout_marginEnd="10dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lương cơ bản"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvDialogSalary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chưa thiết lập"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSetSalary"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_btn_action_primary"
+            android:text="Thiết lập"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="13sp"
+            android:paddingHorizontal="12dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="#E5E7EB" />
+
     <!-- Nút đóng -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCloseDialog"

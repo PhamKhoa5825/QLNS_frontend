@@ -3,39 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F3F4F6"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    android:background="#F9FAFB"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <!-- Blue Header Section -->
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/white"
+        android:layout_height="64dp"
+        android:background="#1976D2"
         android:elevation="4dp"
-        android:gravity="center_vertical"
         android:paddingHorizontal="16dp">
 
         <ImageView
             android:id="@+id/btnBackSelectEmp"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_revert"
-            app:tint="@color/textColorPrimary" />
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_back"
+            app:tint="@color/white" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Chọn người nhận"
-            android:textColor="@color/textColorPrimary"
+            android:layout_centerInParent="true"
+            android:text="Chọn nhân viên"
+            android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSelectEmployee"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp" />
+        android:clipToPadding="false"
+        android:padding="16dp" />
 
 </LinearLayout>
