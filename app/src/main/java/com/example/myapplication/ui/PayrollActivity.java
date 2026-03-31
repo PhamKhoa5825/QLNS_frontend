@@ -58,6 +58,8 @@ public class PayrollActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payroll);
 
+        TopBarHelper.setupAdminHeader(this, "Bảng lương chi tiết");
+
         SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
         employeeId = prefs.getEmployeeId();
         userRole = prefs.getRole();

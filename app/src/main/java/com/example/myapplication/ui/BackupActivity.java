@@ -57,6 +57,8 @@ public class BackupActivity extends AppCompatActivity {
 
         apiService = RetrofitClient.getApiService(this);
 
+        TopBarHelper.setupAdminHeader(this, "Sao lưu dữ liệu");
+
         bindViews();
         loadStatus();
         loadBackups();

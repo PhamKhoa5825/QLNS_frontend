@@ -68,14 +68,9 @@ public class AccountManagementActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_management);
 
-        apiService = RetrofitClient.getApiService(this);
+        TopBarHelper.setupAdminHeader(this, "Quản lý tài khoản");
 
-        TopBarHelper.setupTopBar(this);
-        View btnSearchHeader = findViewById(R.id.btnHeaderExtra);
-        if (btnSearchHeader != null) {
-            btnSearchHeader.setVisibility(View.VISIBLE);
-            btnSearchHeader.setOnClickListener(v -> showFilterDialog());
-        }
+        apiService = RetrofitClient.getApiService(this);
 
         progressBar = findViewById(R.id.progressBar);
         tvTotalAccounts = findViewById(R.id.tvTotalAccounts);

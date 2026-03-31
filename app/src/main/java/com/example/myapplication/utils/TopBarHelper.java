@@ -11,6 +11,7 @@ import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.ui.NotificationActivity;
 import com.example.myapplication.ui.ProfileActivity;
 import com.example.myapplication.utils.SharedPrefsManager;
+import com.google.android.material.appbar.MaterialToolbar;
 
 public class TopBarHelper {
  
@@ -95,5 +96,14 @@ public class TopBarHelper {
         if (name == null || name.isEmpty()) return "?";
         String[] parts = name.trim().split(" ");
         return String.valueOf(parts[parts.length - 1].charAt(0)).toUpperCase();
+    }
+
+    public static void setupAdminHeader(Activity activity, String title) {
+        MaterialToolbar toolbar = activity.findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            toolbar.setTitle(title);
+            toolbar.setNavigationOnClickListener(v -> activity.onBackPressed());
+        }
     }
 }

@@ -55,11 +55,12 @@ public class AdminPayrollActivity extends AppCompatActivity {
         initViews();
         fetchPayrollSummary();
 
+        TopBarHelper.setupAdminHeader(this, "Quản lý lương");
         BottomNavHelper.setupBottomNav(this, -1);
     }
 
     private void initViews() {
-        TopBarHelper.setupTopBar(this);
+        // TopBarHelper.setupTopBar(this); // Remove this if it's there
         
         tvMonthYear = findViewById(R.id.tvMonthYear);
         tvTotalNetSalary = findViewById(R.id.tvTotalNetSalary);

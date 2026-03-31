@@ -6,23 +6,11 @@
     android:layout_height="match_parent"
     android:background="#F3F4F6">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:fitsSystemWindows="true"
+    <include
+        android:id="@+id/include_admin_header"
+        layout="@layout/layout_admin_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_header_inner"
-        app:elevation="0dp">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@android:drawable/ic_menu_revert"
-            app:navigationIconTint="@color/white"
-            app:title="Thêm nhân viên mới"
-            app:titleTextColor="@color/white" />
-
-    </com.google.android.material.appbar.AppBarLayout>
+        android:layout_height="wrap_content" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

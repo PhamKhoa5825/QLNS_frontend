@@ -60,7 +60,7 @@ public class SystemLogActivity extends AppCompatActivity {
 
         apiService = RetrofitClient.getApiService(this);
 
-        TopBarHelper.setupTopBar(this);
+        TopBarHelper.setupAdminHeader(this, "Nhật ký hệ thống");
         View btnSearch = findViewById(R.id.btnHeaderExtra);
         if (btnSearch != null) {
             btnSearch.setVisibility(View.VISIBLE);
