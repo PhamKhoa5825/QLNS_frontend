@@ -345,11 +345,13 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if (imageUrl.isEmpty()) {
                     imageUrl = resolvedFileUrl;
                 }
-                if (imageUrl.isEmpty()) {
-                    Log.w(TAG, "Image URL missing for message=" + message.getId());
-                }
+                
+                // [Chat] Thử tìm trong bộ nhớ máy trước để tải nhanh và mượt hơn (hoặc khi offline).
+                java.io.File localFile = com.example.myapplication.utils.MessageFileManager.findLocalCopy(context, imageUrl);
+                Object glideModel = (localFile != null && localFile.exists()) ? localFile : (imageUrl.isEmpty() ? null : imageUrl);
+
                 Glide.with(context)
-                        .load(imageUrl.isEmpty() ? null : imageUrl)
+                        .load(glideModel)
                         .placeholder(R.drawable.ic_image_placeholder)
                         .error(R.drawable.ic_broken_image)
                         .fallback(R.drawable.ic_broken_image)
@@ -893,7 +895,15 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (url.startsWith("http://") || url.startsWith("https://")) {
             return url;
         }
-        // Backend contract: fileUrl phải là URL tuyệt đối (Cloudinary), không tự nối BASE_URL.
+        
+        // [Chat] Support relative paths from backend by prepending BASE_URL.
+        // If it starts with uploads/ or /uploads, it's likely a relative path.
+        if (url.contains("uploads") || url.charAt(0) != '/') {
+            String baseUrl = com.example.myapplication.network.ApiClient.BASE_URL;
+            if (url.startsWith("/")) url = url.substring(1);
+            return baseUrl + url;
+        }
+
         return "";
     }
 

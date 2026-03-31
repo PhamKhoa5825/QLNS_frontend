@@ -55,7 +55,7 @@ public class AdminPayrollActivity extends AppCompatActivity {
         initViews();
         fetchPayrollSummary();
 
-        BottomNavHelper.setupBottomNav(this, R.id.nav_home);
+        BottomNavHelper.setupBottomNav(this, -1);
     }
 
     private void initViews() {

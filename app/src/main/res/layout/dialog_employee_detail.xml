@@ -97,7 +97,7 @@
         android:layout_height="52dp"
         android:layout_marginTop="24dp"
         android:paddingHorizontal="16dp"
-        android:text="Xem chi tiết (Chấm công · Đơn từ)"
+        android:text="Xem chi tiết"
         android:textAllCaps="false"
         android:textColor="#4F46E5"
         android:textSize="14sp"

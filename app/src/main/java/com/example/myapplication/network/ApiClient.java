@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public final class ApiClient {
 
     // [Chat] Địa chỉ localhost của máy thật khi app chạy trên Android Emulator.
-    private static final String BASE_URL = "http://10.0.2.2:8080/";
+    public static final String BASE_URL = "http://10.0.2.2:8080/";
     private static final String PREFS_NAME = "qlns_pref";
     private static final String TOKEN_KEY = "token";
 

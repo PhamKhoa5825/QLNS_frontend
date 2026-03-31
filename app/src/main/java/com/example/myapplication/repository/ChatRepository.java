@@ -353,13 +353,16 @@ public class ChatRepository {
             RequestBody fileBody = RequestBody.create(mediaType, bytes);
             MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", uploadName, fileBody);
 
-            RequestBody roomPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(roomId));
-            RequestBody typePart = RequestBody.create(MediaType.parse("text/plain"), resolvedType);
+            RequestBody roomPart = RequestBody.create(null, String.valueOf(roomId));
+            RequestBody typePart = RequestBody.create(null, resolvedType);
+
+            // [Chat] Lưu bản sao ở bộ nhớ trong trước khi upload để có thể hiển thị local ngay lập tức hoặc offline.
+            com.example.myapplication.utils.MessageFileManager.saveToLocal(ctx, fileUri, uploadName);
 
             Call<Message> call = chatApiService.uploadFile(roomPart, filePart, typePart);
             enqueueUploadCall(call, liveData, 0);
         } catch (IOException e) {
-            liveData.setValue(new UploadResult(null, -1, e.getMessage()));
+            liveData.setValue(new UploadResult(null, -1, "IO Error: " + e.getMessage()));
         }
         return liveData;
     }
@@ -372,17 +375,17 @@ public class ChatRepository {
                     liveData.setValue(new UploadResult(response.body(), response.code(), null));
                     return;
                 }
-                if (response.code() == 401 && retryCount == 0) {
-                    // Thử retry 1 lần trong trường hợp token vừa được refresh ở nơi khác.
-                    enqueueUploadCall(c.clone(), liveData, 1);
-                    return;
-                }
-                liveData.setValue(new UploadResult(null, response.code(), mapUploadErrorMessage(response.code())));
+                
+                String errorMsg = mapUploadErrorMessage(response.code());
+                Log.e("ChatRepository", "Upload failed: code=" + response.code() + " msg=" + response.message());
+                liveData.setValue(new UploadResult(null, response.code(), errorMsg));
             }
 
             @Override
             public void onFailure(Call<Message> c, Throwable t) {
-                liveData.setValue(new UploadResult(null, -1, t != null ? t.getMessage() : "Upload failed"));
+                String msg = (t != null) ? t.toString() : "Unknown network error";
+                Log.e("ChatRepository", "Upload network failure: " + msg, t);
+                liveData.setValue(new UploadResult(null, -1, msg));
             }
         });
     }

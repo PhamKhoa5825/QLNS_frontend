@@ -24,6 +24,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.utils.BottomNavHelper;
 import com.example.myapplication.utils.TopBarHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
@@ -59,6 +60,7 @@ public class BackupActivity extends AppCompatActivity {
         bindViews();
         loadStatus();
         loadBackups();
+        BottomNavHelper.setupBottomNav(this, -1);
     }
 
     private void bindViews() {

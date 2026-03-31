@@ -28,6 +28,7 @@ import com.example.myapplication.model.Employee;
 import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.utils.BottomNavHelper;
 import com.example.myapplication.utils.TopBarHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -92,6 +93,7 @@ public class AccountManagementActivity extends AppCompatActivity {
 
         setupSearch();
         loadEmployees();
+        BottomNavHelper.setupBottomNav(this, -1);
     }
 
     private void setupSearch() {

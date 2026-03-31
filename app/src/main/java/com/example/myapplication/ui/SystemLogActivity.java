@@ -78,6 +78,7 @@ public class SystemLogActivity extends AppCompatActivity {
 
         setupFilterChips();
         loadLogs();
+        BottomNavHelper.setupBottomNav(this, -1);
     }
 
     private void setupFilterChips() {
