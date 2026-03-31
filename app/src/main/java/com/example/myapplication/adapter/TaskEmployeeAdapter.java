@@ -48,8 +48,8 @@ public class TaskEmployeeAdapter extends RecyclerView.Adapter<TaskEmployeeAdapte
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         Task task = taskList.get(position);
         holder.tvTitle.setText(task.getTitle());
-        holder.tvDateAssigned.setText("Ngày giao: " + (task.getCreatedAt() != null ? formatDate(task.getCreatedAt()) : "--/--/----"));
-        holder.tvDeadline.setText("Hạn chót: " + (task.getDeadline() != null ? task.getDeadline() : "--/--/----"));
+        holder.tvDateAssigned.setText("Ngày giao: " + formatDateTime(task.getCreatedAt()));
+        holder.tvDeadline.setText("Hạn chót: " + formatDateTime(task.getDeadline()));
 
         // Priority binding
         String priority = task.getPriority() != null ? task.getPriority() : "LOW";
@@ -85,12 +85,23 @@ public class TaskEmployeeAdapter extends RecyclerView.Adapter<TaskEmployeeAdapte
         });
     }
 
-    private String formatDate(String dateStr) {
-        // Simple format return if it's already a date string, or handle ISO parsing if needed
-        if (dateStr == null) return "--/--/----";
-        if (dateStr.length() >= 10) {
-            return dateStr.substring(0, 10);
-        }
+    private String formatDateTime(String dateStr) {
+        if (dateStr == null || dateStr.isEmpty()) return "--/--/----";
+        try {
+            if (dateStr.contains("T")) {
+                String[] parts = dateStr.split("T");
+                String[] dateParts = parts[0].split("-");
+                String[] timeParts = parts[1].split(":");
+                String formattedDate = dateParts[2] + "/" + dateParts[1] + "/" + dateParts[0];
+                String formattedTime = timeParts[0] + ":" + timeParts[1];
+                return formattedTime + " - " + formattedDate;
+            } else if (dateStr.contains("-")) {
+                String[] dateParts = dateStr.split("-");
+                if(dateParts.length >= 3) {
+                   return dateParts[2] + "/" + dateParts[1] + "/" + dateParts[0];
+                }
+            }
+        } catch (Exception e) {}
         return dateStr;
     }
 

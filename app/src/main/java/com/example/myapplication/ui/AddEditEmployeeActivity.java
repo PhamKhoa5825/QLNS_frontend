@@ -77,12 +77,14 @@ public class AddEditEmployeeActivity extends AppCompatActivity {
     private List<Department> deptList = new ArrayList<>();
     private Long selectedDeptId = null;
     private String avatarBase64 = null;
+    private Uri selectedImageUri = null;
 
     private final ActivityResultLauncher<Intent> imagePickerLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     Uri uri = result.getData().getData();
                     if (uri != null) {
+                        selectedImageUri = uri; // Save URI
                         displaySelectedImage(uri);
                         convertImageToBase64(uri);
                     }
@@ -347,11 +349,56 @@ public class AddEditEmployeeActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         btnSave.setEnabled(false);
 
+        if (selectedImageUri != null) {
+            uploadAvatarAndSave(fullName, position, phone, address, gender);
+        } else {
+            proceedToSave(fullName, position, phone, address, gender, null);
+        }
+    }
+
+    private void uploadAvatarAndSave(String name, String pos, String ph, String addr, String gen) {
+        try {
+            InputStream is = getContentResolver().openInputStream(selectedImageUri);
+            byte[] bytes = getBytes(is);
+            
+            okhttp3.RequestBody requestFile = okhttp3.RequestBody.create(okhttp3.MediaType.parse("image/*"), bytes);
+            okhttp3.MultipartBody.Part body = okhttp3.MultipartBody.Part.createFormData("file", "avatar_" + System.currentTimeMillis() + ".jpg", requestFile);
+
+            apiService.uploadImage(body).enqueue(new Callback<java.util.Map<String, String>>() {
+                @Override
+                public void onResponse(Call<java.util.Map<String, String>> call, Response<java.util.Map<String, String>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String uploadedUrl = response.body().get("fileUrl");
+                        proceedToSave(name, pos, ph, addr, gen, uploadedUrl);
+                    } else {
+                        progressBar.setVisibility(View.GONE);
+                        btnSave.setEnabled(true);
+                        Toast.makeText(AddEditEmployeeActivity.this, "Lỗi khi upload ảnh", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<java.util.Map<String, String>> call, Throwable t) {
+                    progressBar.setVisibility(View.GONE);
+                    btnSave.setEnabled(true);
+                    Toast.makeText(AddEditEmployeeActivity.this, "Lỗi kết nối upload: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (Exception e) {
+            progressBar.setVisibility(View.GONE);
+            btnSave.setEnabled(true);
+            Toast.makeText(this, "Lỗi xử lý file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void proceedToSave(String fullName, String position, String phone, String address, String gender, String avatarUrl) {
         if (isEditMode) {
-            CreateEmployeeRequest req = new CreateEmployeeRequest(fullName, "", "", position, selectedDeptId, null);
+            com.example.myapplication.model.CreateEmployeeRequest req = new com.example.myapplication.model.CreateEmployeeRequest(fullName, "", "", position, selectedDeptId, null);
             req.setPhone(phone);
             req.setAddress(address);
             req.setGender(gender);
+            if (avatarUrl != null) req.setAvatarUrl(avatarUrl);
+
             apiService.updateEmployee(employeeId, req).enqueue(new Callback<Employee>() {
                 @Override
                 public void onResponse(Call<Employee> c, Response<Employee> r) {
@@ -378,10 +425,11 @@ public class AddEditEmployeeActivity extends AppCompatActivity {
             String joinDate = getText(etJoinDate);
             String role = spinnerRole.getSelectedItem().toString();
 
-            CreateEmployeeRequest req = new CreateEmployeeRequest(fullName, email, password, position, selectedDeptId, role);
+            com.example.myapplication.model.CreateEmployeeRequest req = new com.example.myapplication.model.CreateEmployeeRequest(fullName, email, password, position, selectedDeptId, role);
             req.setPhone(phone);
             req.setAddress(address);
             req.setGender(gender);
+            if (avatarUrl != null) req.setAvatarUrl(avatarUrl);
             if (!dob.isEmpty()) req.setDateOfBirth(dob);
             if (!joinDate.isEmpty()) req.setJoinDate(joinDate);
 
@@ -405,6 +453,17 @@ public class AddEditEmployeeActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private byte[] getBytes(InputStream inputStream) throws java.io.IOException {
+        java.io.ByteArrayOutputStream byteBuffer = new java.io.ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
     }
 
     private void checkPermissionAndPickImage() {

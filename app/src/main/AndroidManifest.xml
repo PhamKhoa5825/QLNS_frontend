@@ -35,12 +35,13 @@
         </activity>
 
         <activity android:name=".ui.EmployeeActivity" android:exported="false" />
-        <activity android:name=".ui.DepartmentActivity" android:exported="false" />
+        <activity android:name=".ui.DepartmentActivity" android:exported="false" android:theme="@style/Theme.MyApplication" />
+        <activity android:name=".ui.DepartmentDetailActivity" android:exported="false" android:theme="@style/Theme.MyApplication" />
         <activity android:name=".ui.RequestActivity" android:exported="false" />
         <activity android:name=".ui.TaskActivity" android:exported="false" />
         <activity android:name=".ui.TimekeepingActivity" android:exported="false" />
         <activity android:name=".ui.ChatActivity" android:exported="false" />
-        <activity android:name=".ui.MessageActivity" android:exported="false" />
+        <activity android:name=".ui.MessageActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.SelectEmployeeActivity" android:exported="false" />
         <activity android:name=".ui.NotificationActivity" android:exported="false" />
         <activity android:name=".ui.ProfileActivity" android:exported="false" />
@@ -54,6 +55,10 @@
         <activity android:name=".ui.AccountManagementActivity" android:exported="false" />
         <activity android:name=".ui.SystemLogActivity" android:exported="false" />
         <activity android:name=".ui.BackupActivity" android:exported="false" />
+        <activity android:name=".ui.EmployeeDetailActivity" android:exported="false" />
+        <activity android:name=".ui.RequestDetailActivity" android:exported="false" />
+        <activity android:name=".ui.ChangePasswordActivity" android:exported="false" />
+        <activity android:name=".ui.AttendanceActivity" android:exported="false" />
 
         <!-- Chat Specific Components -->
         <activity android:name=".ui.ContactsActivity" android:exported="false" />

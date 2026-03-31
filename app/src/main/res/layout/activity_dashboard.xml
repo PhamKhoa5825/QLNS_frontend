@@ -9,9 +9,9 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:background="@color/surface"
         android:fitsSystemWindows="true"
-        app:elevation="0dp">
+        app:elevation="12dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
@@ -47,25 +47,22 @@
                 android:paddingHorizontal="24dp"
                 android:layout_marginTop="24dp">
                 <TextView
-                    android:id="@+id/tvGreeting"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Overview Dashboard"
-                    android:textColor="@color/secondary"
-                    android:textSize="10sp"
-                    android:textAllCaps="true"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.1" />
-                <TextView
                     android:id="@+id/tvUserName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
                     android:text="Chào Buổi Sáng, Manager"
                     android:textColor="@color/on_surface"
-                    android:textSize="28sp"
+                    android:textSize="22sp"
                     android:textStyle="bold"
-                    android:fontFamily="sans-serif-black" />
+                    android:fontFamily="sans-serif-bold" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Chúc bạn có một ngày làm việc thật tuyệt vời"
+                    android:textColor="@color/secondary"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif" />
             </LinearLayout>
 
             <!-- Bento Stats Grid -->
@@ -131,79 +128,244 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- Admin Stats Summary (Admin only) - Moved up -->
+                <LinearLayout
+                    android:id="@+id/layoutAdminStats"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp">
+
+                    <!-- Main Stats Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2"
+                        android:layout_marginBottom="8dp">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardAdminEmployees"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_margin="4dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/surface_container_high"
+                            app:strokeWidth="1dp"
+                            app:cardBackgroundColor="@color/surface_container_lowest">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/outline_contacts_product_24"
+                                    app:tint="@color/primary" />
+                                <TextView
+                                    android:id="@+id/tvTotalEmployees"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textSize="24sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/on_surface"
+                                    android:layout_marginTop="8dp"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Nhân viên"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/secondary" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardAdminDepartments"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_margin="4dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/surface_container_high"
+                            app:strokeWidth="1dp"
+                            app:cardBackgroundColor="@color/surface_container_lowest">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/outline_apartment_24"
+                                    app:tint="@color/tertiary" />
+                                <TextView
+                                    android:id="@+id/tvTotalDepartments"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textSize="24sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/on_surface"
+                                    android:layout_marginTop="8dp"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Phòng ban"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/secondary" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+
+                    <!-- Detailed Stats Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
+                        <!-- Requests Card -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardAdminRequests"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_margin="4dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/surface_container_high"
+                            app:strokeWidth="1dp"
+                            app:cardBackgroundColor="@color/surface_container_lowest">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="12dp"
+                                android:gravity="center">
+                                <TextView
+                                    android:id="@+id/tvPendingRequests"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/orangeWarning" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Đơn chờ"
+                                    android:textSize="10sp"
+                                    android:textColor="@color/secondary" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- Tasks Card -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardAdminTasks"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_margin="4dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/surface_container_high"
+                            app:strokeWidth="1dp"
+                            app:cardBackgroundColor="@color/surface_container_lowest">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="12dp"
+                                android:gravity="center">
+                                <TextView
+                                    android:id="@+id/tvOpenTasks"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/primary" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Việc mở"
+                                    android:textSize="10sp"
+                                    android:textColor="@color/secondary" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- Attendance Card -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardAdminAttendance"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_margin="4dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/surface_container_high"
+                            app:strokeWidth="1dp"
+                            app:cardBackgroundColor="@color/surface_container_lowest">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="12dp"
+                                android:gravity="center">
+                                <TextView
+                                    android:id="@+id/tvTodayAttendanceAdmin"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="--"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/greenSuccess" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Có mặt"
+                                    android:textSize="10sp"
+                                    android:textColor="@color/secondary" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+                </LinearLayout>
+
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:baselineAligned="false">
+                    android:orientation="vertical">
 
-                    <!-- On-time Rate -->
+                    <!-- Leave Balance Card -->
                     <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
+                        android:id="@+id/cardLeaveBalance"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        app:cardBackgroundColor="@color/surface_container_lowest"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
-                        app:strokeColor="@color/surface_container_high"
-                        app:strokeWidth="1dp">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="20dp">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Tỷ Lệ Đi Làm"
-                                android:textColor="@color/secondary"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:orientation="horizontal">
-                                <TextView
-                                    android:id="@+id/tvTimekeepingOnTime"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="-"
-                                    android:textColor="@color/on_surface"
-                                    android:textSize="24sp"
-                                    android:textStyle="bold" />
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="/"
-                                    android:textColor="@color/secondary_container"
-                                    android:textSize="24sp" />
-                                <TextView
-                                    android:id="@+id/tvTimekeepingLate"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="-"
-                                    android:textColor="@color/error_container"
-                                    android:textSize="24sp"
-                                    android:textStyle="bold" />
-                            </LinearLayout>
-                            <!-- Progress Bar Mock -->
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="6dp"
-                                android:layout_marginTop="12dp"
-                                android:background="@color/surface_container_high" />
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <!-- Active Tasks -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="16dp"
                         app:cardBackgroundColor="@color/surface_container_lowest"
                         app:cardCornerRadius="16dp"
                         app:cardElevation="0dp"
@@ -213,349 +375,980 @@
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:padding="20dp">
-                            <TextView
-                                android:id="@+id/tvTasksHeader"
-                                android:layout_width="wrap_content"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:id="@+id/layoutStatsRow"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Công Việc"
-                                android:textColor="@color/secondary"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@id/tvTasksHeader"
-                                android:layout_marginTop="4dp"
-                                android:text="--"
-                                android:textColor="@color/on_surface"
-                                android:textSize="24sp"
-                                android:textStyle="bold" />
+                                android:orientation="horizontal"
+                                android:weightSum="2">
+
+                                <!-- Annual Leave Stats -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+                                    <TextView
+                                        android:id="@+id/tvLeaveHeader"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Phép năm đã sử dụng"
+                                        android:textColor="@color/secondary"
+                                        android:textSize="12sp"
+                                        android:textStyle="bold" />
+                                    <TextView
+                                        android:id="@+id/tvRemainingLeave"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="2dp"
+                                        android:text="- / 12"
+                                        android:textColor="@color/primary"
+                                        android:textSize="22sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+
+                                <!-- Work Day Stats -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:gravity="end"
+                                    android:layout_marginEnd="24dp">
+                                    <TextView
+                                        android:id="@+id/tvWorkHeader"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Số ngày đi làm"
+                                        android:textColor="@color/secondary"
+                                        android:textSize="12sp"
+                                        android:textStyle="bold" />
+                                    <TextView
+                                        android:id="@+id/tvWorkStats"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="2dp"
+                                        android:text="- / -"
+                                        android:textColor="@color/primary"
+                                        android:textSize="22sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+                            </LinearLayout>
+
                             <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
+                                android:id="@+id/ivCheckmark"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
                                 android:layout_alignParentEnd="true"
-                                android:src="@android:drawable/ic_menu_agenda"
-                                app:tint="@color/primary" />
+                                android:src="@drawable/ic_nav_approve"
+                                app:tint="@color/orangeWarning" />
+
+                            <TextView
+                                android:id="@+id/btnQuickRequestLeave"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/layoutStatsRow"
+                                android:layout_marginTop="8dp"
+                                android:paddingVertical="4dp"
+                                android:text="Tạo đơn nghỉ \u2192"
+                                android:textColor="@color/primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:background="?attr/selectableItemBackground" />
+
+                            <TextView
+                                android:id="@+id/btnViewAttendanceHistory"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/btnQuickRequestLeave"
+                                android:layout_marginTop="4dp"
+                                android:paddingVertical="4dp"
+                                android:text="Xem lịch sử đi làm \u2192"
+                                android:textColor="@color/secondary"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:background="?attr/selectableItemBackground" />
                         </RelativeLayout>
                     </com.google.android.material.card.MaterialCardView>
+                    
+                    <!-- Company Settings Card (Admin only) -->
+                    <FrameLayout
+                        android:id="@+id/layoutCompanySettingsCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:visibility="gone">
+                        <include layout="@layout/item_stat_page_company" />
+                    </FrameLayout>
+
+                    <!-- Stats Cards Header -->
+                    <TextView
+                        android:id="@+id/tvStatsHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="Thống kê phòng ban"
+                        android:textColor="@color/on_surface"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textStyle="bold" />
+
+                    <!-- Stats Cards (Attendance & Tasks) -->
+                    <LinearLayout
+                        android:id="@+id/layoutStatsCards"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp"
+                        android:weightSum="2">
+
+                        <!-- On-time Rate -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardAttendanceRate"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/surface_container_lowest"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/surface_container_high"
+                            app:strokeWidth="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Đi Làm Đúng Giờ"
+                                    android:textColor="@color/secondary"
+                                    android:textSize="11sp"
+                                    android:fontFamily="sans-serif-medium"
+                                    android:textStyle="bold" />
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:orientation="horizontal">
+                                    <TextView
+                                        android:id="@+id/tvTimekeepingOnTime"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="0"
+                                        android:textColor="@color/on_surface"
+                                        android:textSize="20sp"
+                                        android:textStyle="bold" />
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="/"
+                                        android:textColor="@color/secondary_container"
+                                        android:textSize="20sp" />
+                                    <TextView
+                                        android:id="@+id/tvTimekeepingLate"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="0"
+                                        android:textColor="@color/error_container"
+                                        android:textSize="20sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+                                <!-- Success indicator bar -->
+                                <View
+                                    android:id="@+id/indicatorAttendance"
+                                    android:layout_width="40dp"
+                                    android:layout_height="4dp"
+                                    android:layout_marginTop="8dp"
+                                    android:background="@color/primary" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- Task Completion Rate -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardTaskCompletionRate"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/surface_container_lowest"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/surface_container_high"
+                            app:strokeWidth="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Hoàn Thành Việc"
+                                    android:textColor="@color/secondary"
+                                    android:textSize="11sp"
+                                    android:fontFamily="sans-serif-medium"
+                                    android:textStyle="bold" />
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:orientation="horizontal">
+                                    <TextView
+                                        android:id="@+id/tvTasksDone"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="0"
+                                        android:textColor="@color/on_surface"
+                                        android:textSize="20sp"
+                                        android:textStyle="bold" />
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="/"
+                                        android:textColor="@color/secondary_container"
+                                        android:textSize="20sp" />
+                                    <TextView
+                                        android:id="@+id/tvTasksTotal"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="0"
+                                        android:textColor="@color/secondary"
+                                        android:textSize="20sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+                                <!-- Progress bar for tasks -->
+                                <View
+                                    android:id="@+id/indicatorTasks"
+                                    android:layout_width="40dp"
+                                    android:layout_height="4dp"
+                                    android:layout_marginTop="8dp"
+                                    android:background="@color/orangeWarning" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+                    
+                    <!-- Manager/Admin: Pending Requests Section -->
+                    <LinearLayout
+                        android:id="@+id/layoutManagerRequests"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="16dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="Đơn từ chờ duyệt"
+                            android:textColor="@color/on_surface"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <!-- Request Item 1 -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardManagerRequest1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            app:cardBackgroundColor="@color/surface_container_lowest"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/surface_container_high"
+                            app:strokeWidth="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="12dp"
+                                android:gravity="center_vertical">
+
+                                <FrameLayout
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp">
+                                    <TextView
+                                        android:id="@+id/tvManagerRequestAvatar1"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@drawable/bg_avatar_circle"
+                                        android:backgroundTint="#EFF6FF"
+                                        android:gravity="center"
+                                        android:text="A"
+                                        android:textColor="@color/primary"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold" />
+                                    <com.google.android.material.imageview.ShapeableImageView
+                                        android:id="@+id/ivManagerRequestAvatar1"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:scaleType="centerCrop"
+                                        android:visibility="gone"
+                                        app:shapeAppearanceOverlay="@style/CircleImageAppearance" />
+                                </FrameLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="12dp"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvManagerRequestName1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Nguyễn Văn A"
+                                        android:textColor="@color/on_surface"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tvManagerRequestType1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Nghỉ phép"
+                                        android:textColor="@color/secondary"
+                                        android:textSize="12sp" />
+                                </LinearLayout>
+
+                                <TextView
+                                    android:id="@+id/tvManagerRequestDate1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/bg_status_pill"
+                                    android:paddingHorizontal="8dp"
+                                    android:paddingVertical="4dp"
+                                    android:text="31/03"
+                                    android:textColor="@color/secondary"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- Request Item 2 -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardManagerRequest2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:cardBackgroundColor="@color/surface_container_lowest"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp"
+                            app:strokeColor="@color/surface_container_high"
+                            app:strokeWidth="1dp"
+                            android:visibility="gone">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="12dp"
+                                android:gravity="center_vertical">
+
+                                <FrameLayout
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp">
+                                    <TextView
+                                        android:id="@+id/tvManagerRequestAvatar2"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@drawable/bg_avatar_circle"
+                                        android:backgroundTint="#EFF6FF"
+                                        android:gravity="center"
+                                        android:text="B"
+                                        android:textColor="@color/primary"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold" />
+                                    <com.google.android.material.imageview.ShapeableImageView
+                                        android:id="@+id/ivManagerRequestAvatar2"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:scaleType="centerCrop"
+                                        android:visibility="gone"
+                                        app:shapeAppearanceOverlay="@style/CircleImageAppearance" />
+                                </FrameLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="12dp"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvManagerRequestName2"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Trần Thị B"
+                                        android:textColor="@color/on_surface"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tvManagerRequestType2"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Đổi ca"
+                                        android:textColor="@color/secondary"
+                                        android:textSize="12sp" />
+                                </LinearLayout>
+
+                                <TextView
+                                    android:id="@+id/tvManagerRequestDate2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/bg_status_pill"
+                                    android:paddingHorizontal="8dp"
+                                    android:paddingVertical="4dp"
+                                    android:text="31/03"
+                                    android:textColor="@color/secondary"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+
+
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Quick Access Menu Items -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="8dp"
-                android:text="TRUY CẬP NHANH"
-                android:textColor="@color/secondary"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.1" />
-
-            <com.google.android.material.card.MaterialCardView
+            <!-- Today's Tasks (Employee/Manager only) -->
+            <LinearLayout
+                android:id="@+id/layoutTodayTasks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                app:cardBackgroundColor="@color/surface_container_lowest"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/surface_container_high"
-                app:strokeWidth="1dp">
-
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginTop="24dp">
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Việc sắp quá hạn"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:textColor="@color/on_surface"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginHorizontal="20dp"/>
+                    
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <!-- Employee -->
-                    <LinearLayout
-                        android:id="@+id/btnNavEmployee"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical"
-                        android:background="?attr/selectableItemBackground">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_menu_myplaces"
-                            app:tint="@color/primary" />
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:text="Nhân viên"
-                            android:textColor="@color/on_surface"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/outline_variant" />
-                    </LinearLayout>
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/surface_container" />
-
-                    <!-- Department -->
-                    <LinearLayout
-                        android:id="@+id/btnNavDepartment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical"
-                        android:background="?attr/selectableItemBackground">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_menu_sort_by_size"
-                            app:tint="@color/primary" />
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:text="Phòng ban"
-                            android:textColor="@color/on_surface"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/outline_variant" />
-                    </LinearLayout>
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/surface_container" />
-
-                    <!-- Timekeeping -->
-                    <LinearLayout
-                        android:id="@+id/btnNavTimekeeping"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical"
-                        android:background="?attr/selectableItemBackground">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_menu_my_calendar"
-                            app:tint="@color/primary" />
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:text="Chấm công"
-                            android:textColor="@color/on_surface"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/outline_variant" />
-                    </LinearLayout>
+                    android:orientation="vertical"
+                    android:layout_marginHorizontal="20dp">
                     
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/surface_container" />
-
-                    <!-- Chat -->
-                    <LinearLayout
-                        android:id="@+id/btnNavChat"
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardTodayTask1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical"
-                        android:background="?attr/selectableItemBackground">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/sym_action_chat"
-                            app:tint="@color/primary" />
-                        <TextView
-                            android:layout_width="0dp"
+                        android:layout_marginBottom="12dp"
+                        android:layout_marginHorizontal="2dp"
+                        android:visibility="gone"
+                        app:cardBackgroundColor="@color/surface_container_lowest"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="4dp"
+                        app:strokeWidth="0dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:text="Chat (Tin nhắn)"
-                            android:textColor="@color/on_surface"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/outline_variant" />
-                    </LinearLayout>
-                    
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/surface_container" />
+                            android:orientation="horizontal"
+                            android:padding="16dp"
+                            android:gravity="center_vertical"
+                            android:background="?attr/selectableItemBackground">
+                            <TextView android:id="@+id/tvTodayTaskTitle1" 
+                                android:layout_width="0dp" 
+                                android:layout_height="wrap_content" 
+                                android:layout_weight="1"
+                                android:textStyle="bold" 
+                                android:textSize="14sp" 
+                                android:textColor="@color/on_surface" />
+                            <TextView android:id="@+id/tvTodayTaskDeadline1" 
+                                android:layout_width="wrap_content" 
+                                android:layout_height="wrap_content" 
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="4dp"
+                                android:background="@drawable/bg_status_pill"
+                                android:textSize="11sp" 
+                                android:textStyle="bold"
+                                android:textColor="@color/error" 
+                                android:gravity="center" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-                    <!-- Task -->
-                    <LinearLayout
-                        android:id="@+id/btnNavTask"
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardTodayTask2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical"
-                        android:background="?attr/selectableItemBackground">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_menu_agenda"
-                            app:tint="@color/primary" />
-                        <TextView
-                            android:layout_width="0dp"
+                        android:layout_marginBottom="12dp"
+                        android:layout_marginHorizontal="2dp"
+                        android:visibility="gone"
+                        app:cardBackgroundColor="@color/surface_container_lowest"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="4dp"
+                        app:strokeWidth="0dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:text="Công việc"
-                            android:textColor="@color/on_surface"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/outline_variant" />
-                    </LinearLayout>
+                            android:orientation="horizontal"
+                            android:padding="16dp"
+                            android:gravity="center_vertical"
+                            android:background="?attr/selectableItemBackground">
+                            <TextView android:id="@+id/tvTodayTaskTitle2" 
+                                android:layout_width="0dp" 
+                                android:layout_height="wrap_content" 
+                                android:layout_weight="1"
+                                android:textStyle="bold" 
+                                android:textSize="14sp" 
+                                android:textColor="@color/on_surface" />
+                            <TextView android:id="@+id/tvTodayTaskDeadline2" 
+                                android:layout_width="wrap_content" 
+                                android:layout_height="wrap_content" 
+                                android:paddingHorizontal="10dp"
+                                android:paddingVertical="4dp"
+                                android:background="@drawable/bg_status_pill"
+                                android:textSize="11sp" 
+                                android:textStyle="bold"
+                                android:textColor="@color/error" 
+                                android:gravity="center" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
 
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/surface_container" />
-
-                    <!-- Request -->
-                    <LinearLayout
-                        android:id="@+id/btnNavRequest"
+                    <TextView
+                        android:id="@+id/tvNoTasksToday"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
+                        android:text="Tuyệt vời! Bạn không có việc nào quá hạn hoặc sắp đến hạn hôm nay."
+                        android:textAlignment="center"
+                        android:textColor="@color/secondary"
+                        android:textSize="12sp"
                         android:padding="16dp"
-                        android:gravity="center_vertical"
-                        android:background="?attr/selectableItemBackground">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_menu_edit"
-                            app:tint="@color/primary" />
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:text="Duyệt đơn"
-                            android:textColor="@color/on_surface"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/outline_variant" />
-                    </LinearLayout>
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/surface_container" />
-
-                    <!-- Notification -->
-                    <LinearLayout
-                        android:id="@+id/btnNavNotification"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical"
-                        android:background="?attr/selectableItemBackground">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_popup_reminder"
-                            app:tint="@color/primary" />
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:text="Thông báo"
-                            android:textColor="@color/on_surface"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/outline_variant" />
-                    </LinearLayout>
-                    <!-- Payroll (Admin only) -->
-                    <LinearLayout
-                        android:id="@+id/btnNavPayroll"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical"
-                        android:background="?attr/selectableItemBackground"
-                        android:visibility="gone">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_menu_today"
-                            app:tint="@color/primary" />
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:text="Quản lý lương"
-                            android:textColor="@color/on_surface"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/outline_variant" />
-                    </LinearLayout>
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/surface_container" />
-
-                    <!-- Settings (Admin only) -->
-                    <LinearLayout
-                        android:id="@+id/btnNavSettings"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical"
-                        android:background="?attr/selectableItemBackground"
-                        android:visibility="gone">
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@android:drawable/ic_menu_preferences"
-                            app:tint="@color/primary" />
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="16dp"
-                            android:text="Cài đặt hệ thống"
-                            android:textColor="@color/on_surface"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/outline_variant" />
-                    </LinearLayout>
+                        android:visibility="gone"/>
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Quick Access Section -->
+            <LinearLayout
+                android:id="@+id/layoutQuickAccess"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="24dp"
+                android:paddingHorizontal="24dp">
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Truy cập nhanh"
+                    android:textColor="@color/on_surface"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginBottom="16dp" />
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="4"
+                    android:alignmentMode="alignMargins"
+                    android:useDefaultMargins="true">
+
+                    <!-- Overtime Quick Access -->
+                    <LinearLayout
+                        android:id="@+id/btnQuickOT"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:paddingVertical="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless">
+                        <View
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            android:background="@drawable/bg_circle_light"
+                            android:backgroundTint="#F3E5F5" /> <!-- Light Purple -->
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginTop="-37dp"
+                            android:src="@drawable/ic_nav_tasks"
+                            app:tint="#9C27B0" /> <!-- Purple -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:text="Làm thêm"
+                            android:textColor="@color/on_surface"
+                            android:textSize="11sp"
+                            android:fontFamily="sans-serif-medium" />
+                    </LinearLayout>
+
+                    <!-- Business Trip Quick Access -->
+                    <LinearLayout
+                        android:id="@+id/btnQuickTrip"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:paddingVertical="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless">
+                        <View
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            android:background="@drawable/bg_circle_light"
+                            android:backgroundTint="#E3F2FD" /> <!-- Light Blue -->
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginTop="-37dp"
+                            android:src="@drawable/ic_nav_approve"
+                            app:tint="#2196F3" /> <!-- Blue -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:text="Công tác"
+                            android:textColor="@color/on_surface"
+                            android:textSize="11sp"
+                            android:fontFamily="sans-serif-medium" />
+                    </LinearLayout>
+
+                    <!-- Sick Leave Quick Access -->
+                    <LinearLayout
+                        android:id="@+id/btnQuickSick"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:paddingVertical="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless">
+                        <View
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            android:background="@drawable/bg_circle_light"
+                            android:backgroundTint="#E0F2F1" /> <!-- Light Cyan -->
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginTop="-37dp"
+                            android:src="@android:drawable/ic_menu_help"
+                            app:tint="#009688" /> <!-- Teal -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:text="Nghỉ ốm"
+                            android:textColor="@color/on_surface"
+                            android:textSize="11sp"
+                            android:fontFamily="sans-serif-medium" />
+                    </LinearLayout>
+
+                    <!-- Punch Correction Quick Access -->
+                    <LinearLayout
+                        android:id="@+id/btnQuickCorrection"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:paddingVertical="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless">
+                        <View
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            android:background="@drawable/bg_circle_light"
+                            android:backgroundTint="#FFF3E0" /> <!-- Light Orange -->
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginTop="-37dp"
+                            android:src="@android:drawable/ic_menu_edit"
+                            app:tint="#FF9800" /> <!-- Orange -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:text="Bổ sung công"
+                            android:textColor="@color/on_surface"
+                            android:textSize="11sp"
+                            android:fontFamily="sans-serif-medium" />
+                    </LinearLayout>
+
+                    <!-- Resignation Quick Access -->
+                    <LinearLayout
+                        android:id="@+id/btnQuickResign"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:paddingVertical="8dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackgroundBorderless">
+                        <View
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            android:background="@drawable/bg_circle_light"
+                            android:backgroundTint="#FFEBEE" /> <!-- Light Red -->
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_marginTop="-37dp"
+                            android:src="@android:drawable/ic_menu_close_clear_cancel"
+                            app:tint="#F44336" /> <!-- Red -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:text="Thôi việc"
+                            android:textColor="@color/on_surface"
+                            android:textSize="11sp"
+                            android:fontFamily="sans-serif-medium" />
+                    </LinearLayout>
+
+                </GridLayout>
+            </LinearLayout>
+
+
+
+
+            <!-- Admin Tools (Admin only) -->
+            <LinearLayout
+                android:id="@+id/layoutAdminTools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Công cụ quản lý"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:textColor="@color/on_surface"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginHorizontal="20dp"/>
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:columnCount="4">
+
+                    <!-- Add Employee -->
+                    <LinearLayout
+                        android:id="@+id/btnAdminAddEmployee"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
+                        android:gravity="center"
+                        android:background="?attr/selectableItemBackground">
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <View
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_avatar_circle"
+                                android:backgroundTint="@color/icon_bg_blue" />
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_menu_add"
+                                app:tint="@color/primary" />
+                        </FrameLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Thêm mới"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:maxLines="2"
+                            android:textAlignment="center"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/on_surface" />
+                    </LinearLayout>
+
+                    <!-- Accounts -->
+                    <LinearLayout
+                        android:id="@+id/btnAdminAccounts"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
+                        android:gravity="center"
+                        android:background="?attr/selectableItemBackground">
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <View
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_avatar_circle"
+                                android:backgroundTint="@color/icon_bg_purple" />
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/outline_account_circle_24"
+                                app:tint="@color/tertiary" />
+                        </FrameLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tài khoản"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:maxLines="2"
+                            android:textAlignment="center"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/on_surface" />
+                    </LinearLayout>
+
+                    <!-- Logs -->
+                    <LinearLayout
+                        android:id="@+id/btnAdminLogs"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
+                        android:gravity="center"
+                        android:background="?attr/selectableItemBackground">
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <View
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_avatar_circle"
+                                android:backgroundTint="@color/icon_bg_amber" />
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_menu_recent_history"
+                                app:tint="@color/orangeWarning" />
+                        </FrameLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nhật ký"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:maxLines="2"
+                            android:textAlignment="center"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/on_surface" />
+                    </LinearLayout>
+
+                    <!-- Backup -->
+                    <LinearLayout
+                        android:id="@+id/btnAdminBackup"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
+                        android:gravity="center"
+                        android:background="?attr/selectableItemBackground">
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <View
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_avatar_circle"
+                                android:backgroundTint="@color/gray_100" />
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_menu_save"
+                                app:tint="@color/secondary" />
+                        </FrameLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sao lưu"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:maxLines="2"
+                            android:textAlignment="center"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/on_surface" />
+                    </LinearLayout>
+
+                    <!-- Payroll -->
+                    <LinearLayout
+                        android:id="@+id/btnAdminPayroll"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_columnWeight="1"
+                        android:orientation="vertical"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
+                        android:gravity="center"
+                        android:background="?attr/selectableItemBackground">
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <View
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_avatar_circle"
+                                android:backgroundTint="@color/icon_bg_green" />
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_menu_today"
+                                app:tint="@color/deep_green" />
+                        </FrameLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bảng lương"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:maxLines="2"
+                            android:textAlignment="center"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/on_surface" />
+                    </LinearLayout>
+
+                </GridLayout>
+            </LinearLayout>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

@@ -20,6 +20,7 @@ import com.example.myapplication.model.ChatRoom;
 import com.example.myapplication.repository.ChatRepository;
 import com.example.myapplication.utils.BottomNavHelper;
 import com.example.myapplication.utils.SharedPrefsManager;
+import com.example.myapplication.utils.TopBarHelper;
 import com.example.myapplication.viewmodel.ChatViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -55,7 +56,7 @@ public class ChatActivity extends AppCompatActivity implements CreateGroupDialog
     protected void onResume() {
         super.onResume();
         // Cập nhật thông tin cá nhân trên Top Bar
-        setupTopBar();
+        TopBarHelper.setupTopBar(this);
         // Kích hoạt thanh điều hướng bên dưới
         BottomNavHelper.setupBottomNav(this, R.id.nav_chat);
         // Clear sự kiện createdGroup cũ để không tự động mở lại dialog khi quay về
@@ -148,17 +149,6 @@ public class ChatActivity extends AppCompatActivity implements CreateGroupDialog
         });
     }
 
-    private void setupTopBar() {
-        SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
-        String name = prefs.getFullName();
-        String dept = prefs.getDepartmentName();
-        
-        if (tvHeaderName != null) tvHeaderName.setText(name.isEmpty() ? prefs.getUsername() : name);
-        if (tvHeaderDept != null) tvHeaderDept.setText(dept);
-        if (tvHeaderAvatarText != null && !name.isEmpty()) {
-            tvHeaderAvatarText.setText(String.valueOf(name.charAt(0)).toUpperCase());
-        }
-    }
 
     private void observeData() {
         // [Chat] Observe danh sách room để cập nhật RecyclerView.

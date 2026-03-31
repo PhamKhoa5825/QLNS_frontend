@@ -1,19 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_bottom_sheet"
+    android:background="@drawable/bg_dialog_rounded"
     android:orientation="vertical"
     android:padding="24dp">
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Tạo đơn mới"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Tạo đơn mới"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btnModalClose"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_close"
+            android:padding="6dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            app:tint="#6B7280"/>
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -30,22 +49,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Loại đơn *"
-                android:textColor="@color/textColorSecondary"
+                android:textStyle="bold"
+                android:textColor="#4B5563"
                 android:textSize="14sp" />
 
-            <Spinner
-                android:id="@+id/spinnerRequestType"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/bg_input" />
+                android:background="@drawable/bg_input">
+                <Spinner
+                    android:id="@+id/spinnerRequestType"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="12dp"
+                    android:src="@android:drawable/arrow_down_float"
+                    app:tint="#9CA3AF"
+                    android:clickable="false"
+                    android:importantForAccessibility="no" />
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Tiêu đề đơn *"
-                android:textColor="@color/textColorSecondary"
+                android:textStyle="bold"
+                android:textColor="#4B5563"
                 android:textSize="14sp" />
 
             <EditText
@@ -60,6 +96,7 @@
                 android:textSize="14sp" />
 
             <RelativeLayout
+                android:id="@+id/layoutDateSelection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp">
@@ -69,37 +106,48 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:text="Chọn ngày cụ thể *"
-                    android:textColor="@color/textColorSecondary"
+                    android:textStyle="bold"
+                    android:textColor="#4B5563"
                     android:textSize="14sp" />
 
-                <TextView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSuggestDate"
+                    style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toStartOf="@+id/btnAddDate"
                     android:layout_marginEnd="8dp"
-                    android:background="@drawable/bg_btn_mini"
-                    android:backgroundTint="#10B981"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp"
+                    app:backgroundTint="#10B981"
                     android:text="Gợi ý chọn ngày"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    app:cornerRadius="8dp"
+                    android:minHeight="0dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="8dp"
                     android:visibility="gone" />
 
-                <TextView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAddDate"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:background="@drawable/bg_btn_mini"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="4dp"
+                    app:backgroundTint="#EFF6FF"
                     android:text="+ Thêm ngày"
-                    android:textColor="@color/white"
+                    android:textColor="@color/primary"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    app:cornerRadius="8dp"
+                    android:minHeight="0dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="8dp" />
             </RelativeLayout>
 
             <LinearLayout
@@ -122,7 +170,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Bằng chứng (Ảnh chụp giấy khám/ra viện) *"
-                    android:textColor="@color/textColorSecondary"
+                    android:textStyle="bold"
+                    android:textColor="#4B5563"
                     android:textSize="14sp" />
 
                 <LinearLayout
@@ -132,14 +181,17 @@
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnPickEvidence"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:text="Chọn ảnh"
+                        android:textColor="#4B5563"
+                        android:textAllCaps="false"
                         android:textSize="12sp"
-                        android:background="@drawable/bg_btn_outline"
-                        android:minHeight="40dp" />
+                        app:cornerRadius="8dp"
+                        app:strokeColor="#D1D5DB" />
 
                     <TextView
                         android:id="@+id/tvEvidencePath"
@@ -169,7 +221,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Nội dung"
-                android:textColor="@color/textColorSecondary"
+                android:textStyle="bold"
+                android:textColor="#4B5563"
                 android:textSize="14sp" />
 
             <EditText
@@ -195,27 +248,29 @@
         android:orientation="horizontal"
         android:weightSum="2">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRequestCancel"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_btn_outline"
             android:text="Hủy"
             android:textAllCaps="false"
-            android:textColor="@color/textColorSecondary" />
+            android:textColor="#4B5563"
+            app:cornerRadius="12dp"
+            app:strokeColor="#D1D5DB" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRequestSubmit"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_btn_solid"
-            android:backgroundTint="#8B5CF6"
             android:text="Gửi đơn"
             android:textAllCaps="false"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            app:backgroundTint="@color/primary"
+            app:cornerRadius="12dp" />
     </LinearLayout>
 </LinearLayout>

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Top Header: Avatar & Info -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp">
+                <TextView
+                    android:id="@+id/tvDetailAvatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_avatar_circle"
+                    android:backgroundTint="#EFF6FF"
+                    android:gravity="center"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivDetailAvatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/CircleImageAppearance" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="14dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvDetailEmployeeName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#1F2937"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvDetailDept"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#6B7280"
+                    android:textSize="14sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#F3F4F6"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Type and Status -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            
+            <TextView
+                android:id="@+id/tvDetailTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#111827"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvDetailStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textAllCaps="true" />
+        </LinearLayout>
+
+        <!-- Dates Detailed List -->
+        <TextView
+            android:id="@+id/tvDetailDates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="#374151"
+            android:textSize="14sp"
+            android:lineSpacingExtra="4dp"
+            android:visibility="gone" />
+
+        <!-- Description -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Lý do / Mô tả:"
+            android:textColor="#9CA3AF"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvDetailDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#4B5563"
+            android:textSize="14sp"
+            android:lineSpacingExtra="4dp" />
+            
+        <!-- Evidence (File) -->
+        <TextView
+            android:id="@+id/tvDetailEvidenceUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="#3B82F6"
+            android:textSize="13sp"
+            android:autoLink="web"
+            android:visibility="gone" />
+
+        <!-- Creation & Review Details -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:background="#F9FAFB"
+            android:padding="12dp"
+            app:cornerRadius="8dp">
+
+            <TextView
+                android:id="@+id/tvDetailDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#6B7280"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tvDetailReviewer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="#6B7280"
+                android:textSize="13sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Rejection Reason -->
+        <TextView
+            android:id="@+id/tvDetailRejection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="#FEF2F2"
+            android:padding="12dp"
+            android:textColor="#EF4444"
+            android:textSize="13sp"
+            android:lineSpacingExtra="2dp"
+            android:visibility="gone" />
+
+        <!-- Action Buttons (Visible for Managers/Admins on Pending requests) -->
+        <LinearLayout
+            android:id="@+id/layoutDetailActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="2">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDetailApprove"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Duyệt đơn"
+                android:textAllCaps="false"
+                android:textSize="15sp"
+                app:backgroundTint="#10B981"
+                app:cornerRadius="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDetailReject"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Từ chối"
+                android:textAllCaps="false"
+                android:textColor="#EF4444"
+                android:textSize="15sp"
+                app:cornerRadius="12dp"
+                app:strokeColor="#EF4444" />
+        </LinearLayout>
+
+        <!-- Footer Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDetailClose"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:text="Đóng"
+            android:textColor="#4B5563"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            app:cornerRadius="12dp"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:backgroundTint="#F3F4F6"/>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

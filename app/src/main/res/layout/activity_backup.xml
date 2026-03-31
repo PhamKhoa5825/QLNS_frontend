@@ -1,104 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F3F4F6">
+    android:background="@color/colorBackground"
+    android:fitsSystemWindows="true">
 
-    <!-- Wrap Toolbar trong AppBarLayout + fitsSystemWindows để xử lý status bar -->
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:fitsSystemWindows="true"
-        android:background="@drawable/bg_header_inner"
         app:elevation="0dp">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
+        <include
+            android:id="@+id/include_top_bar"
+            layout="@layout/layout_top_bar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@android:drawable/ic_menu_revert"
-            app:navigationIconTint="@color/white"
-            app:title="Sao lưu và khôi phục"
-            app:titleTextColor="@color/white" />
+            android:layout_height="wrap_content" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Status card -->
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/white"
-            android:layout_marginBottom="12dp">
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
 
+            <!-- Hero Section / Status Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E8F0"
+                app:cardBackgroundColor="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            app:cardCornerRadius="14dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#F0F9FF"
+                            app:strokeWidth="0dp">
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_menu_save"
+                                app:tint="#0284C7" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Dữ liệu hệ thống"
+                                android:textColor="#1E293B"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:id="@+id/tvBackupStatus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Đang kiểm tra tình trạng..."
+                                android:textColor="#64748B"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="Tạo bản sao lưu ngay để đảm bảo an toàn dữ liệu. Bạn có thể tải xuống hoặc khôi phục bất cứ lúc nào."
+                        android:textColor="#475569"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="4dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBackupNow"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="24dp"
+                        android:text="Bắt đầu sao lưu"
+                        android:textAllCaps="false"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="16dp"
+                        app:icon="@android:drawable/ic_popup_sync"
+                        app:iconGravity="textStart"
+                        app:elevation="4dp"
+                        android:stateListAnimator="@null" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- List Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingHorizontal="24dp">
 
                 <TextView
-                    android:id="@+id/tvBackupStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DANH SÁCH BẢN SAO LƯU"
+                    android:textColor="#64748B"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1" />
+
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Đang kiểm tra..."
-                    android:textSize="13sp" />
+                    android:layout_marginTop="16dp">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnBackupNow"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="12dp"
-                    android:text="Sao lưu ngay"
-                    android:textAllCaps="false"
-                    app:cornerRadius="8dp"
-                    app:icon="@android:drawable/ic_menu_save"
-                    app:iconGravity="textStart" />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewBackups"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="40dp"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/tvEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginTop="60dp"
+                        android:visibility="gone">
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:src="@android:drawable/ic_menu_today"
+                            app:tint="#CBD5E1" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Chưa có bản sao lưu nào"
+                            android:textColor="#94A3B8"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </FrameLayout>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Header -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Danh sách bản sao lưu"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/textColorPrimary"
-            android:layout_marginBottom="8dp" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tvEmpty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Chưa có bản sao lưu nào"
-            android:textSize="14sp"
-            android:textColor="@color/textColorSecondary"
-            android:gravity="center"
-            android:layout_marginTop="40dp"
-            android:visibility="gone" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewBackups"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"
-            android:paddingBottom="16dp" />
-    </LinearLayout>
-</LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -18,10 +18,10 @@ public interface ApiService {
     Call<String> validateToken();
 
     @POST("api/auth/change-password")
-    Call<Void> changePassword(@Body Map<String, String> request);
+    Call<Void> changePassword(@Body ChangePasswordRequest request);
 
     @GET("api/employees/{id}/detail")
-    Call<Employee> getMyProfile();
+    Call<Employee> getMyProfile(@Path("id") Long id);
 
     @GET("api/employees/{id}/summary")
     Call<EmployeeSummary> getEmployeeSummary(@Path("id") Long id);
@@ -218,7 +218,7 @@ public interface ApiService {
 
     // ── FILE UPLOAD ──────────────────────────────
     @Multipart
-    @POST("api/files/upload")
+    @POST("api/upload/image")
     Call<Map<String, String>> uploadImage(@Part MultipartBody.Part file);
 
     // ── PAYROLL ──────────────────────────────────
@@ -281,4 +281,20 @@ public interface ApiService {
 
     @PUT("api/admin/employees/{id}/role")
     Call<Employee> updateEmployeeRole(@Path("id") Long id, @Body AccountDto.UpdateRoleRequest request);
+
+    @GET("api/admin/dashboard/stats")
+    Call<Map<String, Object>> getAdminDashboardStats();
+
+    @GET("api/employees/{id}/resign-check")
+    Call<Map<String, Object>> checkResignImpact(@Path("id") Long id);
+
+    @PUT("api/employees/{id}/reactivate")
+    Call<Void> reactivateEmployee(@Path("id") Long id);
+
+    @PUT("api/requests/{id}/review/employee/{reviewerId}")
+    Call<Request> reviewRequest(
+            @Path("id") Long id,
+            @Path("reviewerId") Long reviewerId,
+            @Body ReviewRequestRequest body
+    );
 }

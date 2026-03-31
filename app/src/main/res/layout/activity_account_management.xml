@@ -4,87 +4,49 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F3F4F6">
+    android:background="@color/colorBackground"
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:fitsSystemWindows="true"
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_header_inner"
+        android:background="@color/colorBackground"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@android:drawable/ic_menu_revert"
-            app:navigationIconTint="@color/white"
-            app:title="Quản lý tài khoản"
-            app:titleTextColor="@color/white" />
-
-        <!-- Search bar with Filter -->
-        <LinearLayout
+            android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="16dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:background="@android:color/transparent"
+            app:contentInsetStart="0dp">
 
-            <EditText
-                android:id="@+id/edtSearchAccount"
-                android:layout_width="0dp"
-                android:layout_height="45dp"
-                android:layout_weight="1"
-                android:background="@drawable/bg_search_bar"
-                android:drawableStart="@android:drawable/ic_menu_search"
-                android:drawablePadding="12dp"
-                android:hint="Tìm theo tên, email..."
-                android:paddingHorizontal="12dp"
-                android:textSize="14sp" />
-
-            <ImageView
-                android:id="@+id/btnFilter"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_search_bar"
-                android:padding="10dp"
-                android:src="@android:drawable/ic_menu_sort_by_size"
-                app:tint="@color/colorPrimary" />
-        </LinearLayout>
-
-        <!-- Hiển thị bộ lọc đang áp dụng -->
-        <TextView
-            android:id="@+id/tvFilterInfo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingBottom="8dp"
-            android:textColor="#E0E0E0"
-            android:textSize="13sp"
-            android:visibility="gone" />
-
+            <include
+                android:id="@+id/include_top_bar"
+                layout="@layout/layout_top_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="16dp">
 
-            <!-- Stats card -->
+            <!-- Stats Overview -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingBottom="12dp"
-                android:clipToPadding="false"
                 android:weightSum="2">
 
                 <com.google.android.material.card.MaterialCardView
@@ -92,20 +54,47 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    app:cardBackgroundColor="@color/soft_blue"
-                    app:cardCornerRadius="16dp"
+                    app:cardBackgroundColor="#EEF2FF"
+                    app:cardCornerRadius="20dp"
                     app:cardElevation="0dp"
-                    app:strokeColor="@color/border"
-                    app:strokeWidth="1dp">
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#E0E7FF">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:orientation="vertical"
-                        android:padding="12dp">
-                        <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_myplaces" app:tint="@color/deep_blue" />
-                        <TextView android:id="@+id/tvTotalAccounts" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="0" android:textColor="@color/textColorPrimary" android:textSize="20sp" android:textStyle="bold" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Tổng tài khoản" android:textColor="@color/textColorSecondary" android:textSize="11sp" />
+                        android:padding="16dp"
+                        android:gravity="center">
+                        <FrameLayout
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_avatar_circle"
+                            android:backgroundTint="#6366F1">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_menu_myplaces"
+                                app:tint="@color/white" />
+                        </FrameLayout>
+                        <TextView
+                            android:id="@+id/tvTotalAccounts"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="0"
+                            android:textColor="#1E1B4B"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tổng số tài khoản"
+                            android:textColor="#4338CA"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.05" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -113,31 +102,135 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    app:cardBackgroundColor="@color/soft_green"
-                    app:cardCornerRadius="16dp"
+                    android:layout_marginStart="8dp"
+                    app:cardBackgroundColor="#F0FDF4"
+                    app:cardCornerRadius="20dp"
                     app:cardElevation="0dp"
-                    app:strokeColor="@color/border"
-                    app:strokeWidth="1dp">
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#DCFCE7">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:orientation="vertical"
-                        android:padding="12dp">
-                        <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_media_play" app:tint="@color/deep_green" />
-                        <TextView android:id="@+id/tvActiveAccounts" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="0" android:textColor="@color/textColorPrimary" android:textSize="20sp" android:textStyle="bold" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="Đang hoạt động" android:textColor="@color/textColorSecondary" android:textSize="11sp" />
+                        android:padding="16dp"
+                        android:gravity="center">
+                        <FrameLayout
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_avatar_circle"
+                            android:backgroundTint="#22C55E">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@android:drawable/ic_media_play"
+                                app:tint="@color/white" />
+                        </FrameLayout>
+                        <TextView
+                            android:id="@+id/tvActiveAccounts"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="0"
+                            android:textColor="#064E3B"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Đang hoạt động"
+                            android:textColor="#15803D"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:textAllCaps="true"
+                            android:letterSpacing="0.05" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
+            <!-- Search Area -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_search_modern"
+                    android:paddingHorizontal="16dp">
+                    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@android:drawable/ic_menu_search"
+                            app:tint="#64748B" />
+                        <EditText
+                            android:id="@+id/edtSearchAccount"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:background="@android:color/transparent"
+                            android:hint="Tìm theo tên, email..."
+                            android:textSize="14sp"
+                            android:textColor="#1E293B"
+                            android:maxLines="1"
+                            android:inputType="text" />
+                    </LinearLayout>
+                </FrameLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnFilter"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="12dp"
+                    app:cardCornerRadius="14dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:strokeWidth="0dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@android:drawable/ic_menu_sort_by_size"
+                        app:tint="@color/primary" />
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Filter Info -->
+            <TextView
+                android:id="@+id/tvFilterInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginHorizontal="4dp"
+                android:background="#F1F5F9"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
+                android:textColor="#64748B"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"
+                android:visibility="gone" />
+
+            <!-- List Section Title -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:text="Danh sách tài khoản"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="16sp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="4dp"
+                android:text="DANH SÁCH TÀI KHOẢN"
+                android:textColor="@color/secondary"
+                android:textSize="11sp"
+                android:letterSpacing="0.1"
                 android:textStyle="bold" />
 
             <ProgressBar
@@ -145,6 +238,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="40dp"
                 android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -152,7 +246,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
-                android:paddingBottom="80dp" />
+                android:paddingBottom="40dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

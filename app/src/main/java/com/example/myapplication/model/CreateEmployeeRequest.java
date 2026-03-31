@@ -34,6 +34,9 @@ public class CreateEmployeeRequest {
     @SerializedName("departmentId")
     private Long departmentId;
 
+    @SerializedName("avatarUrl")
+    private String avatarUrl;
+
     @SerializedName("role")              // EMPLOYEE / MANAGER / ADMIN
     private String role;
 
@@ -49,6 +52,7 @@ public class CreateEmployeeRequest {
     }
 
     // Setters tuỳ chọn
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
     public void setRole(String role) { this.role = role; }
     public void setPhone(String phone) { this.phone = phone; }
     public void setAddress(String address) { this.address = address; }
@@ -63,4 +67,5 @@ public class CreateEmployeeRequest {
     public String getPosition() { return position; }
     public String getRole() { return role; }
     public Long getDepartmentId() { return departmentId; }
+    public String getAvatarUrl() { return avatarUrl; }
 }

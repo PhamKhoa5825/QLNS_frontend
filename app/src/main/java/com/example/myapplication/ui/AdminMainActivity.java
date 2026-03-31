@@ -15,10 +15,12 @@ import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.utils.BottomNavHelper;
 import com.example.myapplication.utils.SharedPrefsManager;
+import com.example.myapplication.utils.TopBarHelper;
 
 import android.widget.ImageView;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,9 +29,7 @@ import retrofit2.Response;
 public class AdminMainActivity extends AppCompatActivity {
 
     private TextView tvTotalEmployees, tvTotalDepartments;
-    private TextView tvHeaderName, tvHeaderDept, tvHeaderAvatarText;
-    private ImageView ivHeaderAvatar;
-    private android.view.View btnHeaderNotifications, btnHeaderExtra, containerProfileLink;
+    private TextView tvPendingRequests, tvOpenTasks, tvTodayAttendance;
     
     // Company Card Views
     private android.view.View cardCompany;
@@ -46,20 +46,17 @@ public class AdminMainActivity extends AppCompatActivity {
         fetchStats();
         
         // Initialize Bottom Navigation
-        BottomNavHelper.setupBottomNav(this, R.id.nav_admin);
+        BottomNavHelper.setupBottomNav(this, -1);
     }
-
+ 
     private void initViews() {
         tvTotalEmployees = findViewById(R.id.tvTotalEmployees);
         tvTotalDepartments = findViewById(R.id.tvTotalDepartments);
+        tvPendingRequests = findViewById(R.id.tvPendingRequests);
+        tvOpenTasks = findViewById(R.id.tvOpenTasks);
+        tvTodayAttendance = findViewById(R.id.tvTodayAttendance);
 
-        tvHeaderName = findViewById(R.id.tvHeaderName);
-        tvHeaderDept = findViewById(R.id.tvHeaderDept);
-        tvHeaderAvatarText = findViewById(R.id.tvHeaderAvatarText);
-        ivHeaderAvatar = findViewById(R.id.ivHeaderAvatar);
-        btnHeaderNotifications = findViewById(R.id.btnHeaderNotifications);
-        btnHeaderExtra = findViewById(R.id.btnHeaderExtra);
-        containerProfileLink = findViewById(R.id.containerProfileLink);
+        tvTodayAttendance = findViewById(R.id.tvTodayAttendance);
 
         // Company Card
         cardCompany = findViewById(R.id.cardCompany);
@@ -73,52 +70,33 @@ public class AdminMainActivity extends AppCompatActivity {
         findViewById(R.id.btnAdminAddEmployee).setOnClickListener(v -> {
             startActivity(new Intent(this, AddEditEmployeeActivity.class));
         });
-
+ 
         findViewById(R.id.btnAdminAccounts).setOnClickListener(v -> {
             startActivity(new Intent(this, AccountManagementActivity.class));
         });
-
+ 
         findViewById(R.id.btnAdminLogs).setOnClickListener(v -> {
             startActivity(new Intent(this, SystemLogActivity.class));
         });
-
+ 
         findViewById(R.id.btnAdminSettings).setOnClickListener(v -> {
             startActivity(new Intent(this, AdminSettingsActivity.class));
         });
-
+ 
         findViewById(R.id.btnAdminBackup).setOnClickListener(v -> {
             startActivity(new Intent(this, BackupActivity.class));
         });
-
-        if (cardCompany != null) {
-            cardCompany.setOnClickListener(v -> {
-                startActivity(new Intent(this, AdminSettingsActivity.class));
-            });
-        }
-
-        if (btnHeaderNotifications != null) {
-            btnHeaderNotifications.setOnClickListener(v -> startActivity(new Intent(this, NotificationActivity.class)));
-        }
-
-        if (btnHeaderExtra != null) {
-            btnHeaderExtra.setOnClickListener(v -> Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show());
-        }
-
-        if (containerProfileLink != null) {
-            containerProfileLink.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
-        }
     }
 
     private void updateTopBar() {
         SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
         String fullName = prefs.getFullName();
-        String deptName = prefs.getDepartmentName();
         Long employeeId = prefs.getEmployeeId();
 
         if (fullName.isEmpty() && employeeId != -1L) {
             fetchEmployeeDetails(employeeId);
         } else {
-            displayUserInfo(fullName, deptName);
+            TopBarHelper.setupTopBar(this);
         }
     }
 
@@ -132,52 +110,47 @@ public class AdminMainActivity extends AppCompatActivity {
                     SharedPrefsManager prefs = SharedPrefsManager.getInstance(AdminMainActivity.this);
                     prefs.setFullName(emp.getFullName());
                     prefs.setDepartmentName(emp.getDepartment());
-                    displayUserInfo(emp.getFullName(), emp.getDepartment());
+                    TopBarHelper.setupTopBar(AdminMainActivity.this);
                 }
             }
 
             @Override
             public void onFailure(Call<Employee> call, Throwable t) {
-                displayUserInfo(SharedPrefsManager.getInstance(AdminMainActivity.this).getUsername(), "");
+                TopBarHelper.setupTopBar(AdminMainActivity.this);
             }
         });
     }
 
-    private void displayUserInfo(String name, String dept) {
-        if (tvHeaderName != null) tvHeaderName.setText(name);
-        if (tvHeaderDept != null) tvHeaderDept.setText(dept);
-        if (tvHeaderAvatarText != null && name != null && !name.isEmpty()) {
-            tvHeaderAvatarText.setText(String.valueOf(name.charAt(0)).toUpperCase());
-        }
-    }
 
     private void fetchStats() {
         ApiService apiService = RetrofitClient.getApiService(this);
 
-        // Fetch Employee Count
-        apiService.getEmployees().enqueue(new Callback<List<Employee>>() {
+        // Fetch Comprehensive Admin Dashboard Stats
+        apiService.getAdminDashboardStats().enqueue(new Callback<Map<String, Object>>() {
             @Override
-            public void onResponse(Call<List<Employee>> call, Response<List<Employee>> response) {
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    tvTotalEmployees.setText(String.valueOf(response.body().size()));
+                    Map<String, Object> stats = response.body();
+                    
+                    // Basic Counts
+                    if (stats.containsKey("totalEmployees")) {
+                        tvTotalEmployees.setText(String.valueOf(stats.get("totalEmployees")));
+                    }
+                    if (stats.containsKey("totalDepartments")) {
+                        tvTotalDepartments.setText(String.valueOf(stats.get("totalDepartments")));
+                    }
+
+                    // Dashboard Specifics
+                    if (tvPendingRequests != null) tvPendingRequests.setText(String.valueOf(stats.get("pendingRequests")));
+                    if (tvOpenTasks != null) tvOpenTasks.setText(String.valueOf(stats.get("openTasks")));
+                    if (tvTodayAttendance != null) tvTodayAttendance.setText(String.valueOf(stats.get("todayAttendance")));
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Employee>> call, Throwable t) {}
-        });
-
-        // Fetch Department Count
-        apiService.getDepartments().enqueue(new Callback<List<Department>>() {
-            @Override
-            public void onResponse(Call<List<Department>> call, Response<List<Department>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    tvTotalDepartments.setText(String.valueOf(response.body().size()));
-                }
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                // Fallback or error handled silently for now
             }
-
-            @Override
-            public void onFailure(Call<List<Department>> call, Throwable t) {}
         });
 
         // Fetch Company Settings for Card
@@ -212,8 +185,8 @@ public class AdminMainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // Ensure the correct tab is highlighted
-        BottomNavHelper.setupBottomNav(this, R.id.nav_admin);
-        updateTopBar();
+        BottomNavHelper.setupBottomNav(this, -1);
+        TopBarHelper.setupTopBar(this);
         fetchStats();
     }
 }

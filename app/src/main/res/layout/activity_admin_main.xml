@@ -62,21 +62,21 @@
             android:paddingHorizontal="16dp"
             android:paddingBottom="100dp">
 
-            <!-- Quick Stats Row -->
+            <!-- Main Stats Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="2">
+                android:weightSum="2"
+                android:layout_marginBottom="8dp">
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="8dp"
+                    android:layout_margin="4dp"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp">
+                    app:cardElevation="2dp">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -109,10 +109,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="8dp"
+                    android:layout_margin="4dp"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp">
+                    app:cardElevation="2dp">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -137,6 +136,108 @@
                             android:layout_height="wrap_content"
                             android:text="Phòng ban"
                             android:textSize="12sp"
+                            android:textColor="@color/secondary" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Detailed Stats Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_marginTop="8dp">
+
+                <!-- Requests Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="1dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/tvPendingRequests"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/orangeWarning" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Đơn chờ"
+                            android:textSize="10sp"
+                            android:textColor="@color/secondary" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Tasks Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="1dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/tvOpenTasks"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/primary" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Việc mở"
+                            android:textSize="10sp"
+                            android:textColor="@color/secondary" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Attendance Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="1dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:gravity="center">
+                        <TextView
+                            android:id="@+id/tvTodayAttendance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/greenSuccess" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Có mặt"
+                            android:textSize="10sp"
                             android:textColor="@color/secondary" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>

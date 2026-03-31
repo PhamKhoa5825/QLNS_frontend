@@ -32,12 +32,6 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <ImageView
-                    android:id="@+id/ivHeaderAvatar"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone" />
                 <TextView
                     android:id="@+id/tvHeaderAvatarText"
                     android:layout_width="match_parent"
@@ -47,6 +41,12 @@
                     android:textColor="#FF8800"
                     android:textSize="18sp"
                     android:fontFamily="sans-serif-black" />
+                <ImageView
+                    android:id="@+id/ivHeaderAvatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
             </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -76,6 +76,20 @@
     </LinearLayout>
 
     <!-- Actions -->
+    <ImageView
+        android:id="@+id/btnHeaderAdd"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginEnd="16dp"
+        android:src="@android:drawable/ic_menu_add"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="2dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/btnHeaderExtra"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:tint="#344054" />
+
     <ImageView
         android:id="@+id/btnHeaderExtra"
         android:layout_width="28dp"

@@ -4,116 +4,101 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FBF8FF">
+    android:background="@color/colorBackground"
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#A855F7"
+        android:background="@color/colorBackground"
+        android:fitsSystemWindows="true"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
             app:contentInsetStart="0dp">
 
-            <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp">
-
-            <ImageView
-                android:id="@+id/btnBackDept"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="@drawable/bg_input"
-                android:backgroundTint="#B026FF"
-                android:padding="6dp"
-                android:src="@android:drawable/ic_menu_revert"
-                app:tint="@color/white" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Quản lý phòng ban"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
+            <include
+                android:id="@+id/include_top_bar"
+                layout="@layout/layout_top_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- Section Title -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:weightSum="3">
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="4dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="#7C40C1"
-                app:cardCornerRadius="16dp"
-                app:strokeWidth="0dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_sort_by_size" app:tint="@color/white" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="6" android:textColor="@color/white" android:textSize="20sp" android:textStyle="bold" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Phòng ban" android:textColor="@color/white" android:textSize="11sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                app:cardBackgroundColor="#7C40C1"
-                app:cardCornerRadius="16dp"
-                app:strokeWidth="0dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_myplaces" app:tint="@color/white" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="112" android:textColor="@color/white" android:textSize="20sp" android:textStyle="bold" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Nhân viên" android:textColor="@color/white" android:textSize="11sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:cardBackgroundColor="#7C40C1"
-                app:cardCornerRadius="16dp"
-                app:strokeWidth="0dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_recent_history" app:tint="@color/white" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="91%" android:textColor="@color/white" android:textSize="20sp" android:textStyle="bold" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Hiệu suất" android:textColor="@color/white" android:textSize="11sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                android:text="PHÒNG BAN"
+                android:textColor="@color/secondary"
+                android:textSize="11sp"
+                android:letterSpacing="0.1"
+                android:textStyle="bold" />
         </LinearLayout>
-    </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Search Bar -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_search_bar"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@android:drawable/ic_menu_search"
+                    app:tint="@color/secondary" />
+
+                <EditText
+                    android:id="@+id/edtSearchDept"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@android:color/transparent"
+                    android:hint="Tìm kiếm phòng ban..."
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewDept"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="88dp"
+            android:paddingTop="8dp" />
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -122,23 +107,23 @@
         android:layout_gravity="center"
         android:visibility="gone" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewDept"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:padding="8dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddDept"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        android:contentDescription="Thêm phòng ban"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="90dp"
         app:srcCompat="@android:drawable/ic_input_add"
-        app:backgroundTint="#9333EA"
-        app:tint="@color/white" />
+        app:backgroundTint="@color/primary"
+        app:tint="@color/on_primary"
+        app:shapeAppearanceOverlay="@style/ModernSquareFAB"
+        app:elevation="4dp" />
+
+    <include 
+        layout="@layout/layout_bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

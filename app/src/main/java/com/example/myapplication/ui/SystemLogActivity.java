@@ -23,6 +23,7 @@ import com.example.myapplication.model.SystemLog;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.utils.BottomNavHelper;
+import com.example.myapplication.utils.TopBarHelper;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -59,20 +60,11 @@ public class SystemLogActivity extends AppCompatActivity {
 
         apiService = RetrofitClient.getApiService(this);
 
-        getWindow().setStatusBarColor(Color.TRANSPARENT);
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            toolbar.setNavigationOnClickListener(v -> finish());
-            toolbar.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.action_filter) {
-                    showFilterDialog();
-                    return true;
-                }
-                return false;
-            });
+        TopBarHelper.setupTopBar(this);
+        View btnSearch = findViewById(R.id.btnHeaderExtra);
+        if (btnSearch != null) {
+            btnSearch.setVisibility(View.VISIBLE);
+            btnSearch.setOnClickListener(v -> showFilterDialog());
         }
 
         progressBar    = findViewById(R.id.progressBar);
@@ -241,14 +233,18 @@ public class SystemLogActivity extends AppCompatActivity {
             h.tvIcon.setText(log.getActionIcon());
 
             int color;
-            switch (log.action != null ? log.action : "") {
-                case "LOGIN":  color = Color.parseColor("#3B82F6"); break;
-                case "CREATE": color = Color.parseColor("#10B981"); break;
-                case "UPDATE": color = Color.parseColor("#F59E0B"); break;
-                case "DELETE": color = Color.parseColor("#EF4444"); break;
-                default:       color = Color.parseColor("#8B5CF6"); break;
+            switch (log.action != null ? log.action.toUpperCase() : "") {
+                case "LOGIN":  color = Color.parseColor("#3B82F6"); break; // Blue
+                case "CREATE": color = Color.parseColor("#10B981"); break; // Green
+                case "UPDATE": color = Color.parseColor("#F59E0B"); break; // Amber
+                case "DELETE": color = Color.parseColor("#EF4444"); break; // Red
+                case "BACKUP": color = Color.parseColor("#8B5CF6"); break; // Purple
+                case "LOGOUT": color = Color.parseColor("#64748B"); break; // Slate
+                default:       color = Color.parseColor("#94A3B8"); break; // Gray
             }
-            h.tvAction.getBackground().setTint(color);
+            if (h.tvAction.getBackground() != null) {
+                h.tvAction.getBackground().setTint(color);
+            }
         }
 
         @Override

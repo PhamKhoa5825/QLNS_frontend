@@ -140,16 +140,26 @@
                 app:cardElevation="2dp"
                 app:cardBackgroundColor="#F5F7FA">
 
-                <EditText
-                    android:id="@+id/etPassword"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@null"
-                    android:hint="••••••••"
-                    android:inputType="textPassword"
-                    android:paddingHorizontal="16dp"
-                    android:textSize="14sp"
-                    android:gravity="center_vertical" />
+                    app:hintEnabled="false"
+                    app:boxBackgroundMode="none"
+                    app:endIconMode="password_toggle"
+                    app:endIconTint="@color/colorPrimary">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent"
+                        android:hint="••••••••"
+                        android:inputType="textPassword"
+                        android:paddingHorizontal="16dp"
+                        android:textSize="14sp"
+                        android:gravity="center_vertical" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
             </androidx.cardview.widget.CardView>
 

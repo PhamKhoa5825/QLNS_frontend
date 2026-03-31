@@ -24,16 +24,35 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/tvRequestAvatar"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/bg_avatar_circle"
-                android:backgroundTint="#EFF6FF"
-                android:gravity="center"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/tvRequestAvatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_avatar_circle"
+                        android:backgroundTint="#EFF6FF"
+                        android:gravity="center"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/ivRequestAvatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -137,41 +156,7 @@
             android:textSize="12sp"
             android:visibility="gone" />
 
-        <!-- Nút hành động (Duyệt/Từ chối) -->
-        <LinearLayout
-            android:id="@+id/layoutActions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            android:weightSum="2">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnApprove"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="6dp"
-                android:text="Duyệt"
-                android:textAllCaps="false"
-                android:textSize="14sp"
-                app:backgroundTint="#10B981"
-                app:cornerRadius="10dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnReject"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
-                android:text="Từ chối"
-                android:textAllCaps="false"
-                android:textColor="#EF4444"
-                android:textSize="14sp"
-                app:cornerRadius="10dp"
-                app:strokeColor="#EF4444" />
-        </LinearLayout>
 
         <!-- Nút Hủy đơn (dành cho chính chủ sở hữu đơn) -->
         <com.google.android.material.button.MaterialButton

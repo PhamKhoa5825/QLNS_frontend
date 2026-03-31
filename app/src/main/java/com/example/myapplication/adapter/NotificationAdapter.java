@@ -14,7 +14,12 @@ import com.example.myapplication.R;
 import com.example.myapplication.model.Notification;
 import com.google.android.material.chip.Chip;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
 
@@ -55,24 +60,39 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         
         holder.tvTitle.setText(notification.getTitle());
         holder.tvMessage.setText(notification.getContent());
-        holder.tvTime.setText(notification.getCreatedAt());
+        holder.tvTime.setText(formatDate(notification.getCreatedAt()));
 
-        // Unread indicator
-        holder.unreadIndicator.setVisibility(notification.isRead() ? View.GONE : View.VISIBLE);
+        // Unread indicator via background tint and bold text
+        if (!notification.isRead()) {
+            holder.cardNotification.setCardBackgroundColor(Color.parseColor("#EFF6FF")); // Light blue
+            holder.tvTitle.setTypeface(null, android.graphics.Typeface.BOLD);
+            holder.tvMessage.setTypeface(null, android.graphics.Typeface.BOLD);
+            holder.tvMessage.setTextColor(Color.parseColor("#111827"));
+        } else {
+            holder.cardNotification.setCardBackgroundColor(Color.WHITE);
+            holder.tvTitle.setTypeface(null, android.graphics.Typeface.NORMAL);
+            holder.tvMessage.setTypeface(null, android.graphics.Typeface.NORMAL);
+            holder.tvMessage.setTextColor(Color.parseColor("#6B7280"));
+        }
 
-        // Category Badge
+        // Category Badge styling
         String targetType = notification.getTargetType();
         if (targetType != null) {
-            holder.chipCategory.setText(targetType);
+            holder.chipCategory.setVisibility(View.VISIBLE);
+            holder.chipCategory.setText(getTranslatedTargetType(targetType));
+            
             if ("COMPANY".equals(targetType)) {
-                holder.chipCategory.setChipBackgroundColorResource(android.R.color.holo_blue_light);
+                holder.chipCategory.setChipBackgroundColor(android.content.res.ColorStateList.valueOf(Color.parseColor("#1565C0")));
                 holder.chipCategory.setTextColor(Color.WHITE);
+                holder.chipCategory.setChipStrokeWidth(0);
             } else if ("DEPARTMENT".equals(targetType)) {
-                holder.chipCategory.setChipBackgroundColorResource(android.R.color.holo_green_light);
+                holder.chipCategory.setChipBackgroundColor(android.content.res.ColorStateList.valueOf(Color.parseColor("#2E7D32")));
                 holder.chipCategory.setTextColor(Color.WHITE);
+                holder.chipCategory.setChipStrokeWidth(0);
             } else {
-                holder.chipCategory.setChipBackgroundColorResource(android.R.color.darker_gray);
+                holder.chipCategory.setChipBackgroundColor(android.content.res.ColorStateList.valueOf(Color.parseColor("#616161")));
                 holder.chipCategory.setTextColor(Color.WHITE);
+                holder.chipCategory.setChipStrokeWidth(0);
             }
         } else {
             holder.chipCategory.setVisibility(View.GONE);
@@ -90,15 +110,39 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         return notificationList != null ? notificationList.size() : 0;
     }
 
+    private String formatDate(String isoString) {
+        if (isoString == null || isoString.isEmpty()) return "";
+        try {
+            // ISO 8601 format: 2026-03-30T07:30:31
+            SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+            isoFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date date = isoFormat.parse(isoString);
+            
+            SimpleDateFormat displayFormat = new SimpleDateFormat("HH:mm dd/MM", Locale.getDefault());
+            return displayFormat.format(date);
+        } catch (ParseException e) {
+            return isoString; // Trả về chuỗi gốc nếu lỗi
+        }
+    }
+
+    private String getTranslatedTargetType(String type) {
+        if ("COMPANY".equals(type)) return "Công ty";
+        if ("DEPARTMENT".equals(type)) return "Phòng ban";
+        if ("INDIVIDUAL".equals(type)) return "Cá nhân";
+        if ("SPECIFIC_USERS".equals(type)) return "Cá nhân";
+        return type;
+    }
+
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {
-        View unreadIndicator, iconBackground;
+        View iconBackground;
+        com.google.android.material.card.MaterialCardView cardNotification;
         TextView tvTitle, tvMessage, tvTime;
         Chip chipCategory;
         android.widget.ImageView ivIcon;
 
         public NotificationViewHolder(@NonNull View itemView) {
             super(itemView);
-            unreadIndicator = itemView.findViewById(R.id.unreadIndicator);
+            cardNotification = itemView.findViewById(R.id.cardNotification);
             iconBackground = itemView.findViewById(R.id.iconBackground);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvMessage = itemView.findViewById(R.id.tvMessage);

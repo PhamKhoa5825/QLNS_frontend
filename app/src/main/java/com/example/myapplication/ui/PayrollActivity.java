@@ -17,6 +17,7 @@ import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.utils.BottomNavHelper;
 import com.example.myapplication.utils.SharedPrefsManager;
+import com.example.myapplication.utils.TopBarHelper;
 
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,7 +42,6 @@ public class PayrollActivity extends AppCompatActivity {
     private View layoutDraftWarning;
     private TextView tvGrossSalaryLabel;
     private ImageButton btnPrevMonth, btnNextMonth;
-    private TextView tvHeaderName, tvHeaderDept, tvHeaderAvatarText;
     private android.view.View containerProfileLink;
 
     private int currentMonth;
@@ -67,12 +67,17 @@ public class PayrollActivity extends AppCompatActivity {
         currentYear = cal.get(Calendar.YEAR);
 
         initViews();
-        setupTopBar();
         updateMonthDisplay();
         fetchPayroll();
         fetchAttendanceSummary();
 
         BottomNavHelper.setupBottomNav(this, -1); // No nav item active for payroll screen
+    }
+ 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        TopBarHelper.setupTopBar(this);
     }
 
     private void initViews() {
@@ -100,9 +105,6 @@ public class PayrollActivity extends AppCompatActivity {
         btnPrevMonth = findViewById(R.id.btnPrevMonth);
         btnNextMonth = findViewById(R.id.btnNextMonth);
         containerProfileLink = findViewById(R.id.containerProfileLink);
-        tvHeaderName = findViewById(R.id.tvHeaderName);
-        tvHeaderDept = findViewById(R.id.tvHeaderDept);
-        tvHeaderAvatarText = findViewById(R.id.tvHeaderAvatarText);
 
         btnPrevMonth.setOnClickListener(v -> {
             currentMonth--;
@@ -126,18 +128,6 @@ public class PayrollActivity extends AppCompatActivity {
         rvCalendar.setAdapter(attendanceAdapter);
     }
 
-    private void setupTopBar() {
-        SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
-        String name = prefs.getFullName();
-        String dept = prefs.getDepartmentName();
-        String username = prefs.getUsername();
-        if (tvHeaderName != null) tvHeaderName.setText(name.isEmpty() ? username : name);
-        if (tvHeaderDept != null) tvHeaderDept.setText(dept != null ? dept : "No Department");
-        if (tvHeaderAvatarText != null && !username.isEmpty())
-            tvHeaderAvatarText.setText(String.valueOf(username.charAt(0)).toUpperCase());
-        if (containerProfileLink != null)
-            containerProfileLink.setOnClickListener(v -> startActivity(new android.content.Intent(this, ProfileActivity.class)));
-    }
 
     private void updateMonthDisplay() {
         tvMonthYear.setText(String.format("Tháng %02d / %d", currentMonth, currentYear));

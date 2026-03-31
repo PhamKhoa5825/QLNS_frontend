@@ -4,31 +4,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
+    android:layout_marginHorizontal="24dp"
     android:layout_marginTop="12dp"
     android:layout_marginBottom="4dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="0dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp"
     app:strokeWidth="1dp"
     app:strokeColor="#E6E0E9"
-    app:cardBackgroundColor="?attr/colorSurface">
+    app:cardBackgroundColor="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/imgDeptIcon"
+        <!-- Icon Container -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardDeptIcon"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="#EADDFF"
-            android:padding="10dp"
-            android:src="@android:drawable/ic_menu_sort_by_size"
+            app:cardCornerRadius="24dp"
+            app:cardBackgroundColor="#EADDFF"
+            app:strokeWidth="0dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
-            app:tint="#21005D" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imgDeptIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/outline_apartment_24"
+                app:tint="#21005D" />
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/tvDeptName"
@@ -37,12 +48,12 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
             android:text="Công nghệ thông tin"
-            android:textColor="#1D1B20"
+            android:textColor="#181C1E"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/imgNext"
-            app:layout_constraintStart_toEndOf="@id/imgDeptIcon"
-            app:layout_constraintTop_toTopOf="@id/imgDeptIcon" />
+            app:layout_constraintEnd_toStartOf="@+id/tvEmpCount"
+            app:layout_constraintStart_toEndOf="@id/cardDeptIcon"
+            app:layout_constraintTop_toTopOf="@id/cardDeptIcon" />
 
         <TextView
             android:id="@+id/tvManagerName"
@@ -52,70 +63,67 @@
             android:text="Trưởng phòng: Nguyễn Văn A"
             android:textColor="#49454F"
             android:textSize="13sp"
-            app:layout_constraintEnd_toEndOf="@id/tvDeptName"
-            app:layout_constraintStart_toStartOf="@id/tvDeptName"
+            app:layout_constraintEnd_toEndOf="@+id/tvDeptName"
+            app:layout_constraintStart_toStartOf="@+id/tvDeptName"
             app:layout_constraintTop_toBottomOf="@id/tvDeptName" />
 
         <TextView
             android:id="@+id/tvEmpCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:drawableStart="@android:drawable/ic_menu_myplaces"
-            android:drawablePadding="4dp"
-            android:gravity="center_vertical"
+            android:background="@drawable/bg_chip_unselected"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
             android:text="25 người"
-            android:textColor="#49454F"
-            android:textSize="12sp"
-            app:drawableTint="#49454F"
-            app:layout_constraintStart_toStartOf="@id/tvDeptName"
-            app:layout_constraintTop_toBottomOf="@id/tvManagerName" />
-
-        <ImageView
-            android:id="@+id/imgNext"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@android:drawable/ic_media_next"
-            app:layout_constraintBottom_toBottomOf="@id/imgDeptIcon"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/imgDeptIcon"
-            app:tint="#CAC4D0" />
-
-        <TextView
-            android:id="@+id/labelPerf"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Hiệu suất làm việc"
-            android:textColor="#49454F"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvEmpCount" />
-
-        <TextView
-            android:id="@+id/tvPerformanceStr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="92%"
-            android:textColor="#1D1B20"
-            android:textSize="12sp"
+            android:textColor="@color/secondary"
+            android:textSize="11sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/labelPerf"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/labelPerf" />
+            app:layout_constraintTop_toTopOf="@id/cardDeptIcon" />
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/progressBar"
+        <!-- Progress/Performance section -->
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:progress="92"
-            app:indicatorColor="#6750A4"
-            app:trackColor="#E6E0E9"
-            app:trackCornerRadius="4dp"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/labelPerf" />
+            app:layout_constraintStart_toStartOf="@id/tvDeptName"
+            app:layout_constraintTop_toBottomOf="@id/tvManagerName">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hiệu suất làm việc"
+                    android:textColor="#49454F"
+                    android:textSize="11sp" />
+                <TextView
+                    android:id="@+id/tvPerformanceStr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="92%"
+                    android:textColor="#1D1B20"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <!-- Using standard ProgressBar for better compatibility with current styles -->
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:max="100"
+                android:progress="92"
+                android:progressTint="@color/primary"
+                android:progressBackgroundTint="#E6E0E9" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

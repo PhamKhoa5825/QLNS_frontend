@@ -15,6 +15,7 @@ import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.utils.SharedPrefsManager;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,7 +23,8 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText etUsername, etPassword;
+    private EditText etUsername;
+    private TextInputEditText etPassword;
     private MaterialButton btnLogin;
 
     @Override
@@ -71,8 +73,14 @@ public class LoginActivity extends AppCompatActivity {
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
+        View tvForgot = findViewById(R.id.tvForgotPassword);
 
         btnLogin.setOnClickListener(v -> handleLogin());
+        if (tvForgot != null) {
+            tvForgot.setOnClickListener(v -> 
+                Toast.makeText(this, "Vui lòng liên hệ Admin để cấp lại mật khẩu", Toast.LENGTH_LONG).show()
+            );
+        }
     }
 
     private void handleLogin() {
@@ -138,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
                     SharedPrefsManager prefs = SharedPrefsManager.getInstance(LoginActivity.this);
                     prefs.setFullName(emp.getFullName());
                     prefs.setDepartmentName(emp.getDepartment());
+                    prefs.setAvatarUrl(emp.getAvatarUrl());
                 }
                 // Proceed to Dashboard regardless of success (fallback to username happens there)
                 startActivity(new Intent(LoginActivity.this, DashboardActivity.class));

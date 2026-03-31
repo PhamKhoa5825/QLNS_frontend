@@ -14,6 +14,7 @@ public class SharedPrefsManager {
     private static final String KEY_EMPLOYEE_ID = "employee_id";
     private static final String KEY_FULL_NAME = "full_name";
     private static final String KEY_DEPT_NAME = "dept_name";
+    private static final String KEY_AVATAR_URL = "avatar_url";
 
     private static SharedPrefsManager mInstance;
     private static Context mCtx;
@@ -68,6 +69,13 @@ public class SharedPrefsManager {
         editor.putString(KEY_DEPT_NAME, deptName);
         editor.apply();
     }
+ 
+    public void setAvatarUrl(String avatarUrl) {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_AVATAR_URL, avatarUrl);
+        editor.apply();
+    }
 
     public boolean isLoggedIn() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -112,6 +120,11 @@ public class SharedPrefsManager {
     public String getDepartmentName() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_DEPT_NAME, "");
+    }
+ 
+    public String getAvatarUrl() {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(KEY_AVATAR_URL, "");
     }
 
     public void logout() {

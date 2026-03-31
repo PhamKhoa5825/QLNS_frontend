@@ -13,11 +13,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.adapter.EmployeeAdapter;
 import com.example.myapplication.model.*;
+import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.utils.BottomNavHelper;
 import com.example.myapplication.utils.SharedPrefsManager;
+import com.example.myapplication.utils.TopBarHelper;
 import com.example.myapplication.viewmodel.EmployeeViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
@@ -36,9 +39,7 @@ public class EmployeeActivity extends AppCompatActivity {
     private EditText edtSearch;
     private FloatingActionButton fabAdd;
     private TextView tvTotal, tvWorking, tvResigned;
-    private TextView tvHeaderName, tvHeaderDept, tvHeaderAvatarText;
-    private View btnHeaderNotifications, btnHeaderExtra, containerProfileLink;
-    private ImageView ivHeaderAvatar;
+    private View btnHeaderAdd;
 
     private EmployeeViewModel viewModel;
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
@@ -61,6 +62,12 @@ public class EmployeeActivity extends AppCompatActivity {
         
         BottomNavHelper.setupBottomNav(this, R.id.nav_people);
     }
+ 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        TopBarHelper.setupTopBar(this);
+    }
 
     private void loadDataByRole() {
         // Backend handles filtering automatically based on JWT role (Admin sees all, Manager sees their dept)
@@ -75,23 +82,7 @@ public class EmployeeActivity extends AppCompatActivity {
         tvWorking   = findViewById(R.id.tvWorking);
         tvResigned  = findViewById(R.id.tvResigned);
 
-        // Top Bar
-        tvHeaderName = findViewById(R.id.tvHeaderName);
-        tvHeaderDept = findViewById(R.id.tvHeaderDept);
-        tvHeaderAvatarText = findViewById(R.id.tvHeaderAvatarText);
-        ivHeaderAvatar = findViewById(R.id.ivHeaderAvatar);
-        btnHeaderNotifications = findViewById(R.id.btnHeaderNotifications);
-        btnHeaderExtra = findViewById(R.id.btnHeaderExtra);
-        containerProfileLink = findViewById(R.id.containerProfileLink);
-
-        setupTopBar();
-        
-        if (btnHeaderNotifications != null) {
-            btnHeaderNotifications.setOnClickListener(v -> startActivity(new android.content.Intent(this, NotificationActivity.class)));
-        }
-        if (containerProfileLink != null) {
-            containerProfileLink.setOnClickListener(v -> startActivity(new android.content.Intent(this, ProfileActivity.class)));
-        }
+        btnHeaderAdd = findViewById(R.id.btnHeaderAdd);
 
         recyclerView = findViewById(R.id.recyclerViewEmployee);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -101,25 +92,19 @@ public class EmployeeActivity extends AppCompatActivity {
 
         SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
         String role = prefs.getRole();
-        if ("ADMIN".equals(role)) {
+        if ("ADMIN".equals(role) || "MANAGER".equals(role)) {
             fabAdd.setVisibility(View.VISIBLE);
             fabAdd.setOnClickListener(v -> showAddEmployeeDialog());
+            if (btnHeaderAdd != null) {
+                btnHeaderAdd.setVisibility(View.VISIBLE);
+                btnHeaderAdd.setOnClickListener(v -> showAddEmployeeDialog());
+            }
         } else {
             fabAdd.setVisibility(View.GONE);
+            if (btnHeaderAdd != null) btnHeaderAdd.setVisibility(View.GONE);
         }
     }
 
-    private void setupTopBar() {
-        SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
-        String name = prefs.getFullName();
-        String dept = prefs.getDepartmentName();
-        
-        if (tvHeaderName != null) tvHeaderName.setText(name.isEmpty() ? prefs.getUsername() : name);
-        if (tvHeaderDept != null) tvHeaderDept.setText(dept);
-        if (tvHeaderAvatarText != null && !name.isEmpty()) {
-            tvHeaderAvatarText.setText(String.valueOf(name.charAt(0)).toUpperCase());
-        }
-    }
 
     private void observeViewModel() {
         viewModel.employees.observe(this, list -> {
@@ -174,9 +159,9 @@ public class EmployeeActivity extends AppCompatActivity {
             if ("ACTIVE".equalsIgnoreCase(e.getStatusRaw())) working++;
         }
 
-        tvTotal.setText("All " + total);
-        tvWorking.setText("Online " + working);
-        tvResigned.setText("Engineering " + (total - working));
+        tvTotal.setText("Tất cả: " + total);
+        tvWorking.setText("Đang làm việc: " + working);
+        tvResigned.setText("Đã nghỉ việc: " + (total - working));
     }
 
     private void showFilterDialog() {
@@ -266,76 +251,107 @@ public class EmployeeActivity extends AppCompatActivity {
         BottomSheetDialog dialog = new BottomSheetDialog(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_employee_detail, null);
 
-        ((TextView) view.findViewById(R.id.tvDialogAvatar)).setText(employee.getAvatarText());
-        ((TextView) view.findViewById(R.id.tvDialogName)).setText(employee.getFullName());
-        ((TextView) view.findViewById(R.id.tvDialogRole)).setText(employee.getRole());
-
-        trySetText(view, R.id.tvDialogEmail, employee.getEmail());
-        trySetText(view, R.id.tvDialogPhone, employee.getPhone());
-        trySetText(view, R.id.tvDialogDept, employee.getDepartment());
-        trySetText(view, R.id.tvDialogStatus, employee.getStatus());
-        trySetText(view, R.id.tvDialogJoinDate, employee.getJoinDate());
-
-        // Salary row: only visible to Admin
-        View layoutSalaryRow = view.findViewById(R.id.layoutSalaryRow);
-        TextView tvDialogSalary = view.findViewById(R.id.tvDialogSalary);
-        View btnSetSalary = view.findViewById(R.id.btnSetSalary);
-        String role = SharedPrefsManager.getInstance(this).getRole();
-
-        if ("ADMIN".equals(role)) {
-            layoutSalaryRow.setVisibility(View.VISIBLE);
-
-            // Display current salary
-            Double salary = employee.getBaseSalary();
-            if (salary != null && salary > 0) {
-                java.text.NumberFormat fmt = java.text.NumberFormat.getInstance(new java.util.Locale("vi", "VN"));
-                tvDialogSalary.setText(fmt.format(salary.longValue()) + " ₫");
-            } else {
-                tvDialogSalary.setText("Chưa thiết lập");
-            }
-
-            // Set salary button opens an AlertDialog
-            btnSetSalary.setOnClickListener(v -> {
-                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-                builder.setTitle("Thiết lập lương cơ bản");
-
-                EditText etSalary = new EditText(this);
-                etSalary.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
-                etSalary.setHint("Nhập lương (VD: 15000000)");
-                if (salary != null && salary > 0) {
-                    etSalary.setText(String.valueOf(salary.longValue()));
-                }
-
-                int padPx = (int) (16 * getResources().getDisplayMetrics().density);
-                android.widget.FrameLayout container = new android.widget.FrameLayout(this);
-                android.widget.FrameLayout.LayoutParams params = new android.widget.FrameLayout.LayoutParams(
-                        android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
-                        android.widget.FrameLayout.LayoutParams.WRAP_CONTENT);
-                params.setMargins(padPx, 0, padPx, 0);
-                etSalary.setLayoutParams(params);
-                container.addView(etSalary);
-                builder.setView(container);
-
-                builder.setPositiveButton("Lưu", (d, which) -> {
-                    String input = etSalary.getText().toString().trim();
-                    if (input.isEmpty()) {
-                        Toast.makeText(this, "Vui lòng nhập mức lương", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    double newSalary = Double.parseDouble(input);
-                    updateEmployeeSalary(employee.getId(), newSalary, tvDialogSalary);
-                });
-                builder.setNegativeButton("Hủy", null);
-                builder.show();
-            });
+        // Bind Basic Info
+        TextView tvAvatar = view.findViewById(R.id.tvDialogAvatar);
+        ImageView ivAvatar = view.findViewById(R.id.ivDialogAvatar);
+        TextView tvName = view.findViewById(R.id.tvDialogName);
+        TextView tvRole = view.findViewById(R.id.tvDialogRole);
+        TextView tvEmail = view.findViewById(R.id.tvDialogEmail);
+        TextView tvPhone = view.findViewById(R.id.tvDialogPhone);
+        TextView tvDept = view.findViewById(R.id.tvDialogDept);
+        TextView tvStatus = view.findViewById(R.id.tvDialogStatus);
+        TextView tvJoinDate = view.findViewById(R.id.tvDialogJoinDate);
+ 
+        String avatarUrl = employee.getAvatarUrl();
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            if (ivAvatar != null) ivAvatar.setVisibility(View.VISIBLE);
+            if (tvAvatar != null) tvAvatar.setVisibility(View.GONE);
+            Glide.with(this)
+                    .load(avatarUrl)
+                    .circleCrop()
+                    .into(ivAvatar);
         } else {
-            layoutSalaryRow.setVisibility(View.GONE);
+            if (ivAvatar != null) ivAvatar.setVisibility(View.GONE);
+            if (tvAvatar != null) {
+                tvAvatar.setVisibility(View.VISIBLE);
+                tvAvatar.setText(employee.getAvatarText());
+            }
+        }
+        if (tvName != null) tvName.setText(employee.getFullName());
+        if (tvRole != null) tvRole.setText(employee.getPosition());
+        if (tvEmail != null) tvEmail.setText(employee.getEmail());
+        if (tvPhone != null) tvPhone.setText(employee.getPhone());
+        if (tvDept != null) tvDept.setText(employee.getDepartmentName());
+        if (tvStatus != null) tvStatus.setText(employee.getStatus());
+        if (tvJoinDate != null) tvJoinDate.setText(employee.getJoinDate());
+
+        // View Details (Full Screen)
+        Button btnViewDetail = view.findViewById(R.id.btnViewDetail);
+        if (btnViewDetail != null) {
+            btnViewDetail.setOnClickListener(v -> {
+                dialog.dismiss();
+                android.content.Intent intent = new android.content.Intent(this, EmployeeDetailActivity.class);
+                intent.putExtra("employeeId", employee.getId());
+                startActivity(intent);
+            });
         }
 
-        view.findViewById(R.id.btnCloseDialog).setOnClickListener(v -> dialog.dismiss());
+        // Close Button
+        View btnClose = view.findViewById(R.id.btnCloseDialog);
+        if (btnClose != null) {
+            btnClose.setOnClickListener(v -> dialog.dismiss());
+        }
+
+        // Admin Actions
+        SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
+        String currentRole = prefs.getRole();
+        Button btnEdit = view.findViewById(R.id.btnEditEmployeeQuick);
+
+        if ("ADMIN".equals(currentRole) || "MANAGER".equals(currentRole)) {
+            if (btnEdit != null) {
+                btnEdit.setVisibility(View.VISIBLE);
+                btnEdit.setOnClickListener(v -> {
+                    dialog.dismiss();
+                    android.content.Intent intent = new android.content.Intent(this, AddEditEmployeeActivity.class);
+                    intent.putExtra("employeeId", employee.getId());
+                    startActivity(intent);
+                });
+            }
+        } else {
+            if (btnEdit != null) btnEdit.setVisibility(View.GONE);
+        }
+
         dialog.setContentView(view);
         dialog.show();
     }
+
+    private void confirmResign(Employee emp) {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Xác nhận nghỉ việc")
+                .setMessage("Cho nhân viên " + emp.getFullName() + " nghỉ việc? Thao tác này sẽ cập nhật trạng thái nhân viên thành Đã nghỉ việc.")
+                .setPositiveButton("Xác nhận", (dialog, which) -> {
+                    com.example.myapplication.network.RetrofitClient.getApiService(this)
+                            .resignEmployee(emp.getId())
+                            .enqueue(new retrofit2.Callback<Void>() {
+                                @Override
+                                public void onResponse(retrofit2.Call<Void> call, retrofit2.Response<Void> response) {
+                                    if (response.isSuccessful()) {
+                                        Toast.makeText(EmployeeActivity.this, "Đã cập nhật trạng thái nghỉ việc", Toast.LENGTH_SHORT).show();
+                                        viewModel.loadEmployees(); // Reload list
+                                    } else {
+                                        Toast.makeText(EmployeeActivity.this, "Lỗi khi xử lý nghỉ việc", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                @Override
+                                public void onFailure(retrofit2.Call<Void> call, Throwable t) {
+                                    Toast.makeText(EmployeeActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                })
+                .setNegativeButton("Huỷ", null)
+                .show();
+    }
+
 
     private void updateEmployeeSalary(Long empId, double salary, TextView tvToUpdate) {
         com.example.myapplication.network.ApiService apiService =
@@ -368,7 +384,8 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void showAddEmployeeDialog() {
-        Toast.makeText(this, "Mở màn hình thêm nhân viên", Toast.LENGTH_SHORT).show();
+        android.content.Intent intent = new android.content.Intent(this, AddEditEmployeeActivity.class);
+        startActivity(intent);
     }
 
     @Override

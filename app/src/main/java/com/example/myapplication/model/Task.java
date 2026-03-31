@@ -39,6 +39,9 @@ public class Task {
     @SerializedName("createdAt")
     private String createdAt;
 
+    @SerializedName("assignedToAvatarUrl")
+    private String assignedToAvatarUrl;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -74,4 +77,7 @@ public class Task {
 
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+
+    public String getAssignedToAvatarUrl() { return assignedToAvatarUrl; }
+    public void setAssignedToAvatarUrl(String assignedToAvatarUrl) { this.assignedToAvatarUrl = assignedToAvatarUrl; }
 }

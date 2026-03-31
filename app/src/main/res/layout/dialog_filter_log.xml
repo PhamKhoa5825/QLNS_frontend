@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
     android:fillViewport="true">
 
     <LinearLayout
@@ -10,82 +12,127 @@
         android:orientation="vertical"
         android:padding="24dp">
 
+        <!-- Handle for BottomSheet -->
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:background="#E2E8F0" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lọc nhật ký"
-            android:textSize="18sp"
+            android:text="Lọc nhật ký hệ thống"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="@color/textColorPrimary" />
+            android:textColor="#1E293B"
+            android:fontFamily="sans-serif-medium" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Tìm kiếm và lọc các hoạt động trong hệ thống"
+            android:textSize="13sp"
+            android:textColor="#64748B" />
 
         <!-- Lọc theo Action (dropdown) -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:hint="Loại thao tác"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
 
             <AutoCompleteTextView
                 android:id="@+id/actvAction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
+                android:inputType="none"
+                android:padding="16dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Lọc theo nhân viên (vừa gõ vừa chọn từ danh sách) -->
+        <!-- Lọc theo nhân viên -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Nhân viên"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+            android:layout_marginTop="16dp"
+            android:hint="Tên nhân viên / Username"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
 
             <AutoCompleteTextView
                 android:id="@+id/actvEmployee"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:completionThreshold="1" />
+                android:completionThreshold="1"
+                android:padding="16dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Lọc theo phòng ban (vừa gõ vừa chọn) -->
+        <!-- Lọc theo phòng ban -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="Phòng ban"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
 
             <AutoCompleteTextView
                 android:id="@+id/actvDepartment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:completionThreshold="1" />
+                android:completionThreshold="1"
+                android:padding="16dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Lọc theo chức vụ (vừa gõ vừa chọn) -->
+        <!-- Lọc theo chức vụ -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="Chức vụ"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp">
 
             <AutoCompleteTextView
                 android:id="@+id/actvPosition"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:completionThreshold="1" />
+                android:completionThreshold="1"
+                android:padding="16dp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Lọc theo ngày -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal">
 
             <com.google.android.material.textfield.TextInputLayout
@@ -94,14 +141,21 @@
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
                 android:hint="Từ ngày"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/primary"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etFromDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
-                    android:clickable="true" />
+                    android:clickable="true"
+                    android:padding="16dp"
+                    android:drawableEnd="@android:drawable/ic_menu_my_calendar" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -109,38 +163,58 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:hint="Đến ngày"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="@color/primary"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etToDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
-                    android:clickable="true" />
+                    android:clickable="true"
+                    android:padding="16dp"
+                    android:drawableEnd="@android:drawable/ic_menu_my_calendar" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
-        <!-- Buttons -->
+        <!-- Spacer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp" />
+
+        <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="end">
+            android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnReset"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
                 android:text="Đặt lại"
+                android:textColor="#64748B"
+                app:backgroundTint="#F1F5F9"
+                app:cornerRadius="12dp"
                 style="@style/Widget.MaterialComponents.Button.TextButton" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnApply"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="Áp dụng" />
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="2"
+                android:text="Áp dụng bộ lọc"
+                android:textColor="@color/white"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="12dp"
+                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="6dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tvAttDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="2026-03-25"
+            android:textSize="13sp"
+            android:textColor="@color/textColorPrimary" />
+
+        <TextView
+            android:id="@+id/tvAttTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            android:text="07:55 → 17:30"
+            android:textSize="13sp"
+            android:textColor="@color/textColorSecondary"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/tvAttStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đúng giờ"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

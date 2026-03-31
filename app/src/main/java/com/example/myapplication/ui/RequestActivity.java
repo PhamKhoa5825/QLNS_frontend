@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.adapter.RequestAdapter;
 import com.example.myapplication.model.CreateRequestRequest;
@@ -34,6 +35,7 @@ import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.utils.BottomNavHelper;
 import com.example.myapplication.utils.SharedPrefsManager;
+import com.example.myapplication.utils.TopBarHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,12 +55,7 @@ public class RequestActivity extends AppCompatActivity {
     private TextView tvLeaveBalance;
     private LinearLayout layoutLeaveBalance;
     private com.google.android.material.floatingactionbutton.FloatingActionButton fabAddRequest;
-    
-    // Top Bar views
-    private TextView tvHeaderName, tvHeaderDept, tvHeaderAvatarText;
-    private View btnHeaderNotifications, btnHeaderExtra, containerProfileLink;
-    private ImageView ivHeaderAvatar;
-    
+
     // Current state
     private Long currentDeptId; 
     private Long currentEmployeeId;
@@ -81,6 +78,8 @@ public class RequestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request);
+        BottomNavHelper.setupBottomNav(this, R.id.nav_request);
+        TopBarHelper.setupTopBar(this);
 
         SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
         currentDeptId = prefs.getDepartmentId();
@@ -94,13 +93,21 @@ public class RequestActivity extends AppCompatActivity {
         initViews();
         setupRecyclerView();
         setupListeners();
-        setupTopBar();
         
         fetchLeaveBalance();
         // Fetch initially
         fetchRequests("ALL");
 
-        BottomNavHelper.setupBottomNav(this, R.id.nav_request);
+        if (getIntent().getBooleanExtra("OPEN_CREATE_DIALOG", false)) {
+            String preselect = getIntent().getStringExtra("PRESELECT_TYPE");
+            showCreateRequestDialog(preselect);
+        }
+    }
+ 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        TopBarHelper.setupTopBar(this);
     }
 
     private void initViews() {
@@ -122,14 +129,7 @@ public class RequestActivity extends AppCompatActivity {
         btnExtraFilter = findViewById(R.id.btnExtraFilter);
         tvSelectedExtra = findViewById(R.id.tvSelectedExtra);
 
-        // Top Bar
-        tvHeaderName = findViewById(R.id.tvHeaderName);
-        tvHeaderDept = findViewById(R.id.tvHeaderDept);
-        tvHeaderAvatarText = findViewById(R.id.tvHeaderAvatarText);
-        ivHeaderAvatar = findViewById(R.id.ivHeaderAvatar);
-        btnHeaderNotifications = findViewById(R.id.btnHeaderNotifications);
-        btnHeaderExtra = findViewById(R.id.btnHeaderExtra);
-        containerProfileLink = findViewById(R.id.containerProfileLink);
+        tvLeaveBalance = findViewById(R.id.tvLeaveBalance);
 
         // FAB tạo đơn: hiện cho tất cả nhân viên
         fabAddRequest.setVisibility(android.view.View.VISIBLE);
@@ -145,28 +145,14 @@ public class RequestActivity extends AppCompatActivity {
         updateChipUI(chipAll);
     }
 
-    private void setupTopBar() {
-        SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
-        String name = prefs.getFullName();
-        String dept = prefs.getDepartmentName();
-        String username = prefs.getUsername();
-
-        if (tvHeaderName != null) tvHeaderName.setText(name.isEmpty() ? username : name);
-        if (tvHeaderDept != null) tvHeaderDept.setText(dept != null ? dept : "No Department");
-        if (tvHeaderAvatarText != null && !username.isEmpty()) {
-            tvHeaderAvatarText.setText(String.valueOf(username.charAt(0)).toUpperCase());
-        }
-
-        if (containerProfileLink != null) {
-            containerProfileLink.setOnClickListener(v -> {
-                startActivity(new android.content.Intent(this, ProfileActivity.class));
-            });
-        }
-    }
-
     private void setupRecyclerView() {
         recyclerViewRequest.setLayoutManager(new LinearLayoutManager(this));
         adapter = new RequestAdapter(this, requestList, new RequestAdapter.OnRequestActionClickListener() {
+            @Override
+            public void onItemClick(Request request) {
+                showRequestDetailDialog(request);
+            }
+
             @Override
             public void onApprove(Request request) {
                 updateRequestStatus(request.getId(), "APPROVED");
@@ -428,6 +414,7 @@ public class RequestActivity extends AppCompatActivity {
                             allRequests.add(r);
                         }
                     }
+                    sortRequestsByDate(allRequests);
                     requestList = allRequests;
                     adapter.setRequestList(requestList);
                 }
@@ -505,6 +492,7 @@ public class RequestActivity extends AppCompatActivity {
         }
         
         allRequests = new ArrayList<>(map.values());
+        sortRequestsByDate(allRequests);
         requestList = allRequests;
         adapter.setRequestList(requestList);
         android.util.Log.d("RequestActivity", "Merged list size: " + allRequests.size() + " for status: " + filterStatus + ", selectedEmpId: " + selectedEmpId);
@@ -516,11 +504,22 @@ public class RequestActivity extends AppCompatActivity {
             public void onResponse(Call<List<Request>> call, Response<List<Request>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     allRequests = response.body();
+                    sortRequestsByDate(allRequests);
                     requestList = allRequests;
                     adapter.setRequestList(requestList);
                 }
             }
             @Override public void onFailure(Call<List<Request>> call, Throwable t) {}
+        });
+    }
+
+    private void sortRequestsByDate(List<Request> list) {
+        if (list == null) return;
+        java.util.Collections.sort(list, (r1, r2) -> {
+            String d1 = r1.getCreatedAt() != null ? r1.getCreatedAt() : "";
+            String d2 = r2.getCreatedAt() != null ? r2.getCreatedAt() : "";
+            // Descending lexicographical sort for ISO date strings works for "Newest First"
+            return d2.compareTo(d1);
         });
     }
 
@@ -596,18 +595,224 @@ public class RequestActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    private void setBadge(TextView tv, String text, String color) {
+        tv.setText(text);
+        tv.setTextColor(android.graphics.Color.WHITE);
+        android.graphics.drawable.GradientDrawable gd = new android.graphics.drawable.GradientDrawable();
+        gd.setColor(android.graphics.Color.parseColor(color));
+        gd.setCornerRadius(40f);
+        tv.setBackground(gd);
+    }
+
+    private void showRequestDetailDialog(Request request) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_request_detail);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        
+        TextView tvDetailAvatar = dialog.findViewById(R.id.tvDetailAvatar);
+        com.google.android.material.imageview.ShapeableImageView ivDetailAvatar = dialog.findViewById(R.id.ivDetailAvatar);
+        TextView tvDetailEmployeeName = dialog.findViewById(R.id.tvDetailEmployeeName);
+        TextView tvDetailDept = dialog.findViewById(R.id.tvDetailDept);
+        TextView tvDetailTitle = dialog.findViewById(R.id.tvDetailTitle);
+        TextView tvDetailStatus = dialog.findViewById(R.id.tvDetailStatus);
+        TextView tvDetailDates = dialog.findViewById(R.id.tvDetailDates);
+        TextView tvDetailDesc = dialog.findViewById(R.id.tvDetailDesc);
+        TextView tvDetailEvidenceUrl = dialog.findViewById(R.id.tvDetailEvidenceUrl);
+        TextView tvDetailDate = dialog.findViewById(R.id.tvDetailDate);
+        TextView tvDetailReviewer = dialog.findViewById(R.id.tvDetailReviewer);
+        TextView tvDetailRejection = dialog.findViewById(R.id.tvDetailRejection);
+        Button btnDetailClose = dialog.findViewById(R.id.btnDetailClose);
+
+        LinearLayout layoutDetailActions = dialog.findViewById(R.id.layoutDetailActions);
+        Button btnDetailApprove = dialog.findViewById(R.id.btnDetailApprove);
+        Button btnDetailReject = dialog.findViewById(R.id.btnDetailReject);
+
+        // Header Info
+        String empName = request.getEmployeeName() != null ? request.getEmployeeName() : "Unknown";
+        tvDetailEmployeeName.setText(empName);
+        tvDetailDept.setText(request.getDepartmentName() != null ? request.getDepartmentName() : "N/A");
+        
+        // Avatar logic
+        if (tvDetailAvatar != null) {
+            String trimmed = empName.trim();
+            if (!trimmed.isEmpty()) {
+                String[] parts = trimmed.split(" ");
+                String lastWord = parts[parts.length - 1];
+                tvDetailAvatar.setText(!lastWord.isEmpty() ? String.valueOf(lastWord.charAt(0)).toUpperCase() : "?");
+            } else {
+                tvDetailAvatar.setText("?");
+            }
+        }
+
+        if (ivDetailAvatar != null) {
+            String avatarUrl = request.getEmployeeAvatarUrl();
+            if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                String fullUrl = avatarUrl.startsWith("http") ? avatarUrl : RetrofitClient.BASE_URL + avatarUrl;
+                Glide.with(this).load(fullUrl).circleCrop().into(ivDetailAvatar);
+                ivDetailAvatar.setVisibility(View.VISIBLE);
+                if (tvDetailAvatar != null) tvDetailAvatar.setVisibility(View.GONE);
+            } else {
+                ivDetailAvatar.setVisibility(View.GONE);
+                if (tvDetailAvatar != null) tvDetailAvatar.setVisibility(View.VISIBLE);
+            }
+        }
+
+        // Type and Title
+        String typeStr = "Khác";
+        if (request.getType() != null) {
+            switch (request.getType()) {
+                case LEAVE_ANNUAL: typeStr = "Nghỉ phép năm"; break;
+                case LEAVE_UNPAID: typeStr = "Nghỉ không lương"; break;
+                case SICK_LEAVE: typeStr = "Nghỉ ốm (BHXH chi trả)"; break;
+                case OVERTIME: typeStr = "Làm thêm giờ"; break;
+                case BUSINESS_TRIP: typeStr = "Công tác"; break;
+                case PUNCH_CORRECTION: typeStr = "Giải trình chấm công"; break;
+                case RESIGNATION: typeStr = "Đơn xin thôi việc"; break;
+            }
+        }
+        tvDetailTitle.setText(typeStr);
+
+        // Status Badge
+        String status = request.getStatus();
+        if ("PENDING".equalsIgnoreCase(status)) {
+            setBadge(tvDetailStatus, "CHỜ DUYỆT", "#F59E0B");
+        } else if ("APPROVED".equalsIgnoreCase(status)) {
+            setBadge(tvDetailStatus, "ĐÃ DUYỆT", "#10B981");
+        } else if ("REJECTED".equalsIgnoreCase(status)) {
+            setBadge(tvDetailStatus, "TỪ CHỐI", "#EF4444");
+        } else if ("CANCELLED".equalsIgnoreCase(status)) {
+            setBadge(tvDetailStatus, "ĐÃ HỦY", "#6B7280");
+        } else {
+            setBadge(tvDetailStatus, status != null ? status.toUpperCase() : "UNK", "#6B7280");
+        }
+
+        // Description
+        tvDetailDesc.setText(request.getDescription() != null ? request.getDescription() : "Không có lý do");
+
+        // Dates Detail
+        if (request.getDetails() != null && !request.getDetails().isEmpty()) {
+            tvDetailDates.setVisibility(View.VISIBLE);
+            StringBuilder datesBuilder = new StringBuilder();
+            for (int i = 0; i < request.getDetails().size(); i++) {
+                com.example.myapplication.model.RequestDetail d = request.getDetails().get(i);
+                
+                String dateStr = d.getSpecificDate() != null ? d.getSpecificDate() : "Chưa xác định";
+                try {
+                    // Try to format YYYY-MM-DD to DD/MM/YYYY
+                    if (dateStr.length() >= 10 && dateStr.contains("-")) {
+                        dateStr = dateStr.substring(8, 10) + "/" + dateStr.substring(5, 7) + "/" + dateStr.substring(0, 4);
+                    }
+                } catch (Exception ignored) {}
+
+                datesBuilder.append("• ").append(dateStr);
+                
+                if ((request.getType() == com.example.myapplication.model.RequestType.LEAVE_ANNUAL
+                        || request.getType() == com.example.myapplication.model.RequestType.LEAVE_UNPAID
+                        || request.getType() == com.example.myapplication.model.RequestType.SICK_LEAVE) && d.getLeaveSession() != null) {
+                    datesBuilder.append(" (");
+                    switch (d.getLeaveSession()) {
+                        case MORNING: datesBuilder.append("Sáng"); break;
+                        case AFTERNOON: datesBuilder.append("Chiều"); break;
+                        case ALL_DAY: datesBuilder.append("Cả ngày"); break;
+                    }
+                    datesBuilder.append(")");
+                } else if (request.getType() == com.example.myapplication.model.RequestType.OVERTIME && d.getOvertimeHours() != null) {
+                    datesBuilder.append(" (").append(d.getOvertimeHours()).append("h)");
+                }
+                if (i < request.getDetails().size() - 1) datesBuilder.append("\n");
+            }
+            tvDetailDates.setText(datesBuilder.toString());
+        }
+
+        // Evidence
+        if (request.getFileUrl() != null && !request.getFileUrl().isEmpty()) {
+            tvDetailEvidenceUrl.setVisibility(View.VISIBLE);
+            tvDetailEvidenceUrl.setText("Đính kèm: " + (request.getFileName() != null ? request.getFileName() : "Xem tài liệu"));
+            tvDetailEvidenceUrl.setOnClickListener(v -> {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(request.getFileUrl()));
+                startActivity(browserIntent);
+            });
+        }
+
+        // Creation Date
+        String iso = request.getCreatedAt();
+        if (iso != null) {
+            try {
+                String datePart = iso.length() >= 10 ? iso.substring(8, 10) + "/" + iso.substring(5, 7) + "/" + iso.substring(0, 4) : iso;
+                String timePart = iso.length() >= 16 ? " " + iso.substring(11, 16) : "";
+                tvDetailDate.setText("Gửi lúc: " + timePart.trim() + " - " + datePart);
+            } catch (Exception e) {
+                tvDetailDate.setText("Gửi lúc: " + iso);
+            }
+        }
+
+        // Reviewer
+        if (request.getReviewedByName() != null && !request.getReviewedByName().isEmpty()) {
+            tvDetailReviewer.setVisibility(View.VISIBLE);
+            tvDetailReviewer.setText("Người duyệt: " + request.getReviewedByName());
+            
+            String updateIso = request.getUpdatedAt();
+            if (updateIso != null) {
+                try {
+                    String datePart = updateIso.length() >= 10 ? updateIso.substring(8, 10) + "/" + updateIso.substring(5, 7) + "/" + updateIso.substring(0, 4) : updateIso;
+                    String timePart = updateIso.length() >= 16 ? " " + updateIso.substring(11, 16) : "";
+                    tvDetailReviewer.setText("Người duyệt: " + request.getReviewedByName() + " lúc " + timePart.trim() + " - " + datePart);
+                } catch (Exception ignored) {}
+            }
+        }
+
+        // Rejection
+        if ("REJECTED".equalsIgnoreCase(status) && request.getRejectionReason() != null) {
+            tvDetailRejection.setVisibility(View.VISIBLE);
+            tvDetailRejection.setText("Lý do từ chối: " + request.getRejectionReason());
+        }
+
+        // Action Buttons logic
+        boolean isOwnRequest = (request.getEmployeeId() != null && request.getEmployeeId().equals(currentEmployeeId));
+        if ("PENDING".equalsIgnoreCase(status) && !isOwnRequest && ("MANAGER".equalsIgnoreCase(userRole) || "ADMIN".equalsIgnoreCase(userRole))) {
+            layoutDetailActions.setVisibility(View.VISIBLE);
+        } else {
+            layoutDetailActions.setVisibility(View.GONE);
+        }
+
+        btnDetailApprove.setOnClickListener(v -> {
+            updateRequestStatus(request.getId(), "APPROVED");
+            dialog.dismiss();
+        });
+
+        btnDetailReject.setOnClickListener(v -> {
+            showRejectDialog(request);
+            dialog.dismiss();
+        });
+
+        btnDetailClose.setOnClickListener(v -> dialog.dismiss());
+        
+        dialog.show();
+    }
+
     private void showCreateRequestDialog() {
+        showCreateRequestDialog(null);
+    }
+
+    private void showCreateRequestDialog(String preselectType) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_request_create);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         com.example.myapplication.model.RequestType[] types = com.example.myapplication.model.RequestType.values();
-        String[] typeNames = {"Nghỉ phép năm", "Nghỉ không lương", "Nghỉ ốm", "Làm thêm giờ", "Công tác", "Bổ sung công"};
+        String[] typeNames = {"Nghỉ phép năm", "Nghỉ không lương", "Nghỉ ốm", "Làm thêm giờ", "Công tác", "Bổ sung công", "Thôi việc"};
         android.widget.Spinner spinnerType = dialog.findViewById(R.id.spinnerRequestType);
         android.widget.ArrayAdapter<String> typeAdapter = new android.widget.ArrayAdapter<>(this, android.R.layout.simple_spinner_item, typeNames);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerType.setAdapter(typeAdapter);
+
+        // Pre-select if requested
+        if (preselectType != null) {
+            if ("OVERTIME".equals(preselectType)) spinnerType.setSelection(3);
+            else if ("BUSINESS_TRIP".equals(preselectType)) spinnerType.setSelection(4);
+        }
 
         EditText edtTitle = dialog.findViewById(R.id.edtRequestTitle);
         EditText edtDesc = dialog.findViewById(R.id.edtRequestDesc);
@@ -615,6 +820,14 @@ public class RequestActivity extends AppCompatActivity {
         TextView btnAddDate = dialog.findViewById(R.id.btnAddDate);
         Button btnCancel = dialog.findViewById(R.id.btnRequestCancel);
         Button btnSubmit = dialog.findViewById(R.id.btnRequestSubmit);
+        ImageView btnModalClose = dialog.findViewById(R.id.btnModalClose);
+        android.widget.RelativeLayout layoutDateSelection = dialog.findViewById(R.id.layoutDateSelection);
+        
+        if (btnModalClose != null) {
+            btnModalClose.setOnClickListener(v -> dialog.dismiss());
+        }
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
 
         // Evidence UI
         android.widget.LinearLayout layoutEvidence = dialog.findViewById(R.id.layoutEvidence);
@@ -644,6 +857,21 @@ public class RequestActivity extends AppCompatActivity {
                     btnSuggest.setVisibility(View.VISIBLE);
                 } else {
                     btnSuggest.setVisibility(View.GONE);
+                }
+
+                // Nếu là đơn THÔI VIỆC: Ẩn nút "Thêm ngày" và giữ lại duy nhất 1 dòng
+                if (currentType[0] == com.example.myapplication.model.RequestType.RESIGNATION) {
+                    btnAddDate.setVisibility(View.GONE);
+                    if (layoutDateSelection != null) layoutDateSelection.setVisibility(View.GONE);
+                    containerDateDetails.setVisibility(View.GONE);
+                    // Nếu lỡ có nhiều hơn 1 dòng thì xóa bớt
+                    while (containerDateDetails.getChildCount() > 1) {
+                        containerDateDetails.removeViewAt(containerDateDetails.getChildCount() - 1);
+                    }
+                } else {
+                    btnAddDate.setVisibility(View.VISIBLE);
+                    if (layoutDateSelection != null) layoutDateSelection.setVisibility(View.VISIBLE);
+                    containerDateDetails.setVisibility(View.VISIBLE);
                 }
 
                 // Update all existing rows
@@ -689,47 +917,49 @@ public class RequestActivity extends AppCompatActivity {
             }
 
             List<com.example.myapplication.model.RequestDetail> details = new ArrayList<>();
-            for (int i = 0; i < containerDateDetails.getChildCount(); i++) {
-                View row = containerDateDetails.getChildAt(i);
-                TextView tvDate = row.findViewById(R.id.tvSelectedDate);
-                String dateStr = tvDate.getText().toString();
-                if (dateStr.isEmpty() || dateStr.contains("Chọn ngày")) {
-                    Toast.makeText(this, "Vui lòng chọn ngày cho tất cả các dòng", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                com.example.myapplication.model.RequestDetail detail = new com.example.myapplication.model.RequestDetail();
-                detail.setSpecificDate(dateStr);
-
-                if (currentType[0] == com.example.myapplication.model.RequestType.LEAVE_ANNUAL
-                        || currentType[0] == com.example.myapplication.model.RequestType.LEAVE_UNPAID
-                        || currentType[0] == com.example.myapplication.model.RequestType.SICK_LEAVE) {
-                    android.widget.Spinner spinnerSession = row.findViewById(R.id.spinnerSession);
-                    detail.setLeaveSession(com.example.myapplication.model.LeaveSession.values()[spinnerSession.getSelectedItemPosition()]);
-                } else if (currentType[0] == com.example.myapplication.model.RequestType.OVERTIME) {
-                    EditText edtHours = row.findViewById(R.id.edtOvertimeHours);
-                    String hoursStr = edtHours.getText().toString();
-                    if (hoursStr.isEmpty()) {
-                        Toast.makeText(this, "Vui lòng nhập số giờ làm thêm", Toast.LENGTH_SHORT).show();
+            if (currentType[0] != com.example.myapplication.model.RequestType.RESIGNATION) {
+                for (int i = 0; i < containerDateDetails.getChildCount(); i++) {
+                    View row = containerDateDetails.getChildAt(i);
+                    TextView tvDate = row.findViewById(R.id.tvSelectedDate);
+                    String dateStr = tvDate.getText().toString();
+                    if (dateStr.isEmpty() || dateStr.contains("Chọn ngày") || dateStr.contains("Ngày làm việc cuối cùng")) {
+                        Toast.makeText(this, "Vui lòng chọn ngày cho tất cả các dòng", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    detail.setOvertimeHours(Double.parseDouble(hoursStr));
-                } else if (currentType[0] == com.example.myapplication.model.RequestType.PUNCH_CORRECTION) {
-                    TextView tvIn = row.findViewById(R.id.tvCheckIn);
-                    TextView tvOut = row.findViewById(R.id.tvCheckOut);
-                    String inTime = tvIn.getText().toString();
-                    String outTime = tvOut.getText().toString();
-                    if (inTime.isEmpty() || inTime.contains("Vào") || outTime.isEmpty() || outTime.contains("Ra")) {
-                        Toast.makeText(this, "Vui lòng chọn đầy đủ giờ vào và giờ ra", Toast.LENGTH_SHORT).show();
-                        return;
+
+                    com.example.myapplication.model.RequestDetail detail = new com.example.myapplication.model.RequestDetail();
+                    detail.setSpecificDate(dateStr);
+
+                    if (currentType[0] == com.example.myapplication.model.RequestType.LEAVE_ANNUAL
+                            || currentType[0] == com.example.myapplication.model.RequestType.LEAVE_UNPAID
+                            || currentType[0] == com.example.myapplication.model.RequestType.SICK_LEAVE) {
+                        android.widget.Spinner spinnerSession = row.findViewById(R.id.spinnerSession);
+                        detail.setLeaveSession(com.example.myapplication.model.LeaveSession.values()[spinnerSession.getSelectedItemPosition()]);
+                    } else if (currentType[0] == com.example.myapplication.model.RequestType.OVERTIME) {
+                        EditText edtHours = row.findViewById(R.id.edtOvertimeHours);
+                        String hoursStr = edtHours.getText().toString();
+                        if (hoursStr.isEmpty()) {
+                            Toast.makeText(this, "Vui lòng nhập số giờ làm thêm", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        detail.setOvertimeHours(Double.parseDouble(hoursStr));
+                    } else if (currentType[0] == com.example.myapplication.model.RequestType.PUNCH_CORRECTION) {
+                        TextView tvIn = row.findViewById(R.id.tvCheckIn);
+                        TextView tvOut = row.findViewById(R.id.tvCheckOut);
+                        String inTime = tvIn.getText().toString();
+                        String outTime = tvOut.getText().toString();
+                        if (inTime.isEmpty() || inTime.contains("Vào") || outTime.isEmpty() || outTime.contains("Ra")) {
+                            Toast.makeText(this, "Vui lòng chọn đầy đủ giờ vào và giờ ra", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        detail.setCheckIn(inTime);
+                        detail.setCheckOut(outTime);
                     }
-                    detail.setCheckIn(inTime);
-                    detail.setCheckOut(outTime);
+                    details.add(detail);
                 }
-                details.add(detail);
             }
 
-            if (details.isEmpty()) {
+            if (details.isEmpty() && currentType[0] != com.example.myapplication.model.RequestType.RESIGNATION) {
                 Toast.makeText(this, "Vui lòng thêm ít nhất một ngày", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -1061,11 +1291,17 @@ public class RequestActivity extends AppCompatActivity {
             edtOvertime.setVisibility(View.VISIBLE);
             tvCheckIn.setVisibility(View.GONE);
             tvCheckOut.setVisibility(View.GONE);
-        } else if (type == com.example.myapplication.model.RequestType.PUNCH_CORRECTION) {
+        } else if (type == com.example.myapplication.model.RequestType.RESIGNATION) {
             spinnerSession.setVisibility(View.GONE);
             edtOvertime.setVisibility(View.GONE);
-            tvCheckIn.setVisibility(View.VISIBLE);
-            tvCheckOut.setVisibility(View.VISIBLE);
+            tvCheckIn.setVisibility(View.GONE);
+            tvCheckOut.setVisibility(View.GONE);
+            
+            // Đổi hint cho ngày của đơn thôi việc
+            TextView tvDate = row.findViewById(R.id.tvSelectedDate);
+            if (tvDate.getText().toString().isEmpty() || tvDate.getText().toString().equals("Chọn ngày")) {
+                tvDate.setText("Ngày làm việc cuối cùng");
+            }
         } else {
             spinnerSession.setVisibility(View.GONE);
             edtOvertime.setVisibility(View.GONE);
@@ -1083,6 +1319,7 @@ public class RequestActivity extends AppCompatActivity {
             case OVERTIME: return "Làm thêm giờ";
             case BUSINESS_TRIP: return "Công tác";
             case PUNCH_CORRECTION: return "Bổ sung công";
+            case RESIGNATION: return "Thôi việc";
             default: return "Khác";
         }
     }

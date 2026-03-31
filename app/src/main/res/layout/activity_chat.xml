@@ -6,11 +6,12 @@
     android:background="@color/surface">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:background="@color/surface"
         android:fitsSystemWindows="true"
-        app:elevation="0dp">
+        app:elevation="12dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
@@ -25,44 +26,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <!-- Section Title (Tương tự Dashboard) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- Section Title -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="24dp"
-            android:paddingVertical="12dp">
+            android:paddingTop="16dp"
+            android:paddingBottom="4dp">
             
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MESSAGES"
+                android:text="TIN NHẮN"
                 android:textColor="@color/secondary"
                 android:textSize="11sp"
                 android:letterSpacing="0.1"
                 android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chat (Tin nhắn)"
-                android:textColor="@color/on_surface"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                android:layout_marginTop="4dp" />
         </LinearLayout>
 
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvRooms"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:clipToPadding="false"
-        android:paddingBottom="88dp"
-        android:paddingTop="8dp" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvRooms"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="88dp"
+            android:paddingTop="8dp" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvEmpty"
@@ -91,10 +90,11 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="90dp"
         android:contentDescription="@string/chat_add_room"
-        android:src="@drawable/ic_chat_add"
+        app:srcCompat="@android:drawable/ic_input_add"
         app:backgroundTint="@color/primary"
-        app:elevation="4dp"
-        app:tint="@android:color/white" />
+        app:tint="@color/on_primary"
+        app:shapeAppearanceOverlay="@style/ModernSquareFAB"
+        app:elevation="4dp" />
 
     <include 
         layout="@layout/layout_bottom_nav"

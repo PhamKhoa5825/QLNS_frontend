@@ -16,7 +16,6 @@ import com.example.myapplication.ui.DashboardActivity;
 import com.example.myapplication.ui.EmployeeActivity;
 import com.example.myapplication.ui.TaskActivity;
 import com.example.myapplication.ui.RequestActivity;
-import com.example.myapplication.ui.AdminMainActivity;
 import android.widget.FrameLayout;
 
 public class BottomNavHelper {
@@ -27,15 +26,8 @@ public class BottomNavHelper {
         FrameLayout navChat = activity.findViewById(R.id.nav_chat);
         FrameLayout navTasks = activity.findViewById(R.id.nav_tasks);
         FrameLayout navRequest = activity.findViewById(R.id.nav_request);
-        FrameLayout navAdmin = activity.findViewById(R.id.nav_admin);
 
         if (navHome == null) return; // Bottom nav not presented
-
-        // Handle Admin visibility
-        String role = SharedPrefsManager.getInstance(activity).getRole();
-        if ("ADMIN".equals(role) && navAdmin != null) {
-            navAdmin.setVisibility(View.VISIBLE);
-        }
 
         // Set click listeners
         navHome.setOnClickListener(v -> navigate(activity, currentNavItemId, R.id.nav_home, DashboardActivity.class));
@@ -43,9 +35,6 @@ public class BottomNavHelper {
         navChat.setOnClickListener(v -> navigate(activity, currentNavItemId, R.id.nav_chat, ChatActivity.class));
         navTasks.setOnClickListener(v -> navigate(activity, currentNavItemId, R.id.nav_tasks, TaskActivity.class));
         navRequest.setOnClickListener(v -> navigate(activity, currentNavItemId, R.id.nav_request, RequestActivity.class));
-        if (navAdmin != null) {
-            navAdmin.setOnClickListener(v -> navigate(activity, currentNavItemId, R.id.nav_admin, AdminMainActivity.class));
-        }
 
         // Update visual states
         updateItemState(activity, activity.findViewById(R.id.pill_home), R.id.icon_home, R.id.text_home, currentNavItemId == R.id.nav_home);
@@ -53,9 +42,6 @@ public class BottomNavHelper {
         updateItemState(activity, activity.findViewById(R.id.pill_chat), R.id.icon_chat, R.id.text_chat, currentNavItemId == R.id.nav_chat);
         updateItemState(activity, activity.findViewById(R.id.pill_tasks), R.id.icon_tasks, R.id.text_tasks, currentNavItemId == R.id.nav_tasks);
         updateItemState(activity, activity.findViewById(R.id.pill_request), R.id.icon_request, R.id.text_request, currentNavItemId == R.id.nav_request);
-        if (navAdmin != null && navAdmin.getVisibility() == View.VISIBLE) {
-            updateItemState(activity, activity.findViewById(R.id.pill_admin), R.id.icon_admin, R.id.text_admin, currentNavItemId == R.id.nav_admin);
-        }
     }
 
     private static void navigate(Activity activity, int currentId, int targetId, Class<?> targetClass) {

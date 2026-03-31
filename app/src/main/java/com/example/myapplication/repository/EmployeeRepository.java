@@ -67,7 +67,8 @@ public class EmployeeRepository {
     }
 
     public void getMyProfile(RepositoryCallback<Employee> callback) {
-        apiService.getMyProfile().enqueue(new Callback<Employee>() {
+        Long empId = prefsManager.getEmployeeId();
+        apiService.getMyProfile(empId).enqueue(new Callback<Employee>() {
             @Override
             public void onResponse(Call<Employee> call, Response<Employee> response) {
                 if (response.isSuccessful() && response.body() != null) {

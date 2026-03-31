@@ -8,9 +8,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.model.Employee;
-
+ 
+import android.widget.ImageView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +50,22 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
         holder.tvName.setText(emp.getFullName());
         holder.tvRole.setText(emp.getRole());
         holder.tvDepartment.setText(emp.getDepartment());
-        holder.tvAvatar.setText(emp.getAvatarText());
+ 
+        String avatarUrl = emp.getAvatarUrl();
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            holder.ivAvatar.setVisibility(View.VISIBLE);
+            holder.tvAvatar.setVisibility(View.GONE);
+            Glide.with(holder.itemView.getContext())
+                    .load(avatarUrl)
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_user_placeholder)
+                    .into(holder.ivAvatar);
+        } else {
+            holder.ivAvatar.setVisibility(View.GONE);
+            holder.tvAvatar.setVisibility(View.VISIBLE);
+            holder.tvAvatar.setText(emp.getAvatarText());
+        }
+ 
         holder.tvStatus.setText(emp.getStatus());
 
         if (emp.isWorking()) {
@@ -67,6 +84,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvRole, tvDepartment, tvAvatar, tvStatus;
+        ImageView ivAvatar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -74,6 +92,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.ViewHo
             tvRole       = itemView.findViewById(R.id.tvRole);
             tvDepartment = itemView.findViewById(R.id.tvDepartment);
             tvAvatar     = itemView.findViewById(R.id.tvAvatar);
+            ivAvatar     = itemView.findViewById(R.id.ivAvatar);
             tvStatus     = itemView.findViewById(R.id.tvStatus);
         }
     }

@@ -16,18 +16,44 @@ import com.example.myapplication.model.SalaryRecord;
 import com.example.myapplication.ui.PayrollActivity;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class AdminPayrollAdapter extends RecyclerView.Adapter<AdminPayrollAdapter.ViewHolder> {
 
     private final Context context;
-    private final List<SalaryRecord> payrollList;
+    private List<SalaryRecord> payrollList;
+    private List<SalaryRecord> payrollListFull;
     private static final NumberFormat fmt = NumberFormat.getInstance(new Locale("vi", "VN"));
 
     public AdminPayrollAdapter(Context context, List<SalaryRecord> payrollList) {
         this.context = context;
         this.payrollList = payrollList;
+        this.payrollListFull = new ArrayList<>(payrollList);
+    }
+
+    public void updateList(List<SalaryRecord> newList) {
+        this.payrollList = newList;
+        this.payrollListFull = new ArrayList<>(newList);
+        notifyDataSetChanged();
+    }
+
+    public void filter(String query) {
+        if (query == null || query.isEmpty()) {
+            payrollList = new ArrayList<>(payrollListFull);
+        } else {
+            List<SalaryRecord> filtered = new ArrayList<>();
+            String lowerQuery = query.toLowerCase().trim();
+            for (SalaryRecord r : payrollListFull) {
+                if ((r.getEmployeeName() != null && r.getEmployeeName().toLowerCase().contains(lowerQuery)) ||
+                    (r.getDepartmentName() != null && r.getDepartmentName().toLowerCase().contains(lowerQuery))) {
+                    filtered.add(r);
+                }
+            }
+            payrollList = filtered;
+        }
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -57,24 +83,27 @@ public class AdminPayrollAdapter extends RecyclerView.Adapter<AdminPayrollAdapte
         String status = record.getStatus() != null ? record.getStatus() : "ESTIMATE";
         switch (status) {
             case "FINALIZED":
+            case "PAID":
                 holder.tvStatus.setText("ĐÃ CHỐT");
-                holder.tvStatus.setTextColor(Color.parseColor("#10B981")); // Green
-                holder.tvStatus.setBackgroundResource(R.drawable.bg_status_working); 
+                holder.tvStatus.setTextColor(context.getResources().getColor(R.color.greenSuccess));
+                holder.tvStatus.setBackgroundResource(R.drawable.bg_status_pill);
+                holder.tvStatus.getBackground().setTint(context.getResources().getColor(R.color.success_bg));
                 break;
             case "DRAFT":
-                holder.tvStatus.setText("NHÁP");
-                holder.tvStatus.setTextColor(Color.parseColor("#3B82F6")); // Blue
-                holder.tvStatus.setBackgroundResource(R.drawable.bg_chip_unselected);
+                holder.tvStatus.setText("BẢN NHÁP");
+                holder.tvStatus.setTextColor(context.getResources().getColor(R.color.primary));
+                holder.tvStatus.setBackgroundResource(R.drawable.bg_status_pill);
+                holder.tvStatus.getBackground().setTint(context.getResources().getColor(R.color.soft_primary));
                 break;
             default:
-                holder.tvStatus.setText("ƯỚC TÍNH");
-                holder.tvStatus.setTextColor(Color.parseColor("#F97316")); // Orange
-                holder.tvStatus.setBackgroundResource(R.drawable.bg_chip_unselected);
+                holder.tvStatus.setText("TẠM TÍNH");
+                holder.tvStatus.setTextColor(context.getResources().getColor(R.color.orangeWarning));
+                holder.tvStatus.setBackgroundResource(R.drawable.bg_status_pill);
+                holder.tvStatus.getBackground().setTint(context.getResources().getColor(R.color.icon_bg_amber));
                 break;
         }
 
         holder.itemView.setOnClickListener(v -> {
-            // Open detail view (reusing PayrollActivity but maybe with extra Admin controls)
             Intent intent = new Intent(context, PayrollActivity.class);
             intent.putExtra("employeeId", record.getEmployeeId());
             intent.putExtra("month", record.getMonth());

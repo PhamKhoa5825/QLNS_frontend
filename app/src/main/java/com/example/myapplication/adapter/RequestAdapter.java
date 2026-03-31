@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +25,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
     private OnRequestActionClickListener listener;
 
     public interface OnRequestActionClickListener {
+        void onItemClick(Request request);
         void onApprove(Request request);
         void onReject(Request request);
         void onCancel(Request request);
@@ -50,19 +53,38 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
     public void onBindViewHolder(@NonNull RequestViewHolder holder, int position) {
         Request request = requestList.get(position);
 
-        // ── Avatar chữ cái đầu ──
-        if (request.getEmployeeName() != null && !request.getEmployeeName().isEmpty()) {
-            String trimmed = request.getEmployeeName().trim();
-            if (!trimmed.isEmpty()) {
-                String[] parts = trimmed.split(" ");
-                String lastWord = parts[parts.length - 1];
-                holder.tvRequestAvatar.setText(!lastWord.isEmpty()
-                        ? String.valueOf(lastWord.charAt(0)).toUpperCase() : "?");
-            } else {
-                holder.tvRequestAvatar.setText("?");
+        // ── Avatar & Initial Stacking ──
+        String empName = request.getEmployeeName() != null ? request.getEmployeeName() : "Unknown";
+        String initial = "?";
+        if (!empName.trim().isEmpty()) {
+            String[] parts = empName.trim().split(" ");
+            String lastWord = parts[parts.length - 1];
+            initial = !lastWord.isEmpty() ? String.valueOf(lastWord.charAt(0)).toUpperCase() : "?";
+        }
+        holder.tvRequestAvatar.setText(initial);
+        holder.tvRequestAvatar.setVisibility(View.VISIBLE);
+
+        String avatarUrl = request.getEmployeeAvatarUrl();
+        if (avatarUrl != null && !avatarUrl.isEmpty() && !avatarUrl.equalsIgnoreCase("null")) {
+            String finalUrl = avatarUrl;
+            if (!finalUrl.startsWith("http")) {
+                String baseUrl = com.example.myapplication.network.RetrofitClient.BASE_URL;
+                if (baseUrl.endsWith("/") && finalUrl.startsWith("/")) {
+                    finalUrl = baseUrl + finalUrl.substring(1);
+                } else if (!baseUrl.endsWith("/") && !finalUrl.startsWith("/")) {
+                    finalUrl = baseUrl + "/" + finalUrl;
+                } else {
+                    finalUrl = baseUrl + finalUrl;
+                }
             }
+            holder.ivRequestAvatar.setVisibility(View.VISIBLE);
+            Glide.with(context)
+                    .load(finalUrl)
+                    .circleCrop()
+                    .error(R.drawable.ic_user_placeholder)
+                    .into(holder.ivRequestAvatar);
         } else {
-            holder.tvRequestAvatar.setText("?");
+            holder.ivRequestAvatar.setVisibility(View.GONE);
         }
 
         // ── Thông tin cơ bản ──
@@ -78,6 +100,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
                 case SICK_LEAVE: typeStr = "NGHỈ ỐM"; break;
                 case OVERTIME: typeStr = "LÀM THÊM GIỜ"; break;
                 case BUSINESS_TRIP: typeStr = "CÔNG TÁC"; break;
+                case RESIGNATION: typeStr = "THÔI VIỆC"; break;
             }
         }
         if (request.getType() == com.example.myapplication.model.RequestType.SICK_LEAVE) {
@@ -148,20 +171,12 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
 
         if ("PENDING".equalsIgnoreCase(status)) {
             setBadge(holder.tvRequestStatus, "CHỜ DUYỆT", "#F59E0B");
-            if ("EMPLOYEE".equalsIgnoreCase(currentRole) || isOwnRequest) {
-                holder.layoutActions.setVisibility(View.GONE);
-                holder.btnCancelRequest.setVisibility(isOwnRequest ? View.VISIBLE : View.GONE);
-            } else {
-                holder.layoutActions.setVisibility(View.VISIBLE);
-                holder.btnCancelRequest.setVisibility(View.GONE);
-            }
+            holder.btnCancelRequest.setVisibility(isOwnRequest ? View.VISIBLE : View.GONE);
         } else if ("APPROVED".equalsIgnoreCase(status)) {
             setBadge(holder.tvRequestStatus, "ĐÃ DUYỆT", "#10B981");
-            holder.layoutActions.setVisibility(View.GONE);
             holder.btnCancelRequest.setVisibility(View.GONE);
         } else if ("REJECTED".equalsIgnoreCase(status)) {
             setBadge(holder.tvRequestStatus, "TỪ CHỐI", "#EF4444");
-            holder.layoutActions.setVisibility(View.GONE);
             holder.btnCancelRequest.setVisibility(View.GONE);
             if (request.getRejectionReason() != null && !request.getRejectionReason().isEmpty()) {
                 holder.tvRejectionReason.setVisibility(View.VISIBLE);
@@ -169,9 +184,12 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
             } else {
                 holder.tvRejectionReason.setVisibility(View.GONE);
             }
+        } else if ("CANCELLED".equalsIgnoreCase(status) || "CANCELED".equalsIgnoreCase(status)) {
+            setBadge(holder.tvRequestStatus, "ĐÃ HỦY", "#6B7280");
+            holder.btnCancelRequest.setVisibility(View.GONE);
+            holder.tvRejectionReason.setVisibility(View.GONE);
         } else {
             setBadge(holder.tvRequestStatus, status != null ? status.toUpperCase() : "UNK", "#6B7280");
-            holder.layoutActions.setVisibility(View.GONE);
             holder.btnCancelRequest.setVisibility(View.GONE);
         }
 
@@ -184,12 +202,8 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
         }
 
         // Action Buttons
-        holder.btnApprove.setOnClickListener(v -> {
-            if (listener != null) listener.onApprove(request);
-        });
-
-        holder.btnReject.setOnClickListener(v -> {
-            if (listener != null) listener.onReject(request);
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onItemClick(request);
         });
 
         holder.btnCancelRequest.setOnClickListener(v -> {
@@ -223,12 +237,13 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
 
     public static class RequestViewHolder extends RecyclerView.ViewHolder {
         TextView tvRequestAvatar, tvRequestEmployeeName, tvRequestDept, tvRequestTitle, tvRequestDesc, tvRequestDate, tvRequestStatus, tvRequestReviewer, tvRejectionReason;
-        LinearLayout layoutActions;
-        Button btnApprove, btnReject, btnCancelRequest;
+        ImageView ivRequestAvatar;
+        Button btnCancelRequest;
 
         public RequestViewHolder(@NonNull View itemView) {
             super(itemView);
             tvRequestAvatar = itemView.findViewById(R.id.tvRequestAvatar);
+            ivRequestAvatar = itemView.findViewById(R.id.ivRequestAvatar);
             tvRequestEmployeeName = itemView.findViewById(R.id.tvRequestEmployeeName);
             tvRequestDept = itemView.findViewById(R.id.tvRequestDept);
             tvRequestTitle = itemView.findViewById(R.id.tvRequestTitle);
@@ -237,9 +252,6 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
             tvRequestStatus = itemView.findViewById(R.id.tvRequestStatus);
             tvRequestReviewer = itemView.findViewById(R.id.tvRequestReviewer);
             tvRejectionReason = itemView.findViewById(R.id.tvRejectionReason);
-            layoutActions = itemView.findViewById(R.id.layoutActions);
-            btnApprove = itemView.findViewById(R.id.btnApprove);
-            btnReject = itemView.findViewById(R.id.btnReject);
             btnCancelRequest = itemView.findViewById(R.id.btnCancelRequest);
         }
     }

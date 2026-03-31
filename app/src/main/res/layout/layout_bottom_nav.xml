@@ -193,41 +193,4 @@
         </LinearLayout>
     </FrameLayout>
 
-    <!-- Admin (Conditional Visibility) -->
-    <FrameLayout
-        android:id="@+id/nav_admin"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:visibility="gone">
-        <LinearLayout
-            android:id="@+id/pill_admin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:paddingVertical="8dp"
-            android:paddingHorizontal="12dp">
-            <ImageView
-                android:id="@+id/icon_admin"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_nav_admin"
-                app:tint="@color/secondary" />
-            <TextView
-                android:id="@+id/text_admin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="Quản trị"
-                android:textColor="@color/secondary"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:visibility="gone" />
-        </LinearLayout>
-    </FrameLayout>
-
 </LinearLayout>

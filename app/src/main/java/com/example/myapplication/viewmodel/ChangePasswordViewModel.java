@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.myapplication.model.ChangePasswordRequest;
 import com.example.myapplication.network.RetrofitClient;
 
 import java.util.HashMap;
@@ -26,11 +27,7 @@ public class ChangePasswordViewModel extends ViewModel {
 
     public void changePassword(String oldPassword, String newPassword) {
         _isLoading.setValue(true);
-        Map<String, String> request = new HashMap<>();
-        request.put("oldPassword", oldPassword);
-        request.put("newPassword", newPassword);
-        request.put("confirmPassword", newPassword);
-
+        ChangePasswordRequest request = new ChangePasswordRequest(oldPassword, newPassword, newPassword);
 
         RetrofitClient.getApiService().changePassword(request).enqueue(new Callback<Void>() {
             @Override

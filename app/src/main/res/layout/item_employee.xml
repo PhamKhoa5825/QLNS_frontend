@@ -1,117 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="24dp"
-    android:layout_marginTop="12dp"
-    android:layout_marginBottom="4dp"
-    app:cardBackgroundColor="@color/surface_container_lowest"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="0dp"
-    app:strokeWidth="0dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginTop="10dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#E5E7EB"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:padding="16dp">
 
-        <!-- Avatar Container -->
         <FrameLayout
             android:id="@+id/avatarContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            android:layout_width="40dp"
+            android:layout_height="40dp">
 
             <TextView
                 android:id="@+id/tvAvatar"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@drawable/bg_avatar_circle"
+                android:backgroundTint="#EFF6FF"
                 android:gravity="center"
                 android:text="N"
                 android:textColor="@color/primary"
-                android:textSize="20sp"
-                android:fontFamily="sans-serif-medium" />
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <View
                 android:id="@+id/statusIndicator"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
                 android:layout_gravity="bottom|end"
-                android:layout_marginBottom="-2dp"
-                android:layout_marginEnd="-2dp"
+                android:layout_marginBottom="-1dp"
+                android:layout_marginEnd="-1dp"
                 android:background="@drawable/bg_status_dot_online" />
         </FrameLayout>
 
-        <!-- Name and details -->
-        <TextView
-            android:id="@+id/tvName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"
-            android:text="Nguyễn Văn A"
-            android:textColor="@color/on_surface"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:letterSpacing="-0.01"
-            app:layout_constraintEnd_toStartOf="@+id/statusIconContainer"
-            app:layout_constraintStart_toEndOf="@id/avatarContainer"
-            app:layout_constraintTop_toTopOf="@id/avatarContainer"
-            app:layout_constraintBottom_toTopOf="@id/tvRole"
-            app:layout_constraintVertical_chainStyle="packed" />
-
-        <TextView
-            android:id="@+id/tvRole"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Trưởng phòng IT"
-            android:textColor="@color/secondary"
-            android:textSize="13sp"
-            android:fontFamily="sans-serif-medium"
-            app:layout_constraintEnd_toEndOf="@+id/tvName"
-            app:layout_constraintStart_toStartOf="@+id/tvName"
-            app:layout_constraintTop_toBottomOf="@id/tvName"
-            app:layout_constraintBottom_toBottomOf="@id/avatarContainer" />
-
-        <!-- Status & Chevron -->
+        <!-- Assignee Name & Role -->
         <LinearLayout
-            android:id="@+id/statusIconContainer"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical">
+            
             <TextView
-                android:id="@+id/tvStatus"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_status_pill"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="4dp"
-                android:text="ĐANG LÀM"
-                android:textColor="@color/on_secondary_container"
-                android:textSize="10sp"
+                android:textColor="#1F2937"
+                android:textSize="15sp"
                 android:textStyle="bold"
-                android:layout_marginEnd="12dp"
-                android:textAllCaps="true" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_chevron_right"
-                app:tint="@color/outline_variant" />
+                tools:text="Nguyễn Văn A" />
+                
+            <TextView
+                android:id="@+id/tvRole"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#4B5563"
+                android:textSize="12sp"
+                tools:text="Trưởng phòng IT" />
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Employee Status -->
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:background="@drawable/bg_status_pill"
+            android:textColor="@color/on_secondary_container"
+            tools:text="ĐANG LÀM" />
+            
+    </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

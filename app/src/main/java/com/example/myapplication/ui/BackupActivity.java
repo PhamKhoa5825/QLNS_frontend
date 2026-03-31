@@ -24,6 +24,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.utils.TopBarHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 
@@ -40,7 +41,8 @@ public class BackupActivity extends AppCompatActivity {
     private ApiService apiService;
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
-    private TextView tvEmpty, tvStatus;
+    private View tvEmpty;
+    private TextView tvStatus;
     private MaterialButton btnBackupNow;
 
     private BackupAdapter adapter;
@@ -60,8 +62,7 @@ public class BackupActivity extends AppCompatActivity {
     }
 
     private void bindViews() {
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) toolbar.setNavigationOnClickListener(v -> finish());
+        TopBarHelper.setupTopBar(this);
 
         recyclerView = findViewById(R.id.recyclerViewBackups);
         progressBar = findViewById(R.id.progressBar);
@@ -137,11 +138,12 @@ public class BackupActivity extends AppCompatActivity {
     }
 
     private void confirmRestore(String filename) {
-        new AlertDialog.Builder(this)
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
                 .setTitle("Khôi phục dữ liệu")
-                .setMessage("Dữ liệu hiện tại sẽ bị ghi đè!")
-                .setPositiveButton("Xác nhận", (d, w) -> doRestore(filename))
-                .setNegativeButton("Huỷ", null).show();
+                .setMessage("Dữ liệu hiện tại trên hệ thống sẽ bị ghi đè bởi bản sao lưu này. Bạn có chắc chắn muốn tiếp tục?")
+                .setPositiveButton("Khôi phục", (d, w) -> doRestore(filename))
+                .setNegativeButton("Hủy", null)
+                .show();
     }
 
     private void doRestore(String filename) {
@@ -158,17 +160,19 @@ public class BackupActivity extends AppCompatActivity {
     }
 
     private void confirmDelete(String filename) {
-        new AlertDialog.Builder(this)
-                .setTitle("Xoá bản sao lưu")
-                .setMessage("Xoá file: " + filename + "?")
-                .setPositiveButton("Xoá", (d, w) -> {
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle("Xóa bản sao lưu")
+                .setMessage("Bạn có chắc chắn muốn xóa vĩnh viễn bản sao lưu: " + filename + "?")
+                .setPositiveButton("Xóa", (d, w) -> {
                     apiService.deleteBackup(filename).enqueue(new Callback<Void>() {
                         @Override public void onResponse(Call<Void> c, Response<Void> r) {
                             if (r.isSuccessful()) loadBackups();
                         }
                         @Override public void onFailure(Call<Void> c, Throwable t) {}
                     });
-                }).setNegativeButton("Huỷ", null).show();
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
     }
 
     private void downloadBackup(String filename) {

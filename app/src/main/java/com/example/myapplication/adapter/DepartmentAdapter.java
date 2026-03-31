@@ -23,20 +23,20 @@ public class DepartmentAdapter extends RecyclerView.Adapter<DepartmentAdapter.Vi
             Color.parseColor("#EF4444"),
     };
 
-    private List<Department> list = new ArrayList<>();
-    private OnItemClickListener listener;
+    private List<Department> departmentList = new ArrayList<>();
+    private final OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        void onItemClick(Department department);
+        void onItemClick(Department dept);
     }
 
-    public DepartmentAdapter(List<Department> list, OnItemClickListener listener) {
-        this.list = list;
+    public DepartmentAdapter(List<Department> departmentList, OnItemClickListener listener) {
+        this.departmentList = departmentList;
         this.listener = listener;
     }
 
     public void setData(List<Department> newList) {
-        this.list = newList;
+        this.departmentList = newList;
         notifyDataSetChanged();
     }
 
@@ -50,30 +50,33 @@ public class DepartmentAdapter extends RecyclerView.Adapter<DepartmentAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Department dept = list.get(position);
+        Department dept = departmentList.get(position);
 
-        holder.tvDeptName.setText(dept.getName());
-        holder.tvManagerName.setText("Trưởng phòng: " + dept.getManagerName());
-        holder.tvEmpCount.setText(String.valueOf(dept.getEmployeeCount()));
-
+        if (holder.tvDeptName != null) holder.tvDeptName.setText(dept.getName());
+        if (holder.tvManagerName != null) holder.tvManagerName.setText("Trưởng phòng: " + dept.getManagerName());
+        if (holder.tvEmpCount != null) holder.tvEmpCount.setText(dept.getEmployeeCount() + " người");
         if (holder.tvPerformanceStr != null) holder.tvPerformanceStr.setText("--");
         if (holder.progressBar != null) holder.progressBar.setProgress(0);
 
         int color = COLORS[position % COLORS.length];
+        if (holder.cardDeptIcon != null)
+            holder.cardDeptIcon.setCardBackgroundColor(ColorStateList.valueOf(color));
         if (holder.imgDeptIcon != null)
-            holder.imgDeptIcon.setBackgroundTintList(ColorStateList.valueOf(color));
+            holder.imgDeptIcon.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
-        if (listener != null)
-            holder.itemView.setOnClickListener(v -> listener.onItemClick(dept));
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onItemClick(dept);
+        });
     }
 
     @Override
-    public int getItemCount() { return list.size(); }
+    public int getItemCount() { return departmentList.size(); }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvDeptName, tvManagerName, tvEmpCount, tvPerformanceStr;
         ImageView imgDeptIcon;
         ProgressBar progressBar;
+        com.google.android.material.card.MaterialCardView cardDeptIcon;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -83,6 +86,7 @@ public class DepartmentAdapter extends RecyclerView.Adapter<DepartmentAdapter.Vi
             tvPerformanceStr = itemView.findViewById(R.id.tvPerformanceStr);
             imgDeptIcon      = itemView.findViewById(R.id.imgDeptIcon);
             progressBar      = itemView.findViewById(R.id.progressBar);
+            cardDeptIcon     = itemView.findViewById(R.id.cardDeptIcon);
         }
     }
 }

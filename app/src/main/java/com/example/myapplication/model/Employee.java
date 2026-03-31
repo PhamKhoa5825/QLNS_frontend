@@ -50,6 +50,12 @@ public class Employee {
     @SerializedName("remainingLeave")
     private Double remainingLeave;
 
+    @SerializedName("leaveDaysUsed")
+    private Double leaveDaysUsed;
+
+    @SerializedName("annualLeaveQuota")
+    private Double annualLeaveQuota;
+
     @SerializedName("userId")
     private Long userId;
 
@@ -109,9 +115,9 @@ public class Employee {
     public void setBaseSalary(Double baseSalary) { this.baseSalary = baseSalary; }
 
     // Được gọi từ RequestActivity, ngày phép còn lại
-    public double getRemainingLeave() { 
-        return remainingLeave != null ? remainingLeave : 0.0; 
-    }
+    public double getRemainingLeave() { return remainingLeave != null ? remainingLeave : 0.0; }
+    public Double getLeaveDaysUsed() { return leaveDaysUsed; }
+    public Double getAnnualLeaveQuota() { return annualLeaveQuota; }
 
     public Long getUserId() { return userId; }
     public String getAccountStatus() { return accountStatus; }

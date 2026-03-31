@@ -1,307 +1,348 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_bottom_sheet"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:paddingHorizontal="24dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="24dp">
 
-    <!-- Handle bar -->
+    <!-- Handle Bar -->
     <View
         android:layout_width="40dp"
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="16dp"
-        android:background="#E5E7EB" />
+        android:layout_marginBottom="24dp"
+        android:background="#E2E8F0" />
 
-    <TextView
+    <!-- Header Section -->
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Thông tin nhân viên"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:layout_height="wrap_content">
 
-    <!-- Avatar + Tên + Chức vụ -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/tvDialogAvatar"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:background="@drawable/bg_avatar_circle"
-            android:gravity="center"
-            android:text="N"
-            android:textColor="@color/colorPrimary"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+        <FrameLayout
+            android:id="@+id/layoutDialogAvatar"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_alignParentStart="true">
+ 
+            <ImageView
+                android:id="@+id/ivDialogAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_avatar_light_blue"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+ 
+            <TextView
+                android:id="@+id/tvDialogAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_avatar_light_blue"
+                android:gravity="center"
+                android:text="A"
+                android:textColor="#2563EB"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+        </FrameLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
-            android:layout_weight="1"
+            android:layout_toEndOf="@id/tvDialogAvatar"
+            android:layout_toStartOf="@+id/btnCloseDialog"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvDialogName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nguyễn Văn A"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="16sp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Nguyễn Văn Admin"
+                android:textColor="#1E293B"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvDialogRole"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lập trình viên"
-                android:textColor="@color/textColorSecondary"
+                android:text="Quản trị hệ thống"
+                android:textColor="#6366F1"
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <!-- Badge trạng thái -->
-        <TextView
-            android:id="@+id/tvDialogStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_status_working"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="4dp"
-            android:text="Đang làm việc"
-            android:textColor="@color/white"
-            android:textSize="11sp" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:background="#E5E7EB" />
-
-    <!-- Phòng ban -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@android:drawable/ic_menu_sort_by_size"
-            android:layout_marginEnd="10dp" />
+            android:id="@+id/btnCloseDialog"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="4dp"
+            android:src="@drawable/ic_close"
+            app:tint="#94A3B8" />
+    </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Phòng ban"
-                android:textColor="@color/textColorSecondary"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/tvDialogDept"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Công nghệ thông tin"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- Email -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@android:drawable/ic_dialog_email"
-            android:layout_marginEnd="10dp" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Email"
-                android:textColor="@color/textColorSecondary"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/tvDialogEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="email@company.com"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="14sp" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- Số điện thoại -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@android:drawable/ic_menu_call"
-            android:layout_marginEnd="10dp" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Số điện thoại"
-                android:textColor="@color/textColorSecondary"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/tvDialogPhone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0912 345 678"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="14sp" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <!-- Ngày vào làm -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@android:drawable/ic_menu_recent_history"
-            android:layout_marginEnd="10dp" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ngày vào làm"
-                android:textColor="@color/textColorSecondary"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/tvDialogJoinDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="01/01/2021"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="14sp" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:background="#E5E7EB" />
-
-    <!-- Lương cơ bản (chỉ Admin thấy) -->
-    <LinearLayout
-        android:id="@+id/layoutSalaryRow"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@android:drawable/ic_menu_agenda"
-            android:layout_marginEnd="10dp" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lương cơ bản"
-                android:textColor="@color/textColorSecondary"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/tvDialogSalary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chưa thiết lập"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnSetSalary"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:background="@drawable/bg_btn_action_primary"
-            android:text="Thiết lập"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:textSize="13sp"
-            android:paddingHorizontal="12dp" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:background="#E5E7EB" />
-
-    <!-- Nút đóng -->
+    <!-- Cross-reference Link Button -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnCloseDialog"
+        android:id="@+id/btnViewDetail"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:text="Đóng"
+        android:layout_height="52dp"
+        android:layout_marginTop="24dp"
+        android:paddingHorizontal="16dp"
+        android:text="Xem chi tiết (Chấm công · Đơn từ)"
         android:textAllCaps="false"
-        android:textSize="15sp" />
+        android:textColor="#4F46E5"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:cornerRadius="12dp"
+        app:icon="@drawable/ic_info"
+        app:iconGravity="start"
+        app:iconSize="18dp"
+        app:iconTint="#4F46E5"
+        app:strokeColor="#4F46E5"
+        app:strokeWidth="1dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="24dp"
+        android:background="#F1F5F9" />
+
+    <!-- Info Column -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical">
+
+        <!-- Email -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_mail_small"
+                app:tint="#64748B" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email"
+                    android:textColor="#94A3B8"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvDialogEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="admin@company.com"
+                    android:textColor="#1E293B"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Phone -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_phone_small"
+                app:tint="#64748B" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Số điện thoại"
+                    android:textColor="#94A3B8"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvDialogPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0901000001"
+                    android:textColor="#1E293B"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Department -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_work"
+                app:tint="#64748B" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phòng ban"
+                    android:textColor="#94A3B8"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvDialogDept"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Công Nghệ Thông Tin"
+                    android:textColor="#1E293B"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Status -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_check_circle"
+                app:tint="#64748B" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Trạng thái"
+                    android:textColor="#94A3B8"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvDialogStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đang làm việc"
+                    android:textColor="#1E293B"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Join Date -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_calendar"
+                app:tint="#64748B" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ngày vào làm"
+                    android:textColor="#94A3B8"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvDialogJoinDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2020-01-01"
+                    android:textColor="#1E293B"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="#F1F5F9" />
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEditEmployeeQuick"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Sửa thông tin"
+            android:textAllCaps="false"
+            android:textColor="#6366F1"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_compose"
+            app:iconGravity="textStart"
+            app:iconTint="#6366F1"
+            app:strokeColor="#6366F1" />
+    </LinearLayout>
 
 </LinearLayout>

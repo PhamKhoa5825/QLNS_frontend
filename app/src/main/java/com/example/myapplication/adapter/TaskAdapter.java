@@ -5,7 +5,11 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.example.myapplication.network.RetrofitClient;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -50,7 +54,32 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.tvTitle.setText(task.getTitle());
         holder.tvDesc.setText(task.getDescription() != null ? task.getDescription() : "Không có mô tả");
         holder.tvAssignee.setText(task.getAssignedToName() != null ? task.getAssignedToName() : "Chưa bàn giao");
-        holder.tvDeadline.setText("Hạn: " + (task.getDeadline() != null ? task.getDeadline() : "--/--/----"));
+        holder.tvDeadline.setText("Hạn: " + formatDateTime(task.getDeadline()));
+
+        // Avatar logic
+        String assigneeName = task.getAssignedToName();
+        if (assigneeName == null || assigneeName.isEmpty()) {
+            holder.tvAvatar.setText("?");
+            holder.ivAvatar.setVisibility(View.GONE);
+            holder.tvAvatar.setVisibility(View.VISIBLE);
+        } else {
+            String initial = assigneeName.substring(0, 1).toUpperCase();
+            holder.tvAvatar.setText(initial);
+
+            String avatarUrl = task.getAssignedToAvatarUrl();
+            if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                String fullUrl = avatarUrl.startsWith("http") ? avatarUrl : RetrofitClient.BASE_URL + avatarUrl;
+                Glide.with(context)
+                        .load(fullUrl)
+                        .circleCrop()
+                        .into(holder.ivAvatar);
+                holder.ivAvatar.setVisibility(View.VISIBLE);
+                holder.tvAvatar.setVisibility(View.GONE);
+            } else {
+                holder.ivAvatar.setVisibility(View.GONE);
+                holder.tvAvatar.setVisibility(View.VISIBLE);
+            }
+        }
 
         // Priority binding
         String priority = task.getPriority() != null ? task.getPriority() : "LOW";
@@ -74,38 +103,42 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         // Status binding
         String status = task.getStatus() != null ? task.getStatus() : "PENDING";
+        
+        // Remove any old overlapping compound drawables
+        holder.tvStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        holder.tvStatus.setBackgroundResource(R.drawable.bg_chip_surface);
+
         switch (status) {
             case "DONE":
             case "COMPLETED":
-                holder.tvStatus.setText("Hoàn thành");
+                holder.tvStatus.setText("HOÀN THÀNH");
                 holder.tvStatus.setTextColor(Color.parseColor("#10B981"));
-                holder.tvStatus.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_info, 0, 0, 0);
-                holder.tvStatus.setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#10B981")));
-                break;
-            case "ACCEPTED":
-            case "IN_PROGRESS":
-                holder.tvStatus.setText("Đang thực hiện");
-                holder.tvStatus.setTextColor(Color.parseColor("#3B82F6"));
-                holder.tvStatus.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_info, 0, 0, 0);
-                holder.tvStatus.setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#3B82F6")));
                 break;
             case "UNDER_REVIEW":
-                holder.tvStatus.setText("Chờ duyệt");
-                holder.tvStatus.setTextColor(Color.parseColor("#8B5CF6")); // Purple for Review
-                holder.tvStatus.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_info, 0, 0, 0);
-                holder.tvStatus.setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#8B5CF6")));
-                break;
-            case "REJECTED":
-                holder.tvStatus.setText("Cần làm lại");
-                holder.tvStatus.setTextColor(Color.parseColor("#F43F5E")); // Rose/Red for Rejected
-                holder.tvStatus.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_alert, 0, 0, 0);
-                holder.tvStatus.setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#F43F5E")));
+                holder.tvStatus.setText("CHỜ DUYỆT");
+                holder.tvStatus.setTextColor(Color.parseColor("#8B5CF6"));
                 break;
             default:
-                holder.tvStatus.setText("Chưa bắt đầu");
-                holder.tvStatus.setTextColor(Color.parseColor("#EA580C"));
-                holder.tvStatus.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_info, 0, 0, 0);
-                holder.tvStatus.setCompoundDrawableTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#EA580C")));
+                if (isOverdue(task.getDeadline())) {
+                    holder.tvStatus.setText("QUÁ HẠN");
+                    holder.tvStatus.setTextColor(Color.parseColor("#EF4444")); // Red color
+                } else {
+                    switch (status) {
+                        case "ACCEPTED":
+                        case "IN_PROGRESS":
+                            holder.tvStatus.setText("ĐANG THỰC HIỆN");
+                            holder.tvStatus.setTextColor(Color.parseColor("#3B82F6"));
+                            break;
+                        case "REJECTED":
+                            holder.tvStatus.setText("CẦN LÀM LẠI");
+                            holder.tvStatus.setTextColor(Color.parseColor("#F43F5E"));
+                            break;
+                        default:
+                            holder.tvStatus.setText("CHƯA BẮT ĐẦU");
+                            holder.tvStatus.setTextColor(Color.parseColor("#EA580C"));
+                            break;
+                    }
+                }
                 break;
         }
 
@@ -114,13 +147,50 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         });
     }
 
+    private boolean isOverdue(String deadlineStr) {
+        if (deadlineStr == null || deadlineStr.isEmpty()) return false;
+        try {
+            java.text.SimpleDateFormat sdf;
+            if (deadlineStr.contains("T")) {
+                sdf = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.US);
+            } else {
+                sdf = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US);
+            }
+            java.util.Date deadline = sdf.parse(deadlineStr);
+            return deadline != null && deadline.before(new java.util.Date());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private String formatDateTime(String dateStr) {
+        if (dateStr == null || dateStr.isEmpty()) return "--/--/----";
+        try {
+            if (dateStr.contains("T")) {
+                String[] parts = dateStr.split("T");
+                String[] dateParts = parts[0].split("-");
+                String[] timeParts = parts[1].split(":");
+                String formattedDate = dateParts[2] + "/" + dateParts[1] + "/" + dateParts[0];
+                String formattedTime = timeParts[0] + ":" + timeParts[1];
+                return formattedTime + " - " + formattedDate;
+            } else if (dateStr.contains("-")) {
+                String[] dateParts = dateStr.split("-");
+                if(dateParts.length >= 3) {
+                   return dateParts[2] + "/" + dateParts[1] + "/" + dateParts[0];
+                }
+            }
+        } catch (Exception e) {}
+        return dateStr;
+    }
+
     @Override
     public int getItemCount() {
         return taskList == null ? 0 : taskList.size();
     }
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvPriority, tvDesc, tvAssignee, tvDeadline, tvStatus;
+        TextView tvTitle, tvPriority, tvDesc, tvAssignee, tvDeadline, tvStatus, tvAvatar;
+        ImageView ivAvatar;
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -130,6 +200,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             tvAssignee = itemView.findViewById(R.id.tvTaskAssignee);
             tvDeadline = itemView.findViewById(R.id.tvTaskDeadline);
             tvStatus = itemView.findViewById(R.id.tvTaskStatus);
+            tvAvatar = itemView.findViewById(R.id.tvTaskAvatar);
+            ivAvatar = itemView.findViewById(R.id.ivTaskAvatar);
         }
     }
 }

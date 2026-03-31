@@ -28,6 +28,7 @@ import com.example.myapplication.model.Employee;
 import com.example.myapplication.network.ApiErrorHelper;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.utils.TopBarHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
@@ -48,7 +49,7 @@ public class AccountManagementActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private EditText edtSearch;
-    private ImageView btnFilter;
+    private View btnFilter;
     private TextView tvFilterInfo, tvTotalAccounts, tvActiveAccounts;
     private ApiService apiService;
     private AccountAdapter adapter;
@@ -68,8 +69,12 @@ public class AccountManagementActivity extends AppCompatActivity {
 
         apiService = RetrofitClient.getApiService(this);
 
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) toolbar.setNavigationOnClickListener(v -> finish());
+        TopBarHelper.setupTopBar(this);
+        View btnSearchHeader = findViewById(R.id.btnHeaderExtra);
+        if (btnSearchHeader != null) {
+            btnSearchHeader.setVisibility(View.VISIBLE);
+            btnSearchHeader.setOnClickListener(v -> showFilterDialog());
+        }
 
         progressBar = findViewById(R.id.progressBar);
         tvTotalAccounts = findViewById(R.id.tvTotalAccounts);
@@ -182,7 +187,17 @@ public class AccountManagementActivity extends AppCompatActivity {
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_reset_password, null);
         TextInputEditText etPass = view.findViewById(R.id.etNewPassword);
         MaterialButton btnConfirm = view.findViewById(R.id.btnConfirm);
-        AlertDialog dialog = new AlertDialog.Builder(this).setView(view).create();
+        MaterialButton btnCancel = view.findViewById(R.id.btnCancel);
+        
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(view)
+                .create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+        }
+
+        if (btnCancel != null) btnCancel.setOnClickListener(v -> dialog.dismiss());
         btnConfirm.setOnClickListener(v -> {
             String pass = etPass.getText().toString();
             Long uid = emp.getUserId() != null ? emp.getUserId() : emp.getId();

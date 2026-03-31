@@ -7,11 +7,12 @@
     android:background="@color/surface">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:background="@color/surface"
         android:fitsSystemWindows="true"
-        app:elevation="0dp">
+        app:elevation="12dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
@@ -26,35 +27,75 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <!-- Section Title -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="4dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NHÂN VIÊN"
+                android:textColor="@color/secondary"
+                android:textSize="11sp"
+                android:letterSpacing="0.1"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <!-- Search Bar -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="16dp">
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_search_bar"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp">
 
-            <EditText
-                android:id="@+id/edtSearch"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/bg_search_modern"
-                android:drawableStart="@android:drawable/ic_menu_search"
-                android:drawablePadding="12dp"
-                android:hint="Search employees, roles, teams..."
-                android:textColorHint="@color/outline"
-                android:textColor="@color/on_surface"
-                android:paddingHorizontal="16dp"
-                android:textSize="14sp"
-                android:elevation="1dp" />
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@android:drawable/ic_menu_search"
+                    app:tint="@color/secondary" />
+
+                <EditText
+                    android:id="@+id/edtSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@android:color/transparent"
+                    android:hint="Tìm kiếm nhân viên..."
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:textSize="14sp" />
+            </LinearLayout>
         </FrameLayout>
 
         <!-- Filter Chips (Horizontal Scroll) -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:clipToPadding="false"
-            android:paddingHorizontal="24dp"
+            android:paddingHorizontal="16dp"
             android:paddingBottom="12dp"
             android:scrollbars="none">
 
@@ -67,12 +108,14 @@
                     android:id="@+id/tvTotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_chip_primary"
+                    android:background="@drawable/bg_chip_selected"
+                    android:gravity="center"
+                    android:minWidth="60dp"
                     android:paddingHorizontal="16dp"
-                    android:paddingVertical="6dp"
-                    android:text="All"
-                    android:textColor="@color/on_primary"
-                    android:textSize="12sp"
+                    android:paddingVertical="8dp"
+                    android:text="Tất cả"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
                     android:textStyle="bold"
                     android:layout_marginEnd="8dp" />
 
@@ -80,40 +123,41 @@
                     android:id="@+id/tvWorking"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_chip_surface"
+                    android:background="@drawable/bg_chip_unselected"
+                    android:gravity="center"
+                    android:minWidth="80dp"
                     android:paddingHorizontal="16dp"
-                    android:paddingVertical="6dp"
-                    android:text="Online"
+                    android:paddingVertical="8dp"
+                    android:text="Đang làm viêc"
                     android:textColor="@color/secondary"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
+                    android:textSize="14sp"
                     android:layout_marginEnd="8dp" />
 
                 <TextView
                     android:id="@+id/tvResigned"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_chip_surface"
+                    android:background="@drawable/bg_chip_unselected"
+                    android:gravity="center"
+                    android:minWidth="80dp"
                     android:paddingHorizontal="16dp"
-                    android:paddingVertical="6dp"
-                    android:text="Engineering"
+                    android:paddingVertical="8dp"
+                    android:text="Đã nghỉ việc"
                     android:textColor="@color/secondary"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
         </HorizontalScrollView>
 
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewEmployee"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:clipToPadding="false"
-        android:paddingBottom="88dp"
-        android:paddingTop="8dp" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewEmployee"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="88dp"
+            android:paddingTop="8dp" />
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddEmployee"
@@ -125,6 +169,7 @@
         app:srcCompat="@android:drawable/ic_input_add"
         app:backgroundTint="@color/primary"
         app:tint="@color/on_primary"
+        app:shapeAppearanceOverlay="@style/ModernSquareFAB"
         app:elevation="4dp" />
 
     <include 

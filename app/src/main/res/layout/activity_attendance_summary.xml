@@ -7,10 +7,12 @@
     android:background="@color/surface">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:background="@color/surface"
+        android:fitsSystemWindows="true"
+        app:elevation="12dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"

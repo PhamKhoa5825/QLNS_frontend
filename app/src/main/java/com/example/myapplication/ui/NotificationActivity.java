@@ -40,10 +40,9 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
     private List<Notification> currentList = new ArrayList<>();
     
     private ImageView btnBack;
-    private FloatingActionButton fabAddNoti;
-    private TextView tvHeaderUnreadCount, tvCountUnread, tvCountTotal;
+    private TextView tvHeaderUnreadCount;
     private TextView tabAll, tabUnread, tabRead;
-    private LinearLayout btnMarkAllRead;
+    private ImageView btnMarkAllRead;
     
     private Long currentDeptId;
     private Long currentUserId;
@@ -62,7 +61,6 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
         setupFilters();
 
         btnBack.setOnClickListener(v -> finish());
-        fabAddNoti.setOnClickListener(v -> showCreateNotiDialog());
         btnMarkAllRead.setOnClickListener(v -> markAllAsRead());
 
         fetchNotifications();
@@ -71,10 +69,7 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
     private void initViews() {
         recyclerViewNoti = findViewById(R.id.recyclerViewNoti);
         btnBack = findViewById(R.id.btnBackNoti);
-        fabAddNoti = findViewById(R.id.fabAddNotification);
         tvHeaderUnreadCount = findViewById(R.id.tvHeaderUnreadCount);
-        tvCountUnread = findViewById(R.id.tvCountUnread);
-        tvCountTotal = findViewById(R.id.tvCountTotal);
         tabAll = findViewById(R.id.tabAll);
         tabUnread = findViewById(R.id.tabUnread);
         tabRead = findViewById(R.id.tabRead);
@@ -137,13 +132,10 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
     }
 
     private void updateStats() {
-        int total = allNotiList.size();
         int unread = 0;
         for (Notification n : allNotiList) {
             if (!n.isRead()) unread++;
         }
-        tvCountTotal.setText(String.valueOf(total));
-        tvCountUnread.setText(String.valueOf(unread));
         tvHeaderUnreadCount.setText(String.valueOf(unread));
     }
 
@@ -152,8 +144,13 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
         
         // Update Tabs UI
         tabAll.setBackgroundResource(filter.equals("ALL") ? R.drawable.bg_tab_selected : 0);
+        tabAll.setTextColor(filter.equals("ALL") ? android.graphics.Color.WHITE : android.graphics.Color.parseColor("#4B5563"));
+        
         tabUnread.setBackgroundResource(filter.equals("UNREAD") ? R.drawable.bg_tab_selected : 0);
+        tabUnread.setTextColor(filter.equals("UNREAD") ? android.graphics.Color.WHITE : android.graphics.Color.parseColor("#4B5563"));
+        
         tabRead.setBackgroundResource(filter.equals("READ") ? R.drawable.bg_tab_selected : 0);
+        tabRead.setTextColor(filter.equals("READ") ? android.graphics.Color.WHITE : android.graphics.Color.parseColor("#4B5563"));
 
         List<Notification> filtered = new ArrayList<>();
         if (filter.equals("ALL")) {
@@ -197,65 +194,5 @@ public class NotificationActivity extends AppCompatActivity implements Notificat
         for (Notification n : allNotiList) {
             if (!n.isRead()) markAsRead(n); // Sequential for now, or could have a bulk API
         }
-    }
-
-    private void showCreateNotiDialog() {
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_notification_form);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        
-        EditText edtTitle = dialog.findViewById(R.id.edtNotiTitle);
-        EditText edtMessage = dialog.findViewById(R.id.edtNotiMessage);
-        Spinner spinnerType = dialog.findViewById(R.id.spinnerNotiType);
-        Button btnSend = dialog.findViewById(R.id.btnSendNotification);
-
-        String[] types = {"DEPARTMENT", "COMPANY"};
-        ArrayAdapter<String> adapterType = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, types);
-        adapterType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerType.setAdapter(adapterType);
-        
-        btnSend.setOnClickListener(v -> {
-            String title = edtTitle.getText().toString().trim();
-            String msg = edtMessage.getText().toString().trim();
-            String targetType = types[spinnerType.getSelectedItemPosition()];
-            
-            if (title.isEmpty() || msg.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            
-            CreateNotificationRequest req = new CreateNotificationRequest();
-            req.setTitle(title);
-            req.setContent(msg);
-            req.setTargetType(targetType);
-            req.setDepartmentId("DEPARTMENT".equals(targetType) ? currentDeptId : null);
-            req.setCreatedById(currentUserId);
-            
-            sendNotification(req, dialog);
-        });
-        
-        dialog.show();
-    }
-    
-    private void sendNotification(CreateNotificationRequest noti, Dialog dialog) {
-        ApiService apiService = RetrofitClient.getApiService(this);
-        Call<Notification> call = apiService.createNotification(noti);
-        call.enqueue(new Callback<Notification>() {
-            @Override
-            public void onResponse(Call<Notification> call, Response<Notification> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(NotificationActivity.this, "Đã gửi thông báo", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                    fetchNotifications();
-                } else {
-                    Toast.makeText(NotificationActivity.this, "Lỗi gửi", Toast.LENGTH_SHORT).show();
-                }
-            }
-            @Override
-            public void onFailure(Call<Notification> call, Throwable t) {
-                Toast.makeText(NotificationActivity.this, "Lỗi mạng", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }
