@@ -83,6 +83,7 @@ public class EmployeeActivity extends AppCompatActivity {
         tvResigned  = findViewById(R.id.tvResigned);
 
         btnHeaderAdd = findViewById(R.id.btnHeaderAdd);
+        View btnFilter = findViewById(R.id.btnFilter);
 
         recyclerView = findViewById(R.id.recyclerViewEmployee);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -90,21 +91,33 @@ public class EmployeeActivity extends AppCompatActivity {
         adapter = new EmployeeAdapter(new ArrayList<>(), this::showEmployeeDetail);
         recyclerView.setAdapter(adapter);
 
+        if (btnFilter != null) {
+            btnFilter.setOnClickListener(v -> showFilterDialog());
+        }
+
+        // Setup top stat chips
+        if (tvTotal != null) tvTotal.setOnClickListener(v -> {
+            updateStatSelection(tvTotal);
+            viewModel.filterEmployees(null, null, null);
+        });
+        if (tvWorking != null) tvWorking.setOnClickListener(v -> {
+            updateStatSelection(tvWorking);
+            viewModel.filterEmployees("ACTIVE", null, null);
+        });
+        if (tvResigned != null) tvResigned.setOnClickListener(v -> {
+            updateStatSelection(tvResigned);
+            viewModel.filterEmployees("RESIGNED", null, null);
+        });
+
         SharedPrefsManager prefs = SharedPrefsManager.getInstance(this);
         String role = prefs.getRole();
         if ("ADMIN".equals(role) || "MANAGER".equals(role)) {
             fabAdd.setVisibility(View.VISIBLE);
             fabAdd.setOnClickListener(v -> showAddEmployeeDialog());
-            if (btnHeaderAdd != null) {
-                btnHeaderAdd.setVisibility(View.VISIBLE);
-                btnHeaderAdd.setOnClickListener(v -> showAddEmployeeDialog());
-            }
         } else {
             fabAdd.setVisibility(View.GONE);
-            if (btnHeaderAdd != null) btnHeaderAdd.setVisibility(View.GONE);
         }
     }
-
 
     private void observeViewModel() {
         viewModel.employees.observe(this, list -> {
@@ -131,22 +144,9 @@ public class EmployeeActivity extends AppCompatActivity {
             @Override public void onTextChanged(CharSequence s, int st, int b, int c) {}
             @Override
             public void afterTextChanged(Editable s) {
-                if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
-                searchRunnable = () -> viewModel.searchEmployees(s.toString().trim());
-                searchHandler.postDelayed(searchRunnable, 500);
+                // Instant local search
+                viewModel.searchEmployees(s.toString().trim());
             }
-        });
-
-        edtSearch.setOnTouchListener((v, event) -> {
-            if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
-                if (event.getRawX() >= edtSearch.getRight()
-                        - edtSearch.getCompoundDrawables()[2].getBounds().width()
-                        - edtSearch.getPaddingEnd()) {
-                    showFilterDialog();
-                    return true;
-                }
-            }
-            return false;
         });
     }
 
@@ -168,7 +168,6 @@ public class EmployeeActivity extends AppCompatActivity {
         BottomSheetDialog dialog = new BottomSheetDialog(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_employee_sort, null);
 
-        ChipGroup cgRole = view.findViewById(R.id.cgRole);
         ChipGroup cgDepartment = view.findViewById(R.id.cgDepartment);
         ChipGroup cgStatus = view.findViewById(R.id.cgStatus);
         Button btnApply = view.findViewById(R.id.btnApply);
@@ -191,29 +190,21 @@ public class EmployeeActivity extends AppCompatActivity {
             });
             viewModel.loadDepartments();
         } else {
-            // Hide department filter for Managers
             View label = view.findViewById(R.id.tvLabelDept);
             if (label != null) label.setVisibility(View.GONE);
             cgDepartment.setVisibility(View.GONE);
         }
 
-        LinkedHashSet<String> positions = new LinkedHashSet<>();
-        for (Employee emp : viewModel.getFullEmployeeList()) {
-            if (emp.getPosition() != null) positions.add(emp.getPosition());
-        }
-        for (String pos : positions) addChip(cgRole, pos, pos);
-
         btnApply.setOnClickListener(v -> {
             String selectedStatus = getSelectedChipTag(cgStatus);
             Long selectedDeptId = getSelectedChipLongTag(cgDepartment);
-            String selectedRole = getSelectedChipTag(cgRole);
 
-            viewModel.filterEmployees(selectedStatus, selectedDeptId, selectedRole);
+            viewModel.filterEmployees(selectedStatus, selectedDeptId, null);
             dialog.dismiss();
         });
 
         btnReset.setOnClickListener(v -> {
-            loadDataByRole();
+            viewModel.filterEmployees(null, null, null);
             dialog.dismiss();
         });
 
@@ -223,6 +214,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
     private void addChip(ChipGroup group, String label, String tag) {
         Chip chip = new Chip(this);
+        chip.setId(View.generateViewId());
         chip.setText(label);
         chip.setTag(tag);
         chip.setCheckable(true);
@@ -231,6 +223,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
     private void addChipWithId(ChipGroup group, String label, Long id) {
         Chip chip = new Chip(this);
+        chip.setId(View.generateViewId());
         chip.setText(label);
         chip.setTag(id);
         chip.setCheckable(true);
@@ -386,6 +379,20 @@ public class EmployeeActivity extends AppCompatActivity {
     private void showAddEmployeeDialog() {
         android.content.Intent intent = new android.content.Intent(this, AddEditEmployeeActivity.class);
         startActivity(intent);
+    }
+
+    private void updateStatSelection(TextView selectedView) {
+        TextView[] views = {tvTotal, tvWorking, tvResigned};
+        for (TextView v : views) {
+            if (v == null) continue;
+            if (v == selectedView) {
+                v.setBackgroundResource(R.drawable.bg_chip_selected);
+                v.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                v.setBackgroundResource(R.drawable.bg_chip_unselected);
+                v.setTextColor(getResources().getColor(R.color.secondary));
+            }
+        }
     }
 
     @Override

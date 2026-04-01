@@ -98,6 +98,7 @@
         android:src="@android:drawable/ic_menu_search"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="2dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@id/btnHeaderNotifications"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

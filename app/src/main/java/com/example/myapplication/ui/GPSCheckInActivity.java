@@ -239,7 +239,37 @@ public class GPSCheckInActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     private void startLocationUpdates() {
-        LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000).build();
+        if (tvDistance != null && currentLocation == null) {
+            tvDistance.setText("Đang xác định vị trí...");
+            tvDistance.setTextColor(Color.GRAY);
+        }
+
+        // Check if GPS is enabled
+        android.location.LocationManager lm = (android.location.LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean gpsEnabled = false;
+        try {
+            gpsEnabled = lm.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER);
+        } catch (Exception e) {}
+
+        if (!gpsEnabled) {
+            showLocationSettingsDialog();
+        }
+
+        // Request Last Known Location for immediate feedback
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+                if (location != null && currentLocation == null) {
+                    currentLocation = location;
+                    updateUIWithLocation(location);
+                }
+            });
+        }
+
+        // More frequent updates initially (2s) to get a fix faster
+        LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000)
+                .setMinUpdateIntervalMillis(1000)
+                .build();
+                
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
@@ -249,9 +279,22 @@ public class GPSCheckInActivity extends AppCompatActivity implements OnMapReadyC
                 }
             }
         };
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
         }
+    }
+
+    private void showLocationSettingsDialog() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Chưa bật vị trí")
+                .setMessage("Ứng dụng cần GPS để chấm công. Vui lòng bật vị trí trong cài đặt hệ thống.")
+                .setPositiveButton("Cài đặt", (dialog, which) -> {
+                    startActivity(new android.content.Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                })
+                .setNegativeButton("Huỷ", (dialog, which) -> dialog.dismiss())
+                .setCancelable(false)
+                .show();
     }
 
     private void updateUIWithLocation(Location location) {
@@ -276,6 +319,7 @@ public class GPSCheckInActivity extends AppCompatActivity implements OnMapReadyC
             Location.distanceBetween(userLatLng.latitude, userLatLng.longitude, officeLocation.latitude, officeLocation.longitude, results);
             distance = results[0];
             tvDistance.setText(String.format(Locale.getDefault(), "Khoảng cách: ~%.0fm", distance));
+            tvDistance.setTextColor(Color.parseColor("#1A73E8")); // Restore primary blue
         } else {
             tvDistance.setText("Đang tải dữ liệu văn phòng...");
         }

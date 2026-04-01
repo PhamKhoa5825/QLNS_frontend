@@ -339,6 +339,10 @@ public class DashboardActivity extends AppCompatActivity {
             if (layoutAdminTools != null) layoutAdminTools.setVisibility(View.VISIBLE);
             if (cardLeaveBalance != null) cardLeaveBalance.setVisibility(View.GONE);
             if (layoutQuickAccess != null) layoutQuickAccess.setVisibility(View.GONE);
+            
+            // Hide department stats for Admin as requested
+            if (tvStatsHeader != null) tvStatsHeader.setVisibility(View.GONE);
+            if (layoutStatsCards != null) layoutStatsCards.setVisibility(View.GONE);
         }
     }
 

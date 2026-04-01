@@ -364,9 +364,14 @@ public class RequestActivity extends AppCompatActivity {
 
         for (Request r : allRequests) {
             String typeDisplay = getRequestTypeDisplay(r.getType());
+            String desc = r.getDescription() != null ? r.getDescription().toLowerCase() : "";
+            String reason = r.getRejectionReason() != null ? r.getRejectionReason().toLowerCase() : "";
+            
             boolean matchesQuery = lowerQuery.isEmpty() || 
                                  (r.getEmployeeName() != null && r.getEmployeeName().toLowerCase().contains(lowerQuery)) ||
-                                 (typeDisplay.toLowerCase().contains(lowerQuery));
+                                 (typeDisplay.toLowerCase().contains(lowerQuery)) ||
+                                 (desc.contains(lowerQuery)) ||
+                                 (reason.contains(lowerQuery));
             if (matchesQuery) {
                 filtered.add(r);
             }
@@ -376,7 +381,6 @@ public class RequestActivity extends AppCompatActivity {
 
     private void fetchRequests(String status) {
         ApiService apiService = RetrofitClient.getApiService(this);
-        etSearchRequest.setText(""); // Clear search when swapping filters
         
         // Clear current list immediately to show loading state/feedback
         allRequests.clear();
@@ -416,7 +420,7 @@ public class RequestActivity extends AppCompatActivity {
                     }
                     sortRequestsByDate(allRequests);
                     requestList = allRequests;
-                    adapter.setRequestList(requestList);
+                    filterList(etSearchRequest.getText().toString());
                 }
             }
             @Override public void onFailure(Call<List<Request>> call, Throwable t) {}
@@ -494,7 +498,7 @@ public class RequestActivity extends AppCompatActivity {
         allRequests = new ArrayList<>(map.values());
         sortRequestsByDate(allRequests);
         requestList = allRequests;
-        adapter.setRequestList(requestList);
+        filterList(etSearchRequest.getText().toString());
         android.util.Log.d("RequestActivity", "Merged list size: " + allRequests.size() + " for status: " + filterStatus + ", selectedEmpId: " + selectedEmpId);
     }
 
@@ -506,7 +510,7 @@ public class RequestActivity extends AppCompatActivity {
                     allRequests = response.body();
                     sortRequestsByDate(allRequests);
                     requestList = allRequests;
-                    adapter.setRequestList(requestList);
+                    filterList(etSearchRequest.getText().toString());
                 }
             }
             @Override public void onFailure(Call<List<Request>> call, Throwable t) {}

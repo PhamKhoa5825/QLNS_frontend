@@ -59,6 +59,15 @@ public class ProfileActivity extends AppCompatActivity {
 
         Button btnLogout = findViewById(R.id.btnLogoutProfile);
         btnLogout.setOnClickListener(v -> {
+            // Log logout to server (best effort)
+            apiService.logout().enqueue(new retrofit2.Callback<Void>() {
+                @Override
+                public void onResponse(retrofit2.Call<Void> call, retrofit2.Response<Void> response) {}
+                @Override
+                public void onFailure(retrofit2.Call<Void> call, Throwable t) {}
+            });
+
+            // Local logout
             prefs.logout();
             Toast.makeText(this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, LoginActivity.class);

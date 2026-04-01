@@ -40,6 +40,9 @@ public class CreateEmployeeRequest {
     @SerializedName("role")              // EMPLOYEE / MANAGER / ADMIN
     private String role;
 
+    @SerializedName("baseSalary")
+    private Double baseSalary;
+
     // Constructor tối thiểu
     public CreateEmployeeRequest(String fullName, String email, String password,
                                  String position, Long departmentId, String role) {
@@ -59,6 +62,7 @@ public class CreateEmployeeRequest {
     public void setDateOfBirth(String dateOfBirth) { this.dateOfBirth = dateOfBirth; }
     public void setGender(String gender) { this.gender = gender; }
     public void setJoinDate(String joinDate) { this.joinDate = joinDate; }
+    public void setBaseSalary(Double baseSalary) { this.baseSalary = baseSalary; }
 
     public String getFullName() { return fullName; }
     public String getEmail() { return email; }
@@ -68,4 +72,5 @@ public class CreateEmployeeRequest {
     public String getRole() { return role; }
     public Long getDepartmentId() { return departmentId; }
     public String getAvatarUrl() { return avatarUrl; }
+    public Double getBaseSalary() { return baseSalary; }
 }

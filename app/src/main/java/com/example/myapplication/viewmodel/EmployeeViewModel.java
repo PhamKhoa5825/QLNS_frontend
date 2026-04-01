@@ -149,25 +149,21 @@ public class EmployeeViewModel extends AndroidViewModel {
         });
     }
 
-    public void searchEmployees(String keyword) {
-        if (keyword == null || keyword.isEmpty()) {
-            _employees.setValue(fullEmployeeList);
-            return;
-        }
-        _isLoading.setValue(true);
-        repository.searchEmployees(keyword, new EmployeeRepository.RepositoryCallback<List<Employee>>() {
-            @Override
-            public void onSuccess(List<Employee> data) {
-                _isLoading.setValue(false);
-                _employees.setValue(data);
-            }
+    private String currentSearchKeyword = "";
+    private String currentFilterStatus = null;
+    private Long currentFilterDeptId = null;
+    private String currentFilterPosition = null;
 
-            @Override
-            public void onError(String message) {
-                _isLoading.setValue(false);
-                _errorMessage.setValue(message);
-            }
-        });
+    public void searchEmployees(String keyword) {
+        this.currentSearchKeyword = keyword != null ? keyword : "";
+        applyFilters();
+    }
+
+    public void filterEmployees(String status, Long deptId, String position) {
+        this.currentFilterStatus = status;
+        this.currentFilterDeptId = deptId;
+        this.currentFilterPosition = position;
+        applyFilters();
     }
 
     public void loadDepartments() {
@@ -184,14 +180,26 @@ public class EmployeeViewModel extends AndroidViewModel {
         });
     }
 
-    public void filterEmployees(String status, Long deptId, String position) {
+    private void applyFilters() {
+        String kw = currentSearchKeyword.toLowerCase().trim();
         List<Employee> filtered = new ArrayList<>();
+        
         for (Employee emp : fullEmployeeList) {
-            boolean statusOk = status == null || status.equals(emp.getStatusRaw());
-            boolean deptOk = deptId == null || (emp.getDepartmentId() != null && emp.getDepartmentId().equals(deptId));
-            boolean roleOk = position == null || position.equals(emp.getPosition());
+            // Search match
+            boolean searchOk = kw.isEmpty();
+            if (!searchOk) {
+                String name = emp.getFullName() != null ? emp.getFullName().toLowerCase() : "";
+                String email = emp.getEmail() != null ? emp.getEmail().toLowerCase() : "";
+                String pos = emp.getPosition() != null ? emp.getPosition().toLowerCase() : "";
+                searchOk = name.contains(kw) || email.contains(kw) || pos.contains(kw);
+            }
 
-            if (statusOk && deptOk && roleOk) {
+            // Filter match
+            boolean statusOk = currentFilterStatus == null || currentFilterStatus.equals(emp.getStatusRaw());
+            boolean deptOk = currentFilterDeptId == null || (emp.getDepartmentId() != null && emp.getDepartmentId().equals(currentFilterDeptId));
+            boolean posOk = currentFilterPosition == null || currentFilterPosition.equals(emp.getPosition());
+
+            if (searchOk && statusOk && deptOk && posOk) {
                 filtered.add(emp);
             }
         }

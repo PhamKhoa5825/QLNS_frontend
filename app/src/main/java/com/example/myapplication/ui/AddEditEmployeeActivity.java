@@ -40,6 +40,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.example.myapplication.utils.SharedPrefsManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -58,8 +59,8 @@ public class AddEditEmployeeActivity extends AppCompatActivity {
 
     // ── Views ──
     private TextInputEditText etFullName, etEmail, etPassword, etPhone,
-            etAddress, etPosition, etDateOfBirth, etJoinDate;
-    private TextInputLayout tilFullName, tilEmail, tilPassword, tilPosition, tilPhone;
+            etAddress, etPosition, etDateOfBirth, etJoinDate, etBaseSalary;
+    private TextInputLayout tilFullName, tilEmail, tilPassword, tilPosition, tilPhone, tilBaseSalary;
     private Spinner spinnerGender, spinnerDept, spinnerRole;
     private MaterialButton btnSave, btnCancel;
     private ProgressBar progressBar;
@@ -68,7 +69,7 @@ public class AddEditEmployeeActivity extends AppCompatActivity {
     private FloatingActionButton btnChangeAvatar;
 
     // ── Views chỉ dùng khi Add (ẩn khi Edit) ──
-    private View layoutEmailGroup, layoutPasswordGroup, layoutRoleGroup;
+    private View layoutEmailGroup, layoutPasswordGroup, layoutRoleGroup, layoutSalaryGroup;
 
     // ── Data ──
     private ApiService apiService;
@@ -147,6 +148,9 @@ public class AddEditEmployeeActivity extends AppCompatActivity {
         layoutEmailGroup    = findViewById(R.id.layoutEmailGroup);
         layoutPasswordGroup = findViewById(R.id.layoutPasswordGroup);
         layoutRoleGroup     = findViewById(R.id.layoutRoleGroup);
+        layoutSalaryGroup   = findViewById(R.id.layoutSalaryGroup);
+        etBaseSalary        = findViewById(R.id.etBaseSalary);
+        tilBaseSalary       = findViewById(R.id.tilBaseSalary);
 
         btnCancel.setOnClickListener(v -> finish());
         btnSave.setOnClickListener(v -> doSave());
@@ -182,6 +186,17 @@ public class AddEditEmployeeActivity extends AppCompatActivity {
         } else {
             if (toolbar != null) toolbar.setTitle("Thêm nhân viên mới");
             btnSave.setText("Lưu lại");
+            if (layoutEmailGroup != null) layoutEmailGroup.setVisibility(View.VISIBLE);
+            if (layoutPasswordGroup != null) layoutPasswordGroup.setVisibility(View.VISIBLE);
+            if (layoutRoleGroup != null) layoutRoleGroup.setVisibility(View.VISIBLE);
+        }
+
+        // Chỉ Admin mới được sửa lương
+        String currentRole = SharedPrefsManager.getInstance(this).getRole();
+        if ("ADMIN".equals(currentRole)) {
+            if (layoutSalaryGroup != null) layoutSalaryGroup.setVisibility(View.VISIBLE);
+        } else {
+            if (layoutSalaryGroup != null) layoutSalaryGroup.setVisibility(View.GONE);
         }
     }
 
@@ -203,6 +218,9 @@ public class AddEditEmployeeActivity extends AppCompatActivity {
                     else spinnerGender.setSelection(0);
                     selectDeptInSpinner(emp.getDepartmentId());
                     loadCurrentAvatar(emp);
+                    if (emp.getBaseSalary() != null && etBaseSalary != null) {
+                        etBaseSalary.setText(String.format(Locale.US, "%.0f", emp.getBaseSalary()));
+                    }
                 }
             }
             @Override
@@ -398,6 +416,9 @@ public class AddEditEmployeeActivity extends AppCompatActivity {
             req.setAddress(address);
             req.setGender(gender);
             if (avatarUrl != null) req.setAvatarUrl(avatarUrl);
+            if (etBaseSalary != null && !getText(etBaseSalary).isEmpty()) {
+                req.setBaseSalary(Double.parseDouble(getText(etBaseSalary)));
+            }
 
             apiService.updateEmployee(employeeId, req).enqueue(new Callback<Employee>() {
                 @Override
@@ -432,6 +453,9 @@ public class AddEditEmployeeActivity extends AppCompatActivity {
             if (avatarUrl != null) req.setAvatarUrl(avatarUrl);
             if (!dob.isEmpty()) req.setDateOfBirth(dob);
             if (!joinDate.isEmpty()) req.setJoinDate(joinDate);
+            if (etBaseSalary != null && !getText(etBaseSalary).isEmpty()) {
+                req.setBaseSalary(Double.parseDouble(getText(etBaseSalary)));
+            }
 
             apiService.createEmployee(req).enqueue(new Callback<Employee>() {
                 @Override

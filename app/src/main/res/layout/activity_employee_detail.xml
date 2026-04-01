@@ -23,16 +23,6 @@
             app:titleTextColor="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:tabIndicatorColor="@color/colorPrimary"
-        app:tabSelectedTextColor="@color/colorPrimary"
-        app:tabTextColor="@color/textColorSecondary"
-        app:tabMode="fixed"
-        app:tabGravity="fill" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -193,54 +183,5 @@
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <LinearLayout
-        android:id="@+id/layoutAttendance"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:visibility="gone">
-
-        <TextView android:id="@+id/tvAttSummary"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Đang tải..." android:textSize="14sp" android:textStyle="bold"
-            android:textColor="@color/textColorPrimary" android:layout_marginBottom="8dp" />
-
-        <TextView android:id="@+id/tvAttEmpty"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Chưa có dữ liệu chấm công" android:textSize="14sp"
-            android:textColor="@color/textColorSecondary" android:gravity="center"
-            android:layout_marginTop="40dp" android:visibility="gone" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvAttendance"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="16dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layoutRequests"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:visibility="gone">
-
-        <TextView android:id="@+id/tvReqEmpty"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Chưa có đơn từ nào" android:textSize="14sp"
-            android:textColor="@color/textColorSecondary" android:gravity="center"
-            android:layout_marginTop="40dp" android:visibility="gone" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvRequests"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="16dp" />
-    </LinearLayout>
 
 </LinearLayout>

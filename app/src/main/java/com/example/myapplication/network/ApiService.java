@@ -20,6 +20,9 @@ public interface ApiService {
     @POST("api/auth/change-password")
     Call<Void> changePassword(@Body ChangePasswordRequest request);
 
+    @POST("api/auth/logout")
+    Call<Void> logout();
+
     @GET("api/employees/{id}/detail")
     Call<Employee> getMyProfile(@Path("id") Long id);
 

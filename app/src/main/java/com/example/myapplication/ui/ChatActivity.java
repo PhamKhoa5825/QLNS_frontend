@@ -140,9 +140,6 @@ public class ChatActivity extends AppCompatActivity implements CreateGroupDialog
             containerProfileLink.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         }
 
-        if (btnHeaderExtra != null) {
-            btnHeaderExtra.setOnClickListener(v -> Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show());
-        }
 
         fabAddRoom.setOnClickListener(v -> {
             startActivity(new Intent(ChatActivity.this, ContactsActivity.class));

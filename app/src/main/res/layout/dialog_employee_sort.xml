@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Handle bar -->
+        <!-- ── Handle bar ── -->
         <View
             android:layout_width="40dp"
             android:layout_height="4dp"
@@ -22,32 +22,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bộ lọc nâng cao"
+            android:text="Bộ lọc nhân viên"
             android:textColor="#111827"
             android:textSize="20sp"
             android:textStyle="bold" />
-
-        <!-- ── Chức vụ ── -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="8dp"
-            android:text="Chức vụ"
-            android:textColor="#374151"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <!--
-            cgRole: load động từ API danh sách position
-            Trong Activity dùng: addChipToGroup(cgRole, "Lập trình viên")
-        -->
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/cgRole"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:chipSpacingVertical="4dp"
-            app:singleSelection="false" />
 
         <!-- ── Phòng ban ── -->
         <TextView
@@ -61,16 +39,12 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <!--
-            cgDepartment: load động từ API GET /api/departments
-            Trong Activity gọi loadDepartmentChips(cgDepartment)
-        -->
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/cgDepartment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:chipSpacingVertical="4dp"
-            app:singleSelection="false" />
+            app:singleSelection="true" />
 
         <!-- ── Trạng thái ── -->
         <TextView

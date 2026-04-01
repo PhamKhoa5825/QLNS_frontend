@@ -51,6 +51,9 @@ public class TaskActivity extends AppCompatActivity {
     private android.widget.LinearLayout btnMonthFilter;
     private TextView tvSelectedMonth;
     private Integer selectedMonth, selectedYear;
+    private EditText edtSearch;
+    private String currentSearchKeyword = "";
+    private String currentCategory = "ALL";
     
     // Configured for current manager's department
     private Long currentDeptId;
@@ -112,6 +115,18 @@ public class TaskActivity extends AppCompatActivity {
         tvSelectedMonth = findViewById(R.id.tvSelectedMonth);
         if (tvSelectedMonth != null) {
             tvSelectedMonth.setText("Tháng " + selectedMonth + "/" + selectedYear);
+        }
+
+        edtSearch = findViewById(R.id.edtSearch);
+        if (edtSearch != null) {
+            edtSearch.addTextChangedListener(new android.text.TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    currentSearchKeyword = s.toString().trim().toLowerCase();
+                    filterTasks(currentCategory);
+                }
+                @Override public void afterTextChanged(android.text.Editable s) {}
+            });
         }
     }
 
@@ -453,18 +468,13 @@ public class TaskActivity extends AppCompatActivity {
                     selectedMonth = which;
                     if (tvSelectedMonth != null) tvSelectedMonth.setText("Tháng " + selectedMonth + "/" + selectedYear);
                 }
-                // Determine current filter category from selected text color or typeface
-                String currentCategory = "ALL";
-                if (tvFilterPending.getCurrentTextColor() == android.graphics.Color.WHITE) currentCategory = "PENDING";
-                else if (tvFilterInProgress.getCurrentTextColor() == android.graphics.Color.WHITE) currentCategory = "IN_PROGRESS";
-                else if (tvFilterDone.getCurrentTextColor() == android.graphics.Color.WHITE) currentCategory = "DONE";
-                
                 filterTasks(currentCategory);
             })
             .show();
     }
 
     private void filterTasks(String category) {
+        currentCategory = category;
         // Update UI Tabs
         int unselectedBg = R.drawable.bg_chip_unselected;
         int selectedBg = R.drawable.bg_chip_selected;
@@ -494,7 +504,7 @@ public class TaskActivity extends AppCompatActivity {
             String s = t.getStatus();
             if (s == null) s = "PENDING";
 
-            // Determine if date matches
+            // 1. Month Filter
             boolean matchesMonth = true;
             if (targetPrefix != null) {
                 String dateToCheck = t.getCreatedAt() != null ? t.getCreatedAt() : t.getDeadline();
@@ -505,7 +515,17 @@ public class TaskActivity extends AppCompatActivity {
                 }
             }
 
-            if (matchesMonth) {
+            // 2. Keyword Filter
+            boolean matchesKeyword = true;
+            if (currentSearchKeyword != null && !currentSearchKeyword.isEmpty()) {
+                String title = t.getTitle() != null ? t.getTitle().toLowerCase() : "";
+                String desc = t.getDescription() != null ? t.getDescription().toLowerCase() : "";
+                if (!title.contains(currentSearchKeyword) && !desc.contains(currentSearchKeyword)) {
+                    matchesKeyword = false;
+                }
+            }
+
+            if (matchesMonth && matchesKeyword) {
                 if (category.equals("ALL")) {
                     filtered.add(t);
                 } else if (category.equals("PENDING") && s.equals("PENDING")) {
