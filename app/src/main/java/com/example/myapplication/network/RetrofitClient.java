@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RetrofitClient {
 
-    public static final String BASE_URL = "http://10.0.2.2:8080/";
+    public static final String BASE_URL = "http://10.129.161.118:8080/";
 
     public static String getBaseUrl() {
         return BASE_URL;

@@ -21,7 +21,7 @@ import ua.naiksoftware.stomp.dto.StompHeader;
 public class StompManager {
 
     private static final String TAG = "StompManager";
-    private static final String WS_URL = "ws://10.0.2.2:8080/ws";
+    private static final String WS_URL = "ws://10.129.161.118:8080/ws";
 
     private static volatile StompManager instance;
 

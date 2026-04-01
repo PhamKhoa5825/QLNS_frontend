@@ -57,16 +57,14 @@ public class EmployeeActivity extends AppCompatActivity {
         initViews();
         setupSearch();
         observeViewModel();
-
-        loadDataByRole();
-        
         BottomNavHelper.setupBottomNav(this, R.id.nav_people);
     }
- 
+
     @Override
     protected void onResume() {
         super.onResume();
         TopBarHelper.setupTopBar(this);
+        loadDataByRole();
     }
 
     private void loadDataByRole() {

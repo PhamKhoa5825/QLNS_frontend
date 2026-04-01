@@ -896,15 +896,20 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             return url;
         }
         
-        // [Chat] Support relative paths from backend by prepending BASE_URL.
-        // If it starts with uploads/ or /uploads, it's likely a relative path.
-        if (url.contains("uploads") || url.charAt(0) != '/') {
-            String baseUrl = com.example.myapplication.network.ApiClient.BASE_URL;
-            if (url.startsWith("/")) url = url.substring(1);
-            return baseUrl + url;
+        // [Chat] Support relative paths from backend. 
+        // All chat media is served via /uploads/ mapping in WebConfig.
+        String baseUrl = com.example.myapplication.network.ApiClient.BASE_URL;
+        if (!baseUrl.endsWith("/")) baseUrl += "/";
+
+        // Remove leading slash to avoid double slashes with baseUrl
+        if (url.startsWith("/")) url = url.substring(1);
+
+        // If it's a relative path from Chat (e.g., room_1/...) it might miss "uploads/"
+        if (!url.toLowerCase().startsWith("uploads/")) {
+            url = "uploads/" + url;
         }
 
-        return "";
+        return baseUrl + url;
     }
 
     private String resolveMessageFileUrl(Message message) {
