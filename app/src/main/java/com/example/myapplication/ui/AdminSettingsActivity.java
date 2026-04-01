@@ -2,8 +2,11 @@ package com.example.myapplication.ui;
 
 import android.Manifest;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
@@ -63,7 +66,7 @@ public class AdminSettingsActivity extends AppCompatActivity implements OnMapRea
     private Marker companyMarker;
     private Circle radiusCircle;
     private FusedLocationProviderClient fusedLocationClient;
-    private LocationCallback locationCallback;
+    private int locationUpdateCount = 0;
 
     // Default coordinates (HCMC)
     private double selectedLat = 10.7769;
@@ -185,28 +188,56 @@ public class AdminSettingsActivity extends AppCompatActivity implements OnMapRea
             return;
         }
 
+        // Check if GPS is enabled
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean gpsEnabled = false;
+        try {
+            gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ignored) {}
+
+        if (!gpsEnabled) {
+            showLocationSettingsDialog();
+        }
+
         Toast.makeText(this, "Đang định vị...", Toast.LENGTH_SHORT).show();
 
-        LocationRequest req = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 3000)
-                .setMaxUpdates(1)
-                .build();
-
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(@NonNull LocationResult result) {
-                fusedLocationClient.removeLocationUpdates(this);
-                if (result.getLastLocation() != null) {
-                    selectedLat = result.getLastLocation().getLatitude();
-                    selectedLng = result.getLastLocation().getLongitude();
-                    LatLng myPos = new LatLng(selectedLat, selectedLng);
-                    updateMapMarker(myPos);
-                    fillLatLng(selectedLat, selectedLng);
-                    Toast.makeText(AdminSettingsActivity.this, "Đã cập nhật vị trí hiện tại", Toast.LENGTH_SHORT).show();
-                }
+        // 1. Try getLastLocation for immediate feedback
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            if (location != null) {
+                updateUIWithLocation(location);
             }
-        };
+        });
 
-        fusedLocationClient.requestLocationUpdates(req, locationCallback, Looper.getMainLooper());
+        // 2. Modern single-fix request (high accuracy)
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                .addOnSuccessListener(this, location -> {
+                    if (location != null) {
+                        updateUIWithLocation(location);
+                    }
+                })
+                .addOnFailureListener(this, e -> {
+                    Toast.makeText(this, "Không thể xác định vị trí: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void updateUIWithLocation(Location loc) {
+        selectedLat = loc.getLatitude();
+        selectedLng = loc.getLongitude();
+        LatLng myPos = new LatLng(selectedLat, selectedLng);
+        updateMapMarker(myPos);
+        fillLatLng(selectedLat, selectedLng);
+    }
+
+    private void showLocationSettingsDialog() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Chưa bật vị trí")
+                .setMessage("Vui lòng bật định vị (GPS) trong cài đặt hệ thống để lấy tọa độ văn phòng hiện tại.")
+                .setPositiveButton("Cài đặt", (dialog, which) -> {
+                    startActivity(new android.content.Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                })
+                .setNegativeButton("Huỷ", (dialog, id) -> dialog.dismiss())
+                .setCancelable(false)
+                .show();
     }
 
     @Override
@@ -310,8 +341,5 @@ public class AdminSettingsActivity extends AppCompatActivity implements OnMapRea
     @Override
     protected void onPause() {
         super.onPause();
-        if (fusedLocationClient != null && locationCallback != null) {
-            fusedLocationClient.removeLocationUpdates(locationCallback);
-        }
     }
 }
