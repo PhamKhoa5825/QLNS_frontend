@@ -91,8 +91,6 @@ public class MessageActivity extends AppCompatActivity implements OnRecallReques
 
     private LinearLayoutManager layoutManager;
     private boolean historyRenderedOnce = false;
-    private boolean refreshOnResume = false;
-    private boolean subscribed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,24 +107,15 @@ public class MessageActivity extends AppCompatActivity implements OnRecallReques
 
         viewModel.loadMessages(roomId);
         viewModel.loadMembers(roomId);
-        refreshOnResume = true;
-        viewModel.connectAndSubscribe(roomId);
-        subscribed = true;
     }
-
     @Override
     protected void onResume() {
         super.onResume();
         ChatForegroundService.currentOpenRoomId = roomId;
-        if (refreshOnResume) {
-            historyRenderedOnce = false; 
-            viewModel.loadMessages(roomId);
-            viewModel.loadMembers(roomId);
-        }
-        if (!subscribed) {
-            viewModel.connectAndSubscribe(roomId);
-            subscribed = true;
-        }
+        historyRenderedOnce = false; 
+        viewModel.loadMessages(roomId);
+        viewModel.loadMembers(roomId);
+        viewModel.connectAndSubscribe(roomId);
     }
 
     @Override
@@ -452,7 +441,6 @@ public class MessageActivity extends AppCompatActivity implements OnRecallReques
     protected void onDestroy() {
         super.onDestroy();
         if (viewModel != null) viewModel.disconnectRoom();
-        subscribed = false;
     }
 
     @Override

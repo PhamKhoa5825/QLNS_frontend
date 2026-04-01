@@ -21,7 +21,7 @@ import ua.naiksoftware.stomp.dto.StompHeader;
 public class StompManager {
 
     private static final String TAG = "StompManager";
-    private static final String WS_URL = "ws://10.129.161.118:8080/ws";
+    private static final String WS_URL = "ws://10.0.2.2:8080/ws";
 
     private static volatile StompManager instance;
 
@@ -46,8 +46,15 @@ public class StompManager {
     }
 
     public void connect(String token) {
+        if (stompClient != null && stompClient.isConnected()) {
+            Log.d(TAG, "STOMP đã kết nối, không cần connect lại");
+            return;
+        }
+
         if (stompClient == null) {
             stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, WS_URL);
+            // [Chat] Cấu hình Heartbeat: 10s gửi ping, 10s chờ pong (giống backend)
+            stompClient.withClientHeartbeat(10000).withServerHeartbeat(10000);
         }
 
         // [Chat] Đăng ký lifecycle để theo dõi trạng thái socket và log lỗi kết nối.
@@ -56,7 +63,19 @@ public class StompManager {
                 stompClient.lifecycle()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                event -> Log.d(TAG, "Lifecycle event: " + event.getType()),
+                                event -> {
+                                    switch (event.getType()) {
+                                        case OPENED:
+                                            Log.d(TAG, "STOMP connection opened");
+                                            break;
+                                        case ERROR:
+                                            Log.e(TAG, "STOMP connection error", event.getException());
+                                            break;
+                                        case CLOSED:
+                                            Log.d(TAG, "STOMP connection closed");
+                                            break;
+                                    }
+                                },
                                 throwable -> Log.e(TAG, "Lỗi lifecycle STOMP", throwable)
                         )
         );
